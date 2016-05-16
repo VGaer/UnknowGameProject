@@ -8,6 +8,7 @@ class Entity : public Node
 {
 public:
 	void bindSprite(Sprite* sprite);
+	Sprite* getSprite();
 private:
 	Sprite* m_sprite;
 };
