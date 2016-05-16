@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include "Player.h"
+#include "AnimBase.h"
 
 enum MoveDir
 {
@@ -22,6 +23,7 @@ public:
 	// 属性部分
 	float hp;
 	float damage;
+	float moveSpeed;   // 行走一条边的时间
 	float attackInter; // 攻击间隔
 	float attackRange; // 攻击范围
 public:
@@ -33,6 +35,7 @@ public:
 private:
 	Player* player;	
 	MoveDir curMoveDir;
+	AnimBase* animBase;             // 动作控制器
 	void changeDirection();			// 改变移动方向
 	bool checkRange();				// 是否在攻击范围
 };
