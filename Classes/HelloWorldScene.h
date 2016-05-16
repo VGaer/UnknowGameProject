@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 #include "Player.h"
+#include "Graph.h"
+#include "Monster.h"
 
 class HelloWorld : public cocos2d::Layer
 {
@@ -22,9 +24,13 @@ public:
 	virtual void update(float dt);
 
 	void setViewpointCenter(Vec2 Position);
+
+	void initGraph();
 private:
 	Player*  m_player;
 	TMXTiledMap* m_map;
+	Graph * graph;
+	Monster* m_monster;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

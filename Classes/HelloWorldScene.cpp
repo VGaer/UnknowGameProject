@@ -94,6 +94,16 @@ bool HelloWorld::init()
 	map->addChild(drawNode4);
 
 	
+	m_monster = Monster::create();
+	map->addChild(m_monster, (int)map->getChildren().size());
+	m_monster->setPosition(64, 384);
+	//m_monster->setPosition(32, 32);
+	m_monster->bindPlayer(m_player);
+
+	initGraph();
+	m_monster->schedule(schedule_selector(Monster::track), 0.6f);
+	
+
 	return true;
 }
 
@@ -115,9 +125,11 @@ void HelloWorld::update(float dt)
 {
 	auto p = m_player->getPosition();
 	p = CC_POINT_POINTS_TO_PIXELS(p);
-
 	m_player->setVertexZ(-((p.y + 64) / 64));
 
+	p = m_monster->getPosition();
+	p = CC_POINT_POINTS_TO_PIXELS(p);
+	m_monster->setVertexZ(-((p.y + 64) / 64));
 	setViewpointCenter(m_player->getPosition());
 
 }
@@ -134,4 +146,12 @@ void HelloWorld::setViewpointCenter(Vec2 Position)
 
 	Vec2 offset = pointA - pointB;
 	this->setPosition(offset);
+}
+
+void HelloWorld::initGraph()
+{
+	graph = Graph::getInstance();
+	graph->setTildMap(m_map);
+	graph->init(Vec2(16,20));
+	return;
 }
