@@ -5,14 +5,6 @@
 #include "Player.h"
 #include "AnimBase.h"
 
-enum MoveDir
-{
-	dir_up,
-	dir_down,
-	dir_left,
-	dir_right
-};
-
 class Monster : Entity
 {
 public:
@@ -34,7 +26,6 @@ public:
 	void cmd_attack();				// 进行攻击
 private:
 	Player* player;	
-	MoveDir curMoveDir;
 	AnimBase* animBase;             // 动作控制器
 	void changeDirection();			// 改变移动方向
 	bool checkRange();				// 是否在攻击范围

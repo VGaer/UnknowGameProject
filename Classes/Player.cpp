@@ -722,6 +722,7 @@ void Player::update(float dt)
 				this->setPlayerPosition(this->getPosition() + Vec2(-4, -4));
 				return;
 			}
+
 			else if ((vec.back() == enum_down && vec[vec.size() - 2] == enum_right
 				|| vec[vec.size() - 2] == enum_down && vec.back() == enum_right))
 			{

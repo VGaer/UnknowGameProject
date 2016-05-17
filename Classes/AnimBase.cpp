@@ -19,7 +19,7 @@ int AnimBase::getDirection(Point tarPos)
 
 void AnimBase::playMoveAnim(int direction)
 {
-	if (m_sprite == NULL) 
+	if (m_sprite == NULL || m_curDirection == direction) 
 		return;
 	if (direction == Dir_right)
 		m_sprite->setScaleX(-1);

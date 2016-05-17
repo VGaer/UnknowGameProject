@@ -5,6 +5,8 @@
 #include "map"
 using namespace std;
 
+#define MONS_DATA_PATH "..."	// 怪物数据文件路径
+
 struct MonsData
 {
 	string name;	   // 名字
@@ -19,16 +21,19 @@ class GameData
 {
 public:
 	// 数据初始化
+	GameData* getInstance();
 	GameData();
 	~GameData();
 	// 基础数据存放
-	typedef map<string, MonsData> MonsData_t;
-	static MonsData_t m_mapMonsData;
+	map<string, MonsData*> m_mapMonsData;
 public:
 	// 加入一条怪物数据
-	static void addDataToMonsData(const MonsData& data);
+	void addDataToMonsData(MonsData* data);
 	// 获取一条怪物数据
-	static const MonsData* getDataFromMonsData(const string& name);
+	const MonsData* getDataFromMonsData(const string& name);
+private:
+	// 读取文件数据
+	void readMonsDataFile();
 };
 
 #endif
