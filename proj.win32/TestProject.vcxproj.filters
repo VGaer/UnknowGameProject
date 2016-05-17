@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity">
+      <UniqueIdentifier>{3784842f-9df9-4e6d-9414-8ab057043923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameData">
+      <UniqueIdentifier>{e0a7de4f-38be-4d03-ba96-12202b63bc37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{dce2d5fe-9b62-4507-9b62-38bb628a47a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity\Player">
+      <UniqueIdentifier>{bcf983ae-1e66-48bf-bca2-98869a5fbe66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity\Monster">
+      <UniqueIdentifier>{076fb301-b7f0-4a01-83ab-1947b2ab5341}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FindPath">
+      <UniqueIdentifier>{c5dc803d-fb53-43c9-9252-3e69a82893f8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Classes\Entity.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameData.cpp">
+      <Filter>GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AnimBase.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AnimationUtil.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Player.cpp">
+      <Filter>Entity\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\RemoteSkill.cpp">
+      <Filter>Entity\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Monster.cpp">
+      <Filter>Entity\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TimeCounter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Edge.cpp">
+      <Filter>FindPath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\FindPath.cpp">
+      <Filter>FindPath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Graph.cpp">
+      <Filter>FindPath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Vertex.cpp">
+      <Filter>FindPath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\StateMachine.cpp">
+      <Filter>Entity\Monster</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Classes\Entity.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameData.h">
+      <Filter>GameData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AnimBase.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AnimationUtil.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Player.h">
+      <Filter>Entity\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\RemoteSkill.h">
+      <Filter>Entity\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Monster.h">
+      <Filter>Entity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TimeCounter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HelloWorldScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Edge.h">
+      <Filter>FindPath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\FindPath.h">
+      <Filter>FindPath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Graph.h">
+      <Filter>FindPath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Vertex.h">
+      <Filter>FindPath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\State.h">
+      <Filter>Entity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\StateMachine.h">
+      <Filter>Entity\Monster</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

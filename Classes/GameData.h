@@ -15,13 +15,15 @@ struct MonsData
 	float moveSpeed;   // 行走一条边的时间
 	float attackInter; // 攻击间隔
 	float attackRange; // 攻击范围
+	float eyeRange;	   // 视野半径
+	string imagePath;  // 图片路径
 };
 
 class GameData
 {
 public:
 	// 数据初始化
-	GameData* getInstance();
+	static GameData* getInstance();
 	GameData();
 	~GameData();
 	// 基础数据存放

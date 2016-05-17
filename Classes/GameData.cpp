@@ -65,6 +65,8 @@ void GameData::readMonsDataFile()
 			data->moveSpeed = value["moveSpeed"].GetDouble();
 			data->attackInter = value["attackInter"].GetDouble();
 			data->attackRange = value["attackRange"].GetDouble();
+			data->eyeRange = value["eyeRange"].GetDouble();
+			data->imagePath = value["imagePath"].GetDouble();
 			addDataToMonsData(data);
 		}
 	} while (0);
