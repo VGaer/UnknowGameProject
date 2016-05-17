@@ -9,6 +9,7 @@ public:
 	virtual bool init();
 	virtual void update(float dt);
 	void start();
+	void end();
 	float getCurTime();
 private:
 	float m_fTime;

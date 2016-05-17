@@ -1,26 +1,26 @@
-#pragma once
+#ifndef _StateMachine_H_
+#define _StateMachine_H_
 #include "cocos2d.h"
+#include "TimeCounter.h"
+#include "State.h"
 USING_NS_CC;
-#include"State.h"
-template<class T>
+
 class StateMachine {
 private:
-	T*	owner;
-	State<T>*	currState;
-	State<T>*	preState;
-	State<T>*	globalState;
+	Monster*	owner;
+	State*	currState;
+	State*	preState;
+	State*	globalState;
 public:
-	StateMachine(T* sender) :owner(sender),
-		currState(NULL),
-		preState(NULL),
-		globalState(NULL)
+	StateMachine(Monster* sender) :owner(sender),
+		currState(NULL), preState(NULL), globalState(NULL)
 	{}
 	virtual ~StateMachine() {}
 
-	void SetCurrState(State<T>* s) { currState = s; }
-	void SetPreState(State<T>* s) { preState = s; }
-	void SetGlobalState(State<T>* S) { globalState = S; }
-	State<T>* GetCurrState() { return currState; }
+	void SetCurrState(State* s) { currState = s; }
+	void SetPreState(State* s) { preState = s; }
+	void SetGlobalState(State* S) { globalState = S; }
+	State* GetCurrState() { return currState; }
 
 	void Update() const {
 		if (globalState)
@@ -29,7 +29,7 @@ public:
 			currState->Excute(owner);
 	}
 
-	void ChangeState(State<T>* newState) {
+	void ChangeState(State* newState) {
 		preState = currState;
 		currState->Exit(owner);
 		currState = newState;
@@ -39,81 +39,41 @@ public:
 		ChangeState(preState);
 	}
 
-	bool IsInstate(const State<T>* sender) const {
+	bool IsInstate(const State* sender) const {
 		return typeid(currState) == typeid(sender);
 	}
 
-	State<T>*  CurrentState()  const { return currState; }
-	State<T>*  GlobalState()   const { return globalState; }
-	State<T>*  PreviousState() const { return preState; }
+	State*  CurrentState()  const { return currState; }
+	State*  GlobalState()   const { return globalState; }
+	State*  PreviousState() const { return preState; }
 };
 
-template<class T>
-class Idle : public State<T> {
+class Idle : public State {
+public:
+	virtual void Enter(Monster*);
+	virtual void Excute(Monster*);
+	virtual void Exit(Monster*);
 private:
-	Idle(){}
+	float duration;
+	TimeCounter timeCounter;
+};
 
-	Idle(const Idle&);
-	Idle& operator=(const Idle&);
+class Patrol : public State {
+private:
+	Patrol() {}
+
+	Patrol(const Patrol&);
+	Patrol& operator=(const Patrol&);
 
 public:
-	static Idle* Instance();
+	static Patrol* Instance();
 
-	virtual void Enter(T* s);
-	virtual void Excute(T* s);
-	virtual void Exit(T* s);
+	virtual void Enter(Monster*);
+	virtual void Excute(Monster*);
+	virtual void Exit(Monster*);
 };
 
-template<class T>
-class Move : public State<T> {
-private:
-	Move() {}
-
-	Move(const Move&);
-	Move& operator=(const Move&);
-
-public:
-	static Move* Instance();
-
-	virtual void Enter(T* s);
-	virtual void Excute(T* s);
-	virtual void Exit(T* s);
-};
-
-template<class T>
-class Attack : public State<T> {
-private:
-	Attack() {}
-
-	Attack(const Attack&);
-	Attack& operator=(const Attack&);
-
-public:
-	static Attack* Instance();
-
-	virtual void Enter(T* s);
-	virtual void Excute(T* s);
-	virtual void Exit(T* s);
-};
-
-template<class T>
-class Dead : public State<T> {
-private:
-	Dead() {}
-
-	Dead(const Dead&);
-	Dead& operator=(const Dead&);
-
-public:
-	static Dead* Instance();
-
-	virtual void Enter(T* s);
-	virtual void Excute(T* s);
-	virtual void Exit(T* s);
-};
-
-template<class T>
-class Track : public State<T> {
+class Track : public State {
 private:
 	Track() {}
 
@@ -123,8 +83,24 @@ private:
 public:
 	static Track* Instance();
 
-	virtual void Enter(T* s);
-	virtual void Excute(T* s);
-	virtual void Exit(T* s);
+	virtual void Enter(Monster*);
+	virtual void Excute(Monster*);
+	virtual void Exit(Monster*);
 };
 
+class Attack : public State {
+private:
+	Attack() {}
+
+	Attack(const Attack&);
+	Attack& operator=(const Attack&);
+
+public:
+	static Attack* Instance();
+
+	virtual void Enter(Monster*);
+	virtual void Excute(Monster*);
+	virtual void Exit(Monster*);
+};
+
+#endif

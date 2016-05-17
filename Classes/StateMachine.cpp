@@ -1,120 +1,96 @@
 #include "StateMachine.h"
 
-template<class T>
-Idle<T> * Idle<T>::Instance()
+void Idle::Enter(Monster* target)
 {
-	static Idle instance;
+	int direction = target->getAnimBase()->getCurDirection();
+	target->cmd_stop();
+	duration = rand() % 3 + 2;  // 滞留时间( 2 - 4 ) 秒
+	timeCounter.start();
+}
+
+void Idle::Excute(Monster* target)
+{
+	// 如果玩家进入视野范围，进入追击状态
+	if (target->checkInEyeRange())
+	{
+		target->getStateMachine()->ChangeState(Track::Instance());
+	}
+	// 滞留时间已到，进入巡逻状态
+	if (timeCounter.getCurTime() >= duration)
+	{
+		target->getStateMachine()->ChangeState(Patrol::Instance());
+	}
+}
+
+void Idle::Exit(Monster* target)
+{
+	delete this;
+}
+
+Patrol* Patrol::Instance()
+{
+	static Patrol instance;
 	return &instance;
 }
 
-template<class T>
-void Idle<T>::Enter(T * s)
+void Patrol::Enter(Monster* target)
 {
 
 }
 
-template<class T>
-void Idle<T>::Excute(T * s)
+void Patrol::Excute(Monster* target)
 {
 
 }
 
-template<class T>
-void Idle<T>::Exit(T * s)
+void Patrol::Exit(Monster* target)
 {
 
 }
 
-template<class T>
-Move<T> * Move<T>::Instance()
-{
-	static Move instance;
-	return &instance;
-}
-
-template<class T>
-void Move<T>::Enter(T * s)
-{
-
-}
-
-template<class T>
-void Move<T>::Excute(T * s)
-{
-
-}
-
-template<class T>
-void Move<T>::Exit(T * s)
-{
-
-}
-
-template<class T>
-Attack<T> * Attack<T>::Instance()
+Attack* Attack::Instance()
 {
 	static Attack instance;
 	return &instance;
 }
 
-template<class T>
-void Attack<T>::Enter(T * s)
+void Attack::Enter(Monster* target)
 {
 
 }
 
-template<class T>
-void Attack<T>::Excute(T * s)
+void Attack::Excute(Monster* target)
 {
 }
 
-template<class T>
-void Attack<T>::Exit(T * s)
-{
-}
-
-template<class T>
-Dead<T> * Dead<T>::Instance()
-{
-	static Dead instance;
-	return &instance;
-}
-
-template<class T>
-void Dead<T>::Enter(T * s)
+void Attack::Exit(Monster* target)
 {
 
 }
 
-template<class T>
-void Dead<T>::Excute(T * s)
-{
-}
-
-template<class T>
-void Dead<T>::Exit(T * s)
-{
-}
-
-template<class T>
-Track<T> * Track<T>::Instance()
+Track* Track::Instance()
 {
 	static Track instance;
 	return &instance;
 }
 
-template<class T>
-void Track<T>::Enter(T * s)
+void Track::Enter(Monster* target)
 {
 
 }
 
-template<class T>
-void Track<T>::Excute(T * s)
+void Track::Excute(Monster* target)
 {
+	// 如果进入攻击范围内，转换攻击状态
+	if (target->checkInAttaRange())
+	{
+		target->getStateMachine()->ChangeState(Attack::Instance());
+	}
+	Vec2 tarPos = target->getPlayer()->getPosition();
+	target->cmd_moveTo(tarPos);
 }
 
-template<class T>
-void Track<T>::Exit(T * s)
+void Track::Exit(Monster* target)
 {
+
 }

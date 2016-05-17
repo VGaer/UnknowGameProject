@@ -21,3 +21,8 @@ void TimeCounter::start()
 	m_fTime = 0;
 	this->scheduleUpdate();
 }
+
+void TimeCounter::end()
+{
+	this->unscheduleUpdate();
+}

@@ -1,12 +1,16 @@
-#pragma once
+#ifndef _State_H_
+#define _State_H_
+
 #include "cocos2d.h"
+#include "Monster.h"
 USING_NS_CC;
-template<class T>
+
 class State {
 public:
-	virtual ~State(){}
-
-	virtual void Enter(T*) = 0;
-	virtual void Excute(T*) = 0;
-	virtual void Exit(T*) = 0;
+	// ×´Ì¬×ª»»
+	virtual void Enter(Monster*) = 0;
+	virtual void Excute(Monster*) = 0;
+	virtual void Exit(Monster*) = 0;
 };
+
+#endif

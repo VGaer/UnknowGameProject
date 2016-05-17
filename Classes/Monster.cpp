@@ -26,12 +26,23 @@ bool Monster::init(const std::string& name)
 	eyeRange = data->eyeRange;
 	bindSprite(Sprite::create(data->imagePath));
 	findPath = new FindPath();
+	stateMachine = new StateMachine(this);
 	return true;
 }
 
 AnimBase* Monster::getAnimBase()
 {
 	return animBase;
+}
+
+StateMachine* Monster::getStateMachine()
+{
+	return stateMachine;
+}
+
+Player* Monster::getPlayer()
+{
+	return player;
 }
 
 void Monster::cmd_moveTo(Point tarPos)
@@ -82,4 +93,9 @@ bool Monster::checkInAttaRange()
 			return true;
 	}
 	return false;
+}
+
+void Monster::update(float dt)
+{
+	stateMachine->Update();
 }

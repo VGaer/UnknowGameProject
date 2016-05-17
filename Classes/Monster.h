@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "FindPath.h"
 #include "AnimBase.h"
+#include "StateMachine.h"
 
 class FindPath;
 
@@ -23,19 +24,24 @@ public:
 	float attackInter; // 攻击间隔
 	float attackRange; // 攻击范围
 	float eyeRange;    // 视野半径
+	// 对外接口
 	AnimBase* getAnimBase();
+	StateMachine* getStateMachine();
+	Player* getPlayer();
 public:
 	// 命令部分
 	void cmd_moveTo(Point tarPos);	// 进行移动
 	void cmd_stop();                // 静止
 	bool cmd_hurt(float damage);	// 返回值表示是否死亡
-	void cmd_attack();				// 进行攻击
+	void cmd_attack();				// 进行攻击	
+	bool checkInEyeRange();			// 是否在视野范围内
+	bool checkInAttaRange();		// 是否在攻击范围内
 private:
 	Player* player;	
 	AnimBase* animBase;             // 动作控制器
 	FindPath* findPath;             // 自动寻路
-	bool checkInEyeRange();			// 是否在视野范围内
-	bool checkInAttaRange();		// 是否在攻击范围内
+	StateMachine* stateMachine;		// 状态机
+	void update(float);				// 更新状态机
 };
 
 #endif
