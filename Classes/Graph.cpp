@@ -84,7 +84,13 @@ void Graph::init(Vec2 center)
 		if (vId.x > 0 && vId.y > 0)
 		{
 			newVec.x = vId.x - 1; newVec.y = vId.y - 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前左边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x - 1; temp.y = vId.y;	
+			//判断上面是否有障碍物
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y - 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0)
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));
@@ -99,7 +105,12 @@ void Graph::init(Vec2 center)
 		if (vId.x < m_map->getMapSize().width - 1 && vId.y < m_map->getMapSize().height - 1)
 		{
 			newVec.x = vId.x + 1; newVec.y = vId.y + 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前右边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x + 1; temp.y = vId.y;
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y + 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0)
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));
@@ -114,7 +125,12 @@ void Graph::init(Vec2 center)
 		if (vId.x > 0 && vId.y < m_map->getMapSize().height - 1)
 		{
 			newVec.x = vId.x - 1; newVec.y = vId.y + 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前左边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x - 1; temp.y = vId.y;
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y + 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0)
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));
@@ -129,7 +145,12 @@ void Graph::init(Vec2 center)
 		if (vId.x < m_map->getMapSize().width - 1 && vId.y > 0)
 		{
 			newVec.x = vId.x + 1; newVec.y = vId.y - 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前右边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x + 1; temp.y = vId.y;
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y - 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0)
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));

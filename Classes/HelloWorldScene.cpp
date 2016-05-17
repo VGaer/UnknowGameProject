@@ -58,7 +58,7 @@ bool HelloWorld::init()
 
 
 	player->setTiledMap(map);
-	player->setPosition(Vec2(100, 150));
+	player->setPosition(Vec2(100, 250));
 
 	Sprite* dian = Sprite::create("dian.jpg");
 	dian->setPosition(player->getContentSize().width, 0);
@@ -99,6 +99,14 @@ bool HelloWorld::init()
 	m_monster->setPosition(64, 384);
 	//m_monster->setPosition(32, 32);
 	m_monster->bindPlayer(m_player);
+	m_monster->getSprite()->setScale(2);
+	m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width * 2 / 2,
+		m_monster->getContentSize().height * 2 / 2));
+	m_monster->setContentSize(m_monster->getContentSize() * 2);
+	Sprite* sprite222 = Sprite::create("dian.jpg");
+	m_monster->addChild(sprite222);
+	sprite222->setPosition(Vec2(m_monster->getContentSize().width / 2,m_monster->getContentSize().height / 2));
+	//sprite222->setPosition(Vec2());
 
 	initGraph();
 	m_monster->schedule(schedule_selector(Monster::track), 0.6f);

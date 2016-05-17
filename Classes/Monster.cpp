@@ -3,7 +3,7 @@
 bool Monster::init()
 {
 	bindSprite(Sprite::create("player.png"));
-	setAnchorPoint(Vec2(0.5, 0));
+	setAnchorPoint(Vec2(0.5, 0.5));
 	findPath = new FindPath();
 	findPath->bindMonster(this);
 	return true;

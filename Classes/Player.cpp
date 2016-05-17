@@ -71,7 +71,7 @@ bool Player::init()
 	PlayerState = enum_initNone;//初始化为什么都没有状态，一运行游戏如果没操作就会转为enum_static,有操作转为对应操作的walk or run状态 
 	PlayerDir = em_down;//初始化时
 
-	swordwaveNum = 20;
+	swordwaveNum = 20; 
 	createSwordWave();
 
 	m_player_magnification = 2;
@@ -516,6 +516,12 @@ void Player::update(float dt)
 		{
 			/*两个方向一起的快走,,由于快走时在静止时才有的，所以快走永远是vec[0],*/
 			if (vec[0] == enum_doubleup && vec.back() == enum_left){
+				//上左快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2,-m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("urun", 0.15f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleup){
@@ -523,12 +529,28 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleup;
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, 6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或上边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0)
+					{
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, 6));
+					}
+				}
+					
 				PlayerDir = em_up;
 				return;
 			}
 			else if (vec[0] == enum_doubleup && vec.back() == enum_right){
+				//上右快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2,-m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("urun", 0.15f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleup){
@@ -536,12 +558,27 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleup;
-				this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或上边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
+					}
+				}
+						
 				PlayerDir = em_up;
 				return;
 			}
 			else if (vec[0] == enum_doubledown && vec.back() == enum_left){
+				//下左
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2,m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("drun", 0.18f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubledown){
@@ -549,12 +586,27 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubledown;
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, -6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或下边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, -6));
+					}
+				}
+			
 				PlayerDir = em_down;
 				return;
 			}
 			else if (vec[0] == enum_doubledown && vec.back() == enum_right){
+				//下右
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2,m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("drun", 0.18f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubledown){
@@ -562,12 +614,27 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubledown;
-				this->setPlayerPosition(this->getPosition() + Vec2(4, -6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或下边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, -6));
+					}
+				}
+			
 				PlayerDir = em_down;
 				return;
 			}
 			else if (vec[0] == enum_doubleleft && vec.back() == enum_up){
+				//左上快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleleft){
@@ -576,12 +643,26 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleleft;
-				this->setPlayerPosition(this->getPosition() + Vec2(-6, 4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(-6, 4));
+					}
+				}
+			
 				PlayerDir = em_left;
 				return;
 			}
 			else if (vec[0] == enum_doubleleft && vec.back() == enum_down){
+				//左下
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleleft){
@@ -590,12 +671,26 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleleft;
-				this->setPlayerPosition(this->getPosition() + Vec2(-6, -4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIddown) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(-6, -4));
+					}
+				}
+			
 				PlayerDir = em_left;
 				return;
 			}
 			else if (vec[0] == enum_doubleright && vec.back() == enum_up){
+				//右上快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleright){
@@ -604,12 +699,26 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleright;
-				this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
+					}
+				}
+				
 				PlayerDir = em_right;
 				return;
 			}
 			else if (vec[0] == enum_doubleright && vec.back() == enum_down){
+				//右下
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleright){
@@ -618,8 +727,16 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleright;
-				this->setPlayerPosition(this->getPosition() + Vec2(6, -4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(6, -4));
+					}
+				}
+			
 				PlayerDir = em_right;
 				return;
 			}
@@ -644,7 +761,13 @@ void Player::update(float dt)
 			if (vec.back() == enum_up && vec[vec.size() - 2] == enum_left
 				|| vec[vec.size() - 2] == enum_up && vec.back() == enum_left)
 			{
-				if (vec.back() == enum_up){
+				//(上左、左上)走
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
+				if (vec.back() == enum_up){			
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
 					if (PlayerState != enum_left){
@@ -665,12 +788,27 @@ void Player::update(float dt)
 					PlayerState = enum_up;
 					PlayerDir = em_up;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, 4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, 4));
+					}
+				}
+						
 				return;
 			}
 			else if (vec.back() == enum_up && vec[vec.size() - 2] == enum_right
 				|| vec[vec.size() - 2] == enum_up && vec.back() == enum_right)
 			{
+				//(右上、上右)快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				if (vec.back() == enum_up){
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
@@ -692,12 +830,27 @@ void Player::update(float dt)
 					PlayerState = enum_up;
 					PlayerDir = em_up;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
+					}
+				}
+						
 				return;
 			}
 			else if (vec.back() == enum_down && vec[vec.size() - 2] == enum_left
 				|| vec[vec.size() - 2] == enum_down && vec.back() == enum_left)
 			{
+				//(左下、下左）
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				if (vec.back() == enum_down){
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
@@ -719,12 +872,27 @@ void Player::update(float dt)
 					PlayerState = enum_down;
 					PlayerDir = em_down;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, -4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, -4));
+					}
+				}
+					
 				return;
 			}
 			else if ((vec.back() == enum_down && vec[vec.size() - 2] == enum_right
 				|| vec[vec.size() - 2] == enum_down && vec.back() == enum_right))
 			{
+				//(右下、下右)
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				if (vec.back() == enum_down){
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
@@ -746,7 +914,16 @@ void Player::update(float dt)
 					PlayerState = enum_down;
 					PlayerDir = em_down;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(4, -4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdright) == 0){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, -4));
+					}
+				}			
+				
 				return;
 			}
 		}
