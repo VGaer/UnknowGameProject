@@ -5,6 +5,8 @@
 #include "Monster.h"
 USING_NS_CC;
 
+class Monster;
+
 class State {
 public:
 	// ×´Ì¬×ª»»

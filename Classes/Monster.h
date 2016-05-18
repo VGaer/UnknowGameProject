@@ -8,6 +8,7 @@
 #include "StateMachine.h"
 
 class FindPath;
+class StateMachine;
 
 class Monster : public Entity
 {
@@ -17,7 +18,7 @@ public:
 	bool init(const std::string& name);
 public:
 	// 属性部分
-	std::string name;	   // 名字
+	std::string name;  // 名字
 	float hp;		   // 生命值
 	float damage;	   // 攻击力
 	float moveSpeed;   // 行走一条边的时间

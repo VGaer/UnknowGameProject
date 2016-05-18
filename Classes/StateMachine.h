@@ -5,6 +5,8 @@
 #include "State.h"
 USING_NS_CC;
 
+class Monster;
+
 class StateMachine {
 private:
 	Monster*	owner;
