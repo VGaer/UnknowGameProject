@@ -535,7 +535,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0)
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup)))
 					{
 						this->setPlayerPosition(this->getPosition() + Vec2(-4, 6));
 					}
@@ -564,7 +565,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))){
 						this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
 					}
 				}
@@ -592,7 +594,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
-					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0 ||
+						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdleft))){
 						this->setPlayerPosition(this->getPosition() + Vec2(-4, -6));
 					}
 				}
@@ -620,7 +623,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
 					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIddown))){
 						this->setPlayerPosition(this->getPosition() + Vec2(4, -6));
 					}
 				}
@@ -648,7 +652,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup))){
 						this->setPlayerPosition(this->getPosition() + Vec2(-6, 4));
 					}
 				}
@@ -676,7 +681,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIddown) == 0){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIddown) == 0 ||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIddown))){
 						this->setPlayerPosition(this->getPosition() + Vec2(-6, -4));
 					}
 				}
@@ -704,7 +710,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))){
 						this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
 					}
 				}
@@ -732,7 +739,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
 					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIddown))){
 						this->setPlayerPosition(this->getPosition() + Vec2(6, -4));
 					}
 				}
@@ -793,7 +801,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 /*||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup))*/){
 						this->setPlayerPosition(this->getPosition() + Vec2(-4, 4));
 					}
 				}
@@ -835,7 +844,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
-					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 /*||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))*/){
 						this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
 					}
 				}
@@ -877,7 +887,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
-					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0 /*||
+						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdleft))*/){
 						this->setPlayerPosition(this->getPosition() + Vec2(-4, -4));
 					}
 				}
@@ -919,7 +930,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
 					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
-					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdright) == 0){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdright) == 0||
+						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdright))){
 						this->setPlayerPosition(this->getPosition() + Vec2(4, -4));
 					}
 				}			
@@ -1686,4 +1698,25 @@ void Player::setPlayerparent(TMXTiledMap* parent)
 int Player::getPlayer_magnification()
 {
 	return m_player_magnification;
+}
+
+bool Player::IsNot_CollidableTile(Vec2 tileCoord)
+{
+	if (tileCoord.x >= 0 && tileCoord.x < m_map->getMapSize().width //不超出瓦片地图坐标
+		&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height){
+		int tileGid = m_map->getLayer("barrier")->getTileGIDAt(tileCoord);
+		if (tileGid > 0){
+			Value prop = m_map->getPropertiesForGID(tileGid);
+			ValueMap proValueMap = prop.asValueMap();
+
+			if (proValueMap.find("Collidable") != proValueMap.end()){
+				std::string collision = proValueMap.at("Collidable").asString();
+				if (collision == "true"){
+					return false;
+				}
+
+			}
+		}
+	}
+	return true;
 }

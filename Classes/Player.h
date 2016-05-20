@@ -56,6 +56,7 @@ public:
 	void setPlayerparent(TMXTiledMap* layerparent);
 	int getPlayer_magnification();
 private:
+	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
 	std::vector<int> vecskill;

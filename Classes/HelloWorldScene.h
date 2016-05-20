@@ -5,6 +5,8 @@
 #include "Player.h"
 #include "Graph.h"
 #include "Monster.h"
+#include "GameData.h"
+#include "AnimBase.h"
 
 class HelloWorld : public cocos2d::Layer
 {

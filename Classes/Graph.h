@@ -25,6 +25,7 @@ public:
 	TMXTiledMap* getMap();
 	Vertex* getGraphVertexByVertexId(Vec2 vertexId);
 private:
+	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
 	std::map<Vec2, Vertex*> vertices;
 	std::vector<Vec2> path;
 	Vec2 targetId;
