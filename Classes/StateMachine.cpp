@@ -15,6 +15,13 @@ void Idle::Enter(Monster* target)
 void Idle::Excute(Monster* target)
 {
 //	log("Idle");
+
+	//如果被主角攻击了，进入被击状态
+	if (target->IsattackedByPlayer()){
+		target->getStateMachine()->ChangeState(new Attacked());
+		return;
+	}
+
 	// 如果玩家进入视野范围或者感知范围，进入追击状态
 	if (target->checkInEyeRange() || target->checkInPerceptionRange())
 	{
@@ -58,6 +65,13 @@ void Patrol::Enter(Monster* target)
 void Patrol::Excute(Monster* target)
 {
 	//log("patrol");
+
+	//如果被主角攻击了，进入被击状态
+	if (target->IsattackedByPlayer()){
+		target->getStateMachine()->ChangeState(new Attacked());
+		return;
+	}
+
 	//巡逻过程中优先判断主角是否在视野
 	// 如果玩家进入视野范围或者感知范围，进入追击状态
 	if (target->checkInEyeRange() || target->checkInPerceptionRange())
@@ -112,6 +126,12 @@ void Attack::Excute(Monster* target)
 {
 //	log("attack");
 	//记录当前状态
+
+	//如果被主角攻击了，进入被击状态
+	if (target->IsattackedByPlayer()){
+		target->getStateMachine()->ChangeState(new Attacked());
+		return;
+	}
 
 	//不在攻击范围了
 	if (!target->checkInAttaRange())
@@ -172,6 +192,13 @@ void Track::Enter(Monster* target)
 void Track::Excute(Monster* target)
 {
 //	log("track");
+
+	//如果被主角攻击了，进入被击状态
+	if (target->IsattackedByPlayer()){
+		target->getStateMachine()->ChangeState(new Attacked());
+		return;
+	}
+
 	// 如果进入攻击范围内，转换攻击状态
 	if (target->checkInAttaRange())
 	{
@@ -209,4 +236,62 @@ void Track::Exit(Monster* target)
 	target->stopAllActions();
 	target->getSprite()->stopAllActions();//停掉精灵的动画
 	target->Is_firstFindplayer_Track = true;//设置第一次发现主角并追踪为true
+}
+
+
+void Attacked::Enter(Monster* target)
+{
+	target->setMachineState(enum_MonsterAttacked);
+	
+	//设置硬直时间
+	target->duration = target->attackedrestoretimes;
+	target->m_timecounter->start();
+
+	/*播放染色动作*/
+	CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+	CCTintTo* action2 = CCTintTo::create(0.05f,target->m_monstercolor);
+	target->getSprite()->runAction(Sequence::create(action1,action2,NULL));
+
+	//这个参数应该根据主角的攻击力和怪物防御力来算
+	target->cmd_hurt(target->damage);
+}
+
+void Attacked::Excute(Monster* target)
+{
+	//如果还是被主角攻击
+	if (target->IsattackedByPlayer()){
+
+		//重新设置硬直时间
+		target->duration = target->attackedrestoretimes;
+		target->m_timecounter->start();
+		/*播放染色动作*/
+		CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+		CCTintTo* action2 = CCTintTo::create(0.05f, target->m_monstercolor);
+		target->getSprite()->runAction(Sequence::create(action1, action2, NULL));
+
+		//这个参数应该是根据主角的攻击力和怪物防御力来算
+		target->cmd_hurt(target->damage);
+	}
+	//如果过了僵直时间而且没有被主角攻击
+	if (target->m_timecounter->getCurTime() > target->duration && !target->IsattackedByPlayer()){
+		//随机静止或者巡逻状态
+		switch (rand () % 2)
+		{
+		case 0:{
+			target->getStateMachine()->ChangeState(new Idle());
+			break;
+		}
+		case 1:{
+			target->getStateMachine()->ChangeState(new Patrol());
+			break;
+		}
+		}
+	}
+}
+
+void Attacked::Exit(Monster* target)
+{
+	delete this;
+	target->stopAllActions();
+	target->getSprite()->stopAllActions();
 }

@@ -19,6 +19,7 @@ struct MonsData
 	float eyeRange;	   // 视野半径，
 	float patrolRange; // 巡逻半径，
 	float perceptionRange; //感知半径
+	float attackedrestoretimes; //被攻击恢复时间 //恢复时间约快说明硬直越高
 	string imagePath;  // 图片路径
 };
 

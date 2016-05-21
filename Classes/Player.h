@@ -55,6 +55,9 @@ public:
 	void CallBack1();
 	void setPlayerparent(TMXTiledMap* layerparent);
 	int getPlayer_magnification();
+	Vector<RemoteSkill*> getPlayerUsing_swordwave_Arr();
+	std::vector<int> getVecSkill();
+	int getPlayerDir();
 private:
 	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
 	TMXTiledMap* m_map;

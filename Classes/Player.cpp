@@ -1244,7 +1244,7 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		//设置K技能的攻击冷却时间//剑气
 		float curtime = timecounter_J->getCurTime();
-		//第一次按J时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
+		//第一次按K时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
 		if (curtime == 0 || curtime > 0.5f){
 			timecounter_J->start();//一直计时
 			//size为0才有剑气
@@ -1719,4 +1719,19 @@ bool Player::IsNot_CollidableTile(Vec2 tileCoord)
 		}
 	}
 	return true;
+}
+
+Vector<RemoteSkill*> Player::getPlayerUsing_swordwave_Arr()
+{
+	return m_Using_swordwave_Arr;
+}
+
+std::vector<int> Player::getVecSkill()
+{
+	return vecskill;
+}
+
+int Player::getPlayerDir()
+{
+	return PlayerDir;
 }

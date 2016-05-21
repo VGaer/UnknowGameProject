@@ -93,4 +93,13 @@ public:
 	virtual void Exit(Monster*);
 };
 
+//±»¹¥»÷×´Ì¬
+class Attacked : public State{
+public:
+	Attacked() {}
+	virtual void Enter(Monster*);
+	virtual void Excute(Monster*);
+	virtual void Exit(Monster*);
+};
+
 #endif

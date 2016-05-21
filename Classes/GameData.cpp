@@ -74,6 +74,7 @@ void GameData::readMonsDataFile()
 			data->eyeRange = value["eyeRange"].GetDouble();
 			data->patrolRange = value["patrolRange"].GetDouble();
 			data->perceptionRange = value["perceptionRange"].GetDouble();
+			data->attackedrestoretimes = value["attackedrestoretimes"].GetDouble();
 			data->imagePath = value["imagePath"].GetString();			
 			addDataToMonsData(data);
 		}

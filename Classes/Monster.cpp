@@ -34,7 +34,10 @@ bool Monster::init(const std::string& name)
 	eyeRange = data->eyeRange;
 	patrolRange = data->patrolRange;
 	perceptionRange = data->perceptionRange;
+	attackedrestoretimes = data->attackedrestoretimes;
 	bindSprite(Sprite::create(data->imagePath));
+	//记录怪物颜色
+	m_monstercolor = this->getSprite()->getColor();
 
 	findPath = new FindPath();//findPath需要绑定monster
 	findPath->bindMonster(this);
@@ -413,4 +416,76 @@ void Monster::setvecPatrolpoint()
 std::vector<Vec2> Monster::getPatrolpointvec()
 {
 	return vecPatrolpoint;
+}
+
+bool Monster::IsattackedByPlayer()
+{
+	//获取主角剑气
+	auto vec = player->getPlayerUsing_swordwave_Arr();
+	if (vec.size() > 0){
+		for (int i = 0; i < vec.size(); i++){
+			if (vec.at(i)->isVisible())
+			{
+				auto swordwave = vec.at(i);
+				Rect rect;
+				rect.setRect(this->getPositionX()- this->getContentSize().width / 2,
+					this->getPositionY() - this->getContentSize().height / 2,
+					this->getContentSize().width,
+					this->getContentSize().height);
+				if (rect.containsPoint(swordwave->getPosition())){
+					swordwave->hide();
+					return true;
+				}
+			}
+		}
+	}
+	//获取主角技能J、K按键容器（在主角类写了vecskill元素最多为一个）
+	auto vecskill = player->getVecSkill();
+	if (vecskill.size() > 0){
+		//如果是普通攻击或者前冲攻击
+		if (vecskill.back() == enum_baseattack || vecskill.back() == enum_basepoke){
+			//先写死测试下，到时主角攻击范围也设置在json文件里
+			Rect rect;
+			rect.setRect(this->getPositionX() - this->getContentSize().width / 2,
+				this->getPositionY() - this->getContentSize().height / 2,
+				this->getContentSize().width,
+				this->getContentSize().height);
+			int playerattackRange = 32;
+			Vec2 vec;
+		
+			//主角的普通攻击暂时写成一个点。
+			switch (player->getPlayerDir())
+			{
+			case em_up:{
+				vec = player->getPosition();
+				vec.y += playerattackRange;
+				if (rect.containsPoint(vec))
+					return true;
+				break;
+			}
+			case em_down:{
+				vec = player->getPosition();
+				vec.y -= playerattackRange;
+				if (rect.containsPoint(vec))
+					return true;
+				break;
+			}
+			case em_left:{
+				vec = player->getPosition();
+				vec.x -= playerattackRange;
+				if (rect.containsPoint(vec))
+					return true;
+				break;
+			}
+			case em_right:{
+				vec = player->getPosition();
+				vec.x += playerattackRange;
+				if (rect.containsPoint(vec))
+					return true;
+				break;
+			}
+			}
+		}
+	}
+	return false;
 }

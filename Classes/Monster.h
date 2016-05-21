@@ -18,7 +18,8 @@ typedef enum
 	enum_MonsterIdle = 0,
 	enum_MonsterPatrol,
 	enum_MonsterAttack,
-	enum_MonsterTrack
+	enum_MonsterTrack,
+	enum_MonsterAttacked
 };
 
 class AnimBase;
@@ -40,6 +41,7 @@ public:
 	float patrolRange; // 巡逻半径
 	float eyeRange;    // 视野半径
 	float perceptionRange; //感知半径
+	float attackedrestoretimes; //硬直时间
 	// 对外接口
 	AnimBase* getAnimBase();
 	StateMachine* getStateMachine();
@@ -68,6 +70,8 @@ public:
 	float duration;
 	bool IspatrolEnd;//巡逻完成
 	int index; //巡逻点记录
+	bool IsattackedByPlayer();	//是否被主角攻击
+	Color3B m_monstercolor; //怪物颜色
 private:
 	Player* player;
 	AnimBase* animBase;             // 动作控制器
