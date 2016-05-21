@@ -42,6 +42,8 @@ public:
 	float eyeRange;    // 视野半径
 	float perceptionRange; //感知半径
 	float attackedrestoretimes; //硬直时间
+	float beforeattacktimes;      //前摇时间
+	float attackAnimatetimePer; //攻击动画播放时间
 	// 对外接口
 	AnimBase* getAnimBase();
 	StateMachine* getStateMachine();

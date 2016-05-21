@@ -1203,8 +1203,8 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		//设置J技能的攻击冷却时间
 		float curtime = timecounter_J->getCurTime();
-		//第一次按J时才有curtime = 0,此后每隔0.3f秒才能按放一次技能
-		if (curtime == 0 || curtime > 0.3f){
+		//第一次按J时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
+		if (curtime == 0 || curtime > 0.5f){
 			timecounter_J->start();//一直计时
 			//size为0才有普通的攻击
 			if (vecskill.size() == 0){
@@ -1244,8 +1244,8 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		//设置K技能的攻击冷却时间//剑气
 		float curtime = timecounter_J->getCurTime();
-		//第一次按K时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
-		if (curtime == 0 || curtime > 0.5f){
+		//第一次按K时才有curtime = 0,此后每隔0.8f秒才能按放一次技能
+		if (curtime == 0 || curtime > 0.8f){
 			timecounter_J->start();//一直计时
 			//size为0才有剑气
 			if (vecskill.size() == 0){

@@ -35,6 +35,8 @@ bool Monster::init(const std::string& name)
 	patrolRange = data->patrolRange;
 	perceptionRange = data->perceptionRange;
 	attackedrestoretimes = data->attackedrestoretimes;
+	beforeattacktimes = data->beforeattacktimes;
+	attackAnimatetimePer = data->attackAnimatetimePer;
 	bindSprite(Sprite::create(data->imagePath));
 	//记录怪物颜色
 	m_monstercolor = this->getSprite()->getColor();

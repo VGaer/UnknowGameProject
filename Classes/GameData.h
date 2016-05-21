@@ -20,6 +20,8 @@ struct MonsData
 	float patrolRange; // 巡逻半径，
 	float perceptionRange; //感知半径
 	float attackedrestoretimes; //被攻击恢复时间 //恢复时间约快说明硬直越高
+	float beforeattacktimes; //前摇时间
+	float attackAnimatetimePer; //攻击动画播放时间
 	string imagePath;  // 图片路径
 };
 

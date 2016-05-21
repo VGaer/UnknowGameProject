@@ -272,18 +272,18 @@ void AnimBase::setAction()
 	
 
 	//攻击动画时间安排要跟怪物的攻击间隔对应上
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterhattack", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName("treemonsterhattack", m_monster->attackAnimatetimePer, 1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_attaAnimArray[0] = animate;
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsteruattack", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName("treemonsteruattack", m_monster->attackAnimatetimePer, 1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_attaAnimArray[1] = animate;
 
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterdattack", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName("treemonsterdattack", m_monster->attackAnimatetimePer, 1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_attaAnimArray[2] = animate;

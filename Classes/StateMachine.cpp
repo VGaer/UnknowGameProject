@@ -127,11 +127,21 @@ void Attack::Excute(Monster* target)
 //	log("attack");
 	//记录当前状态
 
-	//如果被主角攻击了，进入被击状态
-	if (target->IsattackedByPlayer()){
-		target->getStateMachine()->ChangeState(new Attacked());
+	//在攻击范围，攻击间隔时间到了，继续攻击
+	if (target->m_timecounter->getCurTime() > target->attackInter && target->checkInAttaRange())
+	{
+		target->duration = target->attackInter;
+		target->m_timecounter->start();
+		target->cmd_attack();
 		return;
 	}
+
+	//如果怪物还在前摇时间，主角可以打断怪物攻击
+	//如果被主角攻击了，进入被击状态
+	if (target->m_timecounter->getCurTime() > target->beforeattacktimes && target->IsattackedByPlayer()){
+		target->getStateMachine()->ChangeState(new Attacked());
+		return;
+		}
 
 	//不在攻击范围了
 	if (!target->checkInAttaRange())
@@ -156,14 +166,9 @@ void Attack::Excute(Monster* target)
 			}
 			}
 		}
+		return;
 	}
-	//在攻击范围，攻击间隔时间到了，继续攻击
-	else if (target->m_timecounter->getCurTime() > target->attackInter)
-	{
-		target->duration = target->attackInter;
-		target->m_timecounter->start();
-		target->cmd_attack();
-	}
+	
 }
 
 void Attack::Exit(Monster* target)
@@ -248,8 +253,8 @@ void Attacked::Enter(Monster* target)
 	target->m_timecounter->start();
 
 	/*播放染色动作*/
-	CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
-	CCTintTo* action2 = CCTintTo::create(0.05f,target->m_monstercolor);
+	CCTintTo* action1 = CCTintTo::create(target->attackedrestoretimes / 2, 255, 0, 0);
+	CCTintTo* action2 = CCTintTo::create(target->attackedrestoretimes / 2, target->m_monstercolor);
 	target->getSprite()->runAction(Sequence::create(action1,action2,NULL));
 
 	//这个参数应该根据主角的攻击力和怪物防御力来算
@@ -265,8 +270,8 @@ void Attacked::Excute(Monster* target)
 		target->duration = target->attackedrestoretimes;
 		target->m_timecounter->start();
 		/*播放染色动作*/
-		CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
-		CCTintTo* action2 = CCTintTo::create(0.05f, target->m_monstercolor);
+		CCTintTo* action1 = CCTintTo::create(target->attackedrestoretimes / 2, 255, 0, 0);
+		CCTintTo* action2 = CCTintTo::create(target->attackedrestoretimes / 2, target->m_monstercolor);
 		target->getSprite()->runAction(Sequence::create(action1, action2, NULL));
 
 		//这个参数应该是根据主角的攻击力和怪物防御力来算
@@ -274,6 +279,13 @@ void Attacked::Excute(Monster* target)
 	}
 	//如果过了僵直时间而且没有被主角攻击
 	if (target->m_timecounter->getCurTime() > target->duration && !target->IsattackedByPlayer()){
+
+		//如果主角在攻击范围
+		if (target->checkInAttaRange()){
+			target->getStateMachine()->ChangeState(new Attack());
+			return;
+		}
+
 		//随机静止或者巡逻状态
 		switch (rand () % 2)
 		{
