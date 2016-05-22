@@ -113,7 +113,6 @@ void AnimBase::playStanAnim()
 		break;
 	}
 	m_sprite->stopAllActions();
-	log("static%d %d", m_curDirection, direction);
 	if (direction >=0 && direction < 3)
 		m_sprite->runAction(m_stanAnimArray[direction]);
 }
@@ -171,7 +170,6 @@ void AnimBase::playMoveAnim()
 		break;
 	}
 	m_sprite->stopAllActions();
-	log("move%d %d", m_curDirection, direction);
 	if (direction >= 0 && direction < 3)
 		m_sprite->runAction(m_moveAnimArray[direction]);
 }
@@ -229,7 +227,6 @@ void AnimBase::playAttaAnim()
 		break;
 	}
 	m_sprite->stopAllActions();
-	log("%d %d",m_curDirection,direction);
 	if (direction >= 0 && direction < 3)
 		m_sprite->runAction(m_attaAnimArray[direction]);
 }

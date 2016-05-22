@@ -132,16 +132,19 @@ void Attack::Excute(Monster* target)
 	{
 		target->duration = target->attackInter;
 		target->m_timecounter->start();
+		//log("time----%f", target->m_timecounter->getCurTime());
 		target->cmd_attack();
 		return;
 	}
 
 	//如果怪物还在前摇时间，主角可以打断怪物攻击
 	//如果被主角攻击了，进入被击状态
-	if (target->m_timecounter->getCurTime() > target->beforeattacktimes && target->IsattackedByPlayer()){
+	if (target->m_timecounter->getCurTime() < target->beforeattacktimes && target->IsattackedByPlayer()){
+	//	log("time %f", target->m_timecounter->getCurTime());
 		target->getStateMachine()->ChangeState(new Attacked());
 		return;
 		}
+	
 
 	//不在攻击范围了
 	if (!target->checkInAttaRange())
@@ -246,6 +249,8 @@ void Track::Exit(Monster* target)
 
 void Attacked::Enter(Monster* target)
 {
+	log("Attacked!!");
+
 	target->setMachineState(enum_MonsterAttacked);
 	
 	//设置硬直时间
@@ -253,8 +258,9 @@ void Attacked::Enter(Monster* target)
 	target->m_timecounter->start();
 
 	/*播放染色动作*/
-	CCTintTo* action1 = CCTintTo::create(target->attackedrestoretimes / 2, 255, 0, 0);
-	CCTintTo* action2 = CCTintTo::create(target->attackedrestoretimes / 2, target->m_monstercolor);
+	//两个染色时间合起来小于恢复时间就行
+	CCTintTo* action1 = CCTintTo::create(target->attackedrestoretimes / 3, 255, 0, 0);
+	CCTintTo* action2 = CCTintTo::create(target->attackedrestoretimes / 3, target->m_monstercolor);
 	target->getSprite()->runAction(Sequence::create(action1,action2,NULL));
 
 	//这个参数应该根据主角的攻击力和怪物防御力来算
@@ -263,9 +269,9 @@ void Attacked::Enter(Monster* target)
 
 void Attacked::Excute(Monster* target)
 {
-	//如果还是被主角攻击
+	//如果还是被主角攻击,Excute针对的是多段攻击，即大技能,普通攻击判断写成单段攻击
 	if (target->IsattackedByPlayer()){
-
+		log("Attacked!!");
 		//重新设置硬直时间
 		target->duration = target->attackedrestoretimes;
 		target->m_timecounter->start();

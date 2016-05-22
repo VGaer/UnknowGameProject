@@ -140,6 +140,8 @@ void Monster::cmd_attack()
 {
 	//进入攻击范围时，是以怪物前面判定的，此时怪物控制器的方向已经面向主角了
 	animBase->playAttaAnim();
+
+	
 }
 
 bool Monster::checkInEyeRange()
@@ -426,9 +428,9 @@ bool Monster::IsattackedByPlayer()
 	auto vec = player->getPlayerUsing_swordwave_Arr();
 	if (vec.size() > 0){
 		for (int i = 0; i < vec.size(); i++){
-			if (vec.at(i)->isVisible())
+			auto swordwave = vec.at(i);
+			if (swordwave->isVisible())
 			{
-				auto swordwave = vec.at(i);
 				Rect rect;
 				rect.setRect(this->getPositionX()- this->getContentSize().width / 2,
 					this->getPositionY() - this->getContentSize().height / 2,
@@ -441,51 +443,59 @@ bool Monster::IsattackedByPlayer()
 			}
 		}
 	}
+
 	//获取主角技能J、K按键容器（在主角类写了vecskill元素最多为一个）
 	auto vecskill = player->getVecSkill();
 	if (vecskill.size() > 0){
 		//如果是普通攻击或者前冲攻击
 		if (vecskill.back() == enum_baseattack || vecskill.back() == enum_basepoke){
-			//先写死测试下，到时主角攻击范围也设置在json文件里
-			Rect rect;
-			rect.setRect(this->getPositionX() - this->getContentSize().width / 2,
-				this->getPositionY() - this->getContentSize().height / 2,
-				this->getContentSize().width,
-				this->getContentSize().height);
-			int playerattackRange = 32;
-			Vec2 vec;
-		
-			//主角的普通攻击暂时写成一个点。
-			switch (player->getPlayerDir())
-			{
-			case em_up:{
-				vec = player->getPosition();
-				vec.y += playerattackRange;
-				if (rect.containsPoint(vec))
-					return true;
-				break;
+			auto& vecskillstruct = player->getvecskillstr();//获取到的是一个引用
+			if (vecskillstruct.back().b == false){
+				vecskillstruct.back().b = true;//标志单段普通攻击已判断完成;
+				//先写死测试下，到时主角攻击范围也设置在json文件里
+				Rect rect;
+				rect.setRect(this->getPositionX() - this->getContentSize().width / 2,
+					this->getPositionY() - this->getContentSize().height / 2,
+					this->getContentSize().width,
+					this->getContentSize().height);
+				int playerattackRange = 32;
+				Vec2 vec;
+
+				//主角的普通攻击暂时写成一个点。
+				switch (player->getPlayerDir())
+				{
+				case em_up:{
+					vec = player->getPosition();
+					vec.y += playerattackRange;
+					if (rect.containsPoint(vec))
+						return true;
+					break;
+				}
+				case em_down:{
+					vec = player->getPosition();
+					vec.y -= playerattackRange;
+					if (rect.containsPoint(vec))
+						return true;
+					break;
+				}
+				case em_left:{
+					vec = player->getPosition();
+					vec.x -= playerattackRange;
+					if (rect.containsPoint(vec))
+						return true;
+					break;
+				}
+				case em_right:{
+					vec = player->getPosition();
+					vec.x += playerattackRange;
+					if (rect.containsPoint(vec))
+						return true;
+					break;
+				}
+				}
 			}
-			case em_down:{
-				vec = player->getPosition();
-				vec.y -= playerattackRange;
-				if (rect.containsPoint(vec))
-					return true;
-				break;
-			}
-			case em_left:{
-				vec = player->getPosition();
-				vec.x -= playerattackRange;
-				if (rect.containsPoint(vec))
-					return true;
-				break;
-			}
-			case em_right:{
-				vec = player->getPosition();
-				vec.x += playerattackRange;
-				if (rect.containsPoint(vec))
-					return true;
-				break;
-			}
+			else{
+				return false;//普通单段攻击在普通攻击动画结束前已判断过一次，return false;
 			}
 		}
 	}

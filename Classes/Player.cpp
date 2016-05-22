@@ -1205,12 +1205,14 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 		float curtime = timecounter_J->getCurTime();
 		//第一次按J时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
 		if (curtime == 0 || curtime > 0.5f){
+		
 			timecounter_J->start();//一直计时
 			//size为0才有普通的攻击
 			if (vecskill.size() == 0){
 				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
 					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright){
 					vecskill.push_back(enum_basepoke);
+					vecskillstr.push_back(baseskillstr(enum_basepoke, false));
 					switch (PlayerState)//run状态下一帧使用basepoke技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup:{
@@ -1235,6 +1237,7 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 				}
 				else{
 					vecskill.push_back(enum_baseattack);
+					vecskillstr.push_back(baseskillstr(enum_baseattack, false));
 				}
 			}
 		}
@@ -1245,7 +1248,7 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 		//设置K技能的攻击冷却时间//剑气
 		float curtime = timecounter_J->getCurTime();
 		//第一次按K时才有curtime = 0,此后每隔0.8f秒才能按放一次技能
-		if (curtime == 0 || curtime > 0.8f){
+		if (curtime == 0 || curtime > 0.7f){
 			timecounter_J->start();//一直计时
 			//size为0才有剑气
 			if (vecskill.size() == 0){
@@ -1670,6 +1673,8 @@ void Player::CallBack1()
 {
 	if (vecskill.size() == 1){
 		vecskill.erase(vecskill.begin());
+		if (vecskillstr.size() == 1)
+			vecskillstr.erase(vecskillstr.begin());
 	}
 }
 
@@ -1734,4 +1739,9 @@ std::vector<int> Player::getVecSkill()
 int Player::getPlayerDir()
 {
 	return PlayerDir;
+}
+
+std::vector<baseskillstr>& Player::getvecskillstr()
+{
+	return vecskillstr;
 }

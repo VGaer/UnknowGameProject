@@ -38,6 +38,13 @@ typedef enum
 	em_right
 }FourDir;
 
+struct baseskillstr
+{
+	int i;//技能编号
+	bool b;//单段攻击判断完成标志,true代表已判断
+	baseskillstr(int ii, bool bb) : i(ii), b(bb){}
+};
+
 class Player : public Entity
 {
 public:
@@ -57,12 +64,14 @@ public:
 	int getPlayer_magnification();
 	Vector<RemoteSkill*> getPlayerUsing_swordwave_Arr();
 	std::vector<int> getVecSkill();
+	std::vector<baseskillstr>& getvecskillstr(); //返回引用
 	int getPlayerDir();
 private:
 	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
 	std::vector<int> vecskill;
+	std::vector<baseskillstr> vecskillstr;
 	TimeCounter* timecounter_up;
 	TimeCounter* timecounter_down;
 	TimeCounter* timecounter_left;
