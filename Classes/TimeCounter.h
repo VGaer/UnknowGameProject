@@ -10,6 +10,7 @@ public:
 	virtual void update(float dt);
 	void start();
 	float getCurTime();
+	void setstartTimeZeroAndOpenSchedule();
 private:
 	float m_fTime;
 };

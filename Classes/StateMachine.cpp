@@ -1,10 +1,11 @@
 #include "StateMachine.h"
 #include "Monster.h"
+#include "Player.h"
 #define Pi 3.141592653
 
 void Idle::Enter(Monster* target)
 {
-	//log("Idle");
+	log("Idle");
 	//记录当前状态
 	target->setMachineState(enum_MonsterIdle);
 	target->cmd_stop();
@@ -14,7 +15,7 @@ void Idle::Enter(Monster* target)
 
 void Idle::Excute(Monster* target)
 {
-//	log("Idle");
+	log("Idle");
 
 	//如果被主角攻击了，进入被击状态
 	if (target->IsattackedByPlayer()){
@@ -46,7 +47,7 @@ void Patrol::Enter(Monster* target)
 {
 	//记录当前状态
 	target->setMachineState(enum_MonsterPatrol);
-	//log("patrol");
+	log("patrol");
 
 	std::vector<Vec2> patrolvec = target->getPatrolpointvec();
 	if (patrolvec.size() > 0)
@@ -64,7 +65,7 @@ void Patrol::Enter(Monster* target)
 
 void Patrol::Excute(Monster* target)
 {
-	//log("patrol");
+	log("patrol");
 
 	//如果被主角攻击了，进入被击状态
 	if (target->IsattackedByPlayer()){
@@ -112,6 +113,7 @@ void Patrol::Exit(Monster* target)
 
 void Attack::Enter(Monster* target)
 {
+	log("attack");
 	//记录当前状态
 	target->setMachineState(enum_MonsterAttack);
 
@@ -120,12 +122,16 @@ void Attack::Enter(Monster* target)
 	target->m_timecounter->start();
 
 	target->cmd_attack();
+	target->Isrestartbaseattack = true;
 }
 
 void Attack::Excute(Monster* target)
 {
-//	log("attack");
+	log("attack");
 	//记录当前状态
+
+	//设置怪物朝向
+	target->getAnimBase()->setCurDirection(target->getPlayer()->getPosition());
 
 	//在攻击范围，攻击间隔时间到了，继续攻击
 	if (target->m_timecounter->getCurTime() > target->attackInter && target->checkInAttaRange())
@@ -134,7 +140,69 @@ void Attack::Excute(Monster* target)
 		target->m_timecounter->start();
 		//log("time----%f", target->m_timecounter->getCurTime());
 		target->cmd_attack();
+		target->Isrestartbaseattack = true;
 		return;
+	}
+
+	//怪物过了前摇的真正攻击,此时主角在攻击范围内，
+	if (target->m_timecounter->getCurTime() > target->beforeattacktimes && target->checkInAttaRange())
+	{
+		if (target->Isrestartbaseattack == true)
+		{
+			target->Isrestartbaseattack = false;
+			//把主角被攻击信息放进队列
+			switch (target->getAnimBase()->getCurDirection())
+			{
+			case Dir_up:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromdown);
+				break;
+			}
+			case Dir_down:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromup);
+				break;
+			}
+			case Dir_left:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromright);
+				break;
+			}
+			case Dir_right:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromleft);
+				break;
+			}
+			case Dir_upleft:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromdown);
+				break;
+			}
+			case Dir_upright:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromdown);
+				break;
+			}
+			case Dir_downleft:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromup);
+				break;
+			}
+			case Dir_downright:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromup);
+				break;
+			}
+			case Dir_leftup:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromright);
+				break;
+			}
+			case Dir_rightup:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromleft);
+				break;
+			}
+			case Dir_leftdown:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromright);
+				break;
+			}
+			case Dir_rightdown:{
+				target->getPlayer()->attackedqueue.push(enum_playerattackedfromleft);
+				break;
+			}
+			}
+		}
 	}
 
 	//如果怪物还在前摇时间，主角可以打断怪物攻击
@@ -183,7 +251,7 @@ void Attack::Exit(Monster* target)
 
 void Track::Enter(Monster* target)
 {
-	//log("track");
+	log("track");
 	//记录当前状态
 	target->setMachineState(enum_MonsterTrack);
 
@@ -199,7 +267,7 @@ void Track::Enter(Monster* target)
 
 void Track::Excute(Monster* target)
 {
-//	log("track");
+	log("track");
 
 	//如果被主角攻击了，进入被击状态
 	if (target->IsattackedByPlayer()){
@@ -207,6 +275,9 @@ void Track::Excute(Monster* target)
 		return;
 	}
 
+	//记录怪物位置
+	target->prePosition = target->getPosition();
+	
 	// 如果进入攻击范围内，转换攻击状态
 	if (target->checkInAttaRange())
 	{
@@ -234,6 +305,14 @@ void Track::Excute(Monster* target)
 		target->duration = target->moveSpeed;
 		target->m_timecounter->start();
 		target->cmd_moveTo(tarPos);
+		//如果怪物不动了，但是又打不到主角，说明怪物确实是寻路到主角附近了，但是攻击范围达不上，那么微调怪物位置 
+		if (target->getPosition() == target->prePosition)
+		{
+			//指向主角的位移,距离不超100的，瓦片大小才64，
+			Vec2 dif = target->getPlayer()->getPosition() - target->getPosition();
+			dif = dif * 0.1;
+			target->setPosition(target->getPosition() + dif);
+		}
 	}			
 	
 }
@@ -276,8 +355,8 @@ void Attacked::Excute(Monster* target)
 		target->duration = target->attackedrestoretimes;
 		target->m_timecounter->start();
 		/*播放染色动作*/
-		CCTintTo* action1 = CCTintTo::create(target->attackedrestoretimes / 2, 255, 0, 0);
-		CCTintTo* action2 = CCTintTo::create(target->attackedrestoretimes / 2, target->m_monstercolor);
+		CCTintTo* action1 = CCTintTo::create(target->attackedrestoretimes / 3, 255, 0, 0);
+		CCTintTo* action2 = CCTintTo::create(target->attackedrestoretimes / 3, target->m_monstercolor);
 		target->getSprite()->runAction(Sequence::create(action1, action2, NULL));
 
 		//这个参数应该是根据主角的攻击力和怪物防御力来算

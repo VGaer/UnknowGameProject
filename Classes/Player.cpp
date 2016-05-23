@@ -36,6 +36,8 @@ bool Player::init()
 	this->addChild(timecounter_right);
 	timecounter_J = TimeCounter::create();
 	this->addChild(timecounter_J);
+	timecounter_attacked = TimeCounter::create();
+	this->addChild(timecounter_attacked);
 
 	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
 	frameCache->addSpriteFramesWithFile("dwalk/dwalk.plist", "dwalk/dwalk.png");
@@ -75,6 +77,11 @@ bool Player::init()
 	createSwordWave();
 
 	m_player_magnification = 2;
+
+	m_hp = 100;
+
+	this->bindSprite(Sprite::create("player.png"));
+	m_playerColor = this->getSprite()->getColor();
 
 	return true;
 }
@@ -213,7 +220,229 @@ void Player::update(float dt)
 			}
 		}
 	}
+	//////////////////////////////////////////主角被攻击
+	if(attackedqueue.size() > 0){	
+		//主角被攻击过了僵直时间,才pop掉队列
+		if (timecounter_attacked->getCurTime() > 0.11f){	
+			attackedqueue.pop();
+			//设置计时为0，当被攻击信息队列增加消息size再次大于0时，不会马上被pop掉，而是重新调用了timecouter_attacked->start才判断是否pop掉
+			timecounter_attacked->setstartTimeZeroAndOpenSchedule();
+		}
 
+		//被攻击僵直间隔
+		if(attackedqueue.size() > 0 && timecounter_attacked->getCurTime() == 0.0f)
+		{
+			int attack = attackedqueue.front();
+			switch (attack)
+			{
+			case enum_playerattackedfromleft:{
+				auto backMove = MoveBy::create(0.05f, Vec2(20, 0));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(-20, 0));
+				auto backRotate = RotateBy::create(0.05f, 5, 0);
+				auto forwardRotate = RotateBy::create(0.05f, -5, 0);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(6, 0));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromleft;
+
+				break;
+			}
+			case enum_playerattackedfromright:{
+				auto backMove = MoveBy::create(0.05f, Vec2(-20, 0));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(20, 0));
+				auto backRotate = RotateBy::create(0.05f, -5, 0);
+				auto forwardRotate = RotateBy::create(0.05f, 5, 0);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(-6, 0));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromright;
+
+				break;
+			}
+			case enum_playerattackedfromup:{
+				auto backMove = MoveBy::create(0.05f, Vec2(0, -20));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(0, 20));
+				auto backRotate = RotateBy::create(0.05f, 0, -5);
+				auto forwardRotate = RotateBy::create(0.05f, 0, 5);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(0, -6));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromup;
+				break;
+			}
+			case enum_playerattackedfromdown:{
+				auto backMove = MoveBy::create(0.05f, Vec2(0, 20));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(0, -20));
+				auto backRotate = RotateBy::create(0.05f, 0, 5);
+				auto forwardRotate = RotateBy::create(0.05f, 0, -5);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(0, 6));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromup;
+
+				break;
+			}
+			}
+		}
+
+		return;//队列为空时，即不再被攻击了,就可以执行下面的动作了
+	}
+	
+
+	playerIsattacked = false;//标志主角不为被击状态
+	
 	/////////////////////攻击优先于走或跑
 	if (vecskill.size() == 1){
 		switch (PlayerDir)
@@ -1204,7 +1433,8 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 		//设置J技能的攻击冷却时间
 		float curtime = timecounter_J->getCurTime();
 		//第一次按J时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
-		if (curtime == 0 || curtime > 0.5f){
+		//主角非被击状态才能放技能
+		if (curtime == 0 || curtime > 0.5f && (playerIsattacked == false)){
 		
 			timecounter_J->start();//一直计时
 			//size为0才有普通的攻击
@@ -1248,7 +1478,8 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 		//设置K技能的攻击冷却时间//剑气
 		float curtime = timecounter_J->getCurTime();
 		//第一次按K时才有curtime = 0,此后每隔0.8f秒才能按放一次技能
-		if (curtime == 0 || curtime > 0.7f){
+		//主角非被击状态才能放技能
+		if (curtime == 0 || curtime > 0.7f && (playerIsattacked == false)){
 			timecounter_J->start();//一直计时
 			//size为0才有剑气
 			if (vecskill.size() == 0){

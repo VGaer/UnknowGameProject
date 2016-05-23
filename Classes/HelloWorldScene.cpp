@@ -58,7 +58,6 @@ bool HelloWorld::init()
 
 	Player* player = Player::createWithparent(map);
 	//bindSprite后主角便有个ContenSize,即不再是默认的0，0 ContenSize
-	player->bindSprite(Sprite::create("player.png"));
 	//放大主角精灵
 	player->getSprite()->setScale(player->getPlayer_magnification());
 	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
@@ -136,6 +135,9 @@ bool HelloWorld::init()
 	/*加载树怪测试*/
 	m_monster = Monster::create("bear");
 	map->addChild(m_monster, (int)map->getChildren().size());
+	m_monster->getSprite()->setScale(1.5);
+	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+	m_monster->setAnchorPoint(Vec2(0.5,0.2));
 	m_monster->setMonsterParent(map);
 	m_monster->setvecPatrolpoint();
 	m_monster->setPosition(32, 384);
