@@ -69,7 +69,9 @@ bool HelloWorld::init()
 	//设置主角的锚点跟主角的精灵一样为（0.5，0.5) //此时就有Player这个Node节点用Player精灵代表了，中心重合
 	player->setAnchorPoint(Vec2(0.5, 0.5));
 
-
+	Sprite* spritedian = Sprite::create("dian.jpg");
+	player->addChild(spritedian);
+	spritedian->setPosition(player->getContentSize().width * player->getAnchorPoint().x, player->getContentSize().height * player->getAnchorPoint().y);
 
 	player->setTiledMap(map);
 	player->setPosition(Vec2(100, 250));
@@ -87,57 +89,23 @@ bool HelloWorld::init()
 
 	scheduleUpdate();
 
-	auto drawNode = DrawNode::create();
-	drawNode->drawLine(Vec2(0, 0), Vec2(0, 2000), Color4F::BLUE);
-	player->addChild(drawNode);
-
-	auto drawNode1 = DrawNode::create();
-	drawNode1->drawLine(Vec2(player->getContentSize().width, 0), Vec2(player->getContentSize().width, 2000), Color4F::BLACK);
-	player->addChild(drawNode1);
-
-	auto drawNode2 = DrawNode::create();
-	drawNode2->drawLine(Vec2(player->getContentSize().width / 2, 0), Vec2(player->getContentSize().width / 2, 2000), Color4F::BLUE);
-	player->addChild(drawNode2);
-
-	auto drawNode3 = DrawNode::create();
-	drawNode3->drawLine(Vec2(640, 0), Vec2(640, 2000), Color4F::BLACK);
-	map->addChild(drawNode3);
-
-	auto drawNode4 = DrawNode::create();
-	drawNode4->drawLine(Vec2(682, 0), Vec2(682, 2000), Color4F::BLACK);
-	map->addChild(drawNode4);
-
 	//读入怪物数据
 	GameData* gamedata = GameData::getInstance();
 	
 	//初始化怪物寻路图 
 	initGraph();
 
-	//m_monster = Monster::create("bear");
-	//map->addChild(m_monster, (int)map->getChildren().size());
-	//m_monster->setMonsterParent(map);
-	//m_monster->setvecPatrolpoint();//设置巡逻点
-	//m_monster->setPosition(32, 384);
-	////m_monster->setPosition(32, 32);
-	//m_monster->bindPlayer(m_player);
-	//m_monster->getAnimBase()->setCurDirection(m_player->getPosition());//初始化控制器方向
-
-	//m_monster->getSprite()->setScale(m_monster->getMonster_magnification());//放大怪物
-	//m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width * 2 / 2,
-	//	m_monster->getContentSize().height * 2 / 2));
-	//m_monster->setContentSize(m_monster->getContentSize() * 2);
-	//Sprite* sprite222 = Sprite::create("dian.jpg");
-	//m_monster->addChild(sprite222);
-	//sprite222->setPosition(Vec2(m_monster->getContentSize().width / 2,m_monster->getContentSize().height / 2));
-	//sprite222->setPosition(Vec2());
-
+	
 
 	/*加载树怪测试*/
 	m_monster = Monster::create("bear");
 	map->addChild(m_monster, (int)map->getChildren().size());
 	m_monster->getSprite()->setScale(1.5);
+	m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width * 1.5 / 2, m_monster->getContentSize().height * 1.5 / 2));
 	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
-	m_monster->setAnchorPoint(Vec2(0.5,0.2));
+	Sprite* sprite222 = Sprite::create("dian.jpg");
+	m_monster->addChild(sprite222);
+	sprite222->setPosition(Vec2(m_monster->getContentSize().width * m_monster->getAnchorPoint().x, m_monster->getContentSize().height * m_monster->getAnchorPoint().y));
 	m_monster->setMonsterParent(map);
 	m_monster->setvecPatrolpoint();
 	m_monster->setPosition(32, 384);

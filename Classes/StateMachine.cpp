@@ -127,7 +127,7 @@ void Attack::Enter(Monster* target)
 
 void Attack::Excute(Monster* target)
 {
-	log("attack");
+	//log("attack");
 	//记录当前状态
 
 	//设置怪物朝向
@@ -267,7 +267,7 @@ void Track::Enter(Monster* target)
 
 void Track::Excute(Monster* target)
 {
-	log("track");
+
 
 	//如果被主角攻击了，进入被击状态
 	if (target->IsattackedByPlayer()){
@@ -275,9 +275,6 @@ void Track::Excute(Monster* target)
 		return;
 	}
 
-	//记录怪物位置
-	target->prePosition = target->getPosition();
-	
 	// 如果进入攻击范围内，转换攻击状态
 	if (target->checkInAttaRange())
 	{
@@ -301,12 +298,13 @@ void Track::Excute(Monster* target)
 	//还是视野范围，继续寻路
 	else if (target->m_timecounter->getCurTime() > target->duration)
 	{
+		log("track");
 		Vec2 tarPos = target->getPlayer()->getPosition();
 		target->duration = target->moveSpeed;
 		target->m_timecounter->start();
 		target->cmd_moveTo(tarPos);
 		//如果怪物不动了，但是又打不到主角，说明怪物确实是寻路到主角附近了，但是攻击范围达不上，那么微调怪物位置 
-		if (target->getPosition() == target->prePosition)
+		if (target->IstrackNoresult == true)
 		{
 			//指向主角的位移,距离不超100的，瓦片大小才64，
 			Vec2 dif = target->getPlayer()->getPosition() - target->getPosition();
@@ -370,19 +368,19 @@ void Attacked::Excute(Monster* target)
 			target->getStateMachine()->ChangeState(new Attack());
 			return;
 		}
-
-		//随机静止或者巡逻状态
-		switch (rand () % 2)
+	
+		// 如果玩家进入视野范围或者感知范围，进入追击状态
+		//从被击状态进入追踪的判断直接启动圆形区域的追踪判断
+		target->Is_firstFindplayer_Track = false;
+		if (target->checkInEyeRange() || target->checkInPerceptionRange())
 		{
-		case 0:{
-			target->getStateMachine()->ChangeState(new Idle());
-			break;
+			target->getStateMachine()->ChangeState(new Track()); 
+			return;
 		}
-		case 1:{
-			target->getStateMachine()->ChangeState(new Patrol());
-			break;
-		}
-		}
+
+		//被攻击后，如果没发现主角，进入巡逻状态
+		target->getStateMachine()->ChangeState(new Patrol());
+		
 	}
 }
 

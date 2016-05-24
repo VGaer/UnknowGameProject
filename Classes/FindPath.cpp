@@ -9,6 +9,15 @@ void FindPath::run(Vec2 startId, Vec2 endId)
 	{
 		monster->stopAllActions();
 		result = graph->getPathResult();
+	
+		//当寻路原地不动时
+		if (result.size() == 0){
+			monster->IstrackNoresult = true;
+			return;
+		}
+		else{
+			monster->IstrackNoresult = false;
+		}
 		for (int i = 0, size = result.size(); i < size; i++)
 		{
 			auto vertex = graph->getGraphVertexByVertexId(result.at(i));

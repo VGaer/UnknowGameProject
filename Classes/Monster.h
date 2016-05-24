@@ -75,7 +75,7 @@ public:
 	bool IsattackedByPlayer();	//是否被主角攻击
 	Color3B m_monstercolor; //怪物颜色
 	bool Isrestartbaseattack;	//记录怪物是否重新普通攻击
-	Vec2 prePosition;    //追踪时记录怪物前一次的位置
+	bool IstrackNoresult;    //追踪时记录怪物前一次的位置
 private:
 	Player* player;
 	AnimBase* animBase;             // 动作控制器
