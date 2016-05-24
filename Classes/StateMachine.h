@@ -1,4 +1,4 @@
-ï»¿#ifndef _StateMachine_H_
+#ifndef _StateMachine_H_
 #define _StateMachine_H_
 #include "cocos2d.h"
 #include "TimeCounter.h"
@@ -56,7 +56,7 @@ public:
 	virtual void Enter(Monster*);
 	virtual void Excute(Monster*);
 	virtual void Exit(Monster*);
-private:
+private:	
 };
 
 class Patrol : public State {
@@ -82,7 +82,7 @@ public:
 };
 
 class Attack : public State {
-private:
+private:	
 	Attack(const Attack&);
 	Attack& operator=(const Attack&);
 
@@ -93,7 +93,8 @@ public:
 	virtual void Exit(Monster*);
 };
 
-class Attacked : public State {
+//±»¹¥»÷×´Ì¬
+class Attacked : public State{
 public:
 	Attacked() {}
 	virtual void Enter(Monster*);

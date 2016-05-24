@@ -70,19 +70,19 @@ public:
 	// 加入一条怪物数据
 	void addDataToMonsData(MonsData* data);
 	// 获取一条怪物数据
-	const MonsData* getDataFromMonsData(const string& name);
+	MonsData* getDataFromMonsData(const string& name);
 	// 加入一条NPC数据
 	void addDataToNpcsData(NpcsData* data);
 	// 获取一条NPC数据
-	const NpcsData* getDataFromNpcsData(const string& name);
+	NpcsData* getDataFromNpcsData(const string& name);
 	// 加入一条任务数据
 	void addDataToQuestsData(QuestListData* data);
 	// 获取一条任务数据
-	const QuestListData* getDataFromQuestsData(const int id);
+	QuestListData* getDataFromQuestsData(const int id);
 	// 加入一条任务对话数据
 	void addDataToQuestDlgsData(QuestDlgsData* data);
 	// 获取一条任务对话数据
-	const QuestDlgsData* getDataFromQuestDlgsData(const int id);
+	QuestDlgsData* getDataFromQuestDlgsData(const int id);
 private:
 	// 读取文件数据
 	void readMonsDataFile();

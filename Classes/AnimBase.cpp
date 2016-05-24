@@ -12,35 +12,35 @@ int AnimBase::getDirectionByTargetPos(Point tarPos)
 {
 	Vec2 vec = tarPos - m_monster->getPosition();
 	/*一个更好的版本，即根据两个方向的，根据x打还是y大决定用两个方向中哪个为主方向，然后怪物的脸就朝向哪个方向*/
-	if (vec.y > 0 && vec.x < 0) {
-		if (abs(vec.y) > abs(vec.x)) {
+	if (vec.y > 0 && vec.x < 0){
+		if (abs(vec.y) > abs(vec.x)){
 			return Dir_upleft;
 		}
-		else {
+		else{
 			return Dir_leftup;
 		}
 	}
-	else if (vec.y > 0 && vec.x > 0) {
-		if (abs(vec.y) > abs(vec.x)) {
+	else if (vec.y > 0 && vec.x > 0){
+		if (abs(vec.y) > abs(vec.x)){
 			return Dir_upright;
 		}
-		else {
+		else{
 			return Dir_rightup;
 		}
 	}
-	else if (vec.y < 0 && vec.x < 0) {
-		if (abs(vec.y) > abs(vec.x)) {
+	else if (vec.y < 0 && vec.x < 0){
+		if (abs(vec.y) > abs(vec.x)){
 			return Dir_downleft;
 		}
-		else {
+		else{
 			return Dir_leftdown;
 		}
 	}
-	else if (vec.y < 0 && vec.x > 0) {
-		if (abs(vec.y) > abs(vec.x)) {
+	else if (vec.y < 0 && vec.x > 0){
+		if (abs(vec.y) > abs(vec.x)){
 			return Dir_downright;
 		}
-		else {
+		else{
 			return Dir_rightdown;
 		}
 	}
@@ -57,7 +57,7 @@ int AnimBase::getCurDirection()
 
 void AnimBase::setCurDirection(Point tarPos)
 {
-	m_curDirection = (AnimDirection)getDirectionByTargetPos(tarPos);
+	 m_curDirection = (AnimDirection)getDirectionByTargetPos(tarPos);
 }
 
 void AnimBase::playStanAnim()
@@ -113,7 +113,7 @@ void AnimBase::playStanAnim()
 		break;
 	}
 	m_sprite->stopAllActions();
-	if (direction >= 0 && direction < 3)
+	if (direction >=0 && direction < 3)
 		m_sprite->runAction(m_stanAnimArray[direction]);
 }
 
@@ -266,7 +266,7 @@ void AnimBase::setAction()
 	animate = Animate::create(animation);
 	animate->retain();
 	m_moveAnimArray[2] = animate;
-
+	
 
 	//攻击动画时间安排要跟怪物的攻击间隔对应上
 	animation = AnimationUtil::createWithSingleFrameName("treemonsterhattack", m_monster->attackAnimatetimePer, 1);

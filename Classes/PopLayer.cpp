@@ -165,6 +165,12 @@ void PopLayer::popBack()
 	this->runAction(popLayer);
 }
 
+void PopLayer::flashLabel(Label* pSender)
+{
+	pSender->setVisible(false);
+	pSender->setVisible(true);
+}
+
 void PopLayer::onExit() {
 	log("popup on exit.");
 	Layer::onExit();

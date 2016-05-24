@@ -13,7 +13,7 @@
 class FindPath;
 class StateMachine;
 
-typedef enum
+typedef enum 
 {
 	enum_MonsterIdle = 0,
 	enum_MonsterPatrol,
@@ -44,7 +44,7 @@ public:
 	float attackedrestoretimes; //硬直时间
 	float beforeattacktimes;      //前摇时间
 	float attackAnimatetimePer; //攻击动画播放时间
-								// 对外接口
+	// 对外接口
 	AnimBase* getAnimBase();
 	StateMachine* getStateMachine();
 	Player* getPlayer();
@@ -74,6 +74,8 @@ public:
 	int index; //巡逻点记录
 	bool IsattackedByPlayer();	//是否被主角攻击
 	Color3B m_monstercolor; //怪物颜色
+	bool Isrestartbaseattack;	//记录怪物是否重新普通攻击
+	Vec2 prePosition;    //追踪时记录怪物前一次的位置
 private:
 	Player* player;
 	AnimBase* animBase;             // 动作控制器

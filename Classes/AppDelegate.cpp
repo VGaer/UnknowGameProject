@@ -1,4 +1,4 @@
-ï»¿#include "AppDelegate.h"
+#include "AppDelegate.h"
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 
@@ -48,9 +48,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	// run
 	director->runWithScene(scene);
 
-	//ë†“è¿¦ëºêµì’¼ï¥–ìžˆ
+	//³õÊ¼»¯±³¾°ÒôÀÖ
 
-	//ë†“è¿¦ëºï¥–æ§»
+	//³õÊ¼»¯ÒôÐ§
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/swordsound.wav");
 
 	return true;

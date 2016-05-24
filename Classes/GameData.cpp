@@ -49,7 +49,7 @@ void GameData::addDataToQuestDlgsData(QuestDlgsData * data)
 	m_mapQuestDlgsData[id] = data;
 }
 
-const MonsData* GameData::getDataFromMonsData(const string& name)
+MonsData* GameData::getDataFromMonsData(const string& name)
 {
 	MonsData* monsData = NULL;
 	if (m_mapMonsData.find(name) != m_mapMonsData.end())
@@ -59,7 +59,7 @@ const MonsData* GameData::getDataFromMonsData(const string& name)
 	return monsData;
 }
 
-const NpcsData* GameData::getDataFromNpcsData(const string& name)
+NpcsData* GameData::getDataFromNpcsData(const string& name)
 {
 	NpcsData* npcsData = NULL;
 	if (m_mapNpcsData.find(name) != m_mapNpcsData.end())
@@ -69,7 +69,7 @@ const NpcsData* GameData::getDataFromNpcsData(const string& name)
 	return npcsData;
 }
 
-const QuestListData * GameData::getDataFromQuestsData(const int id)
+QuestListData * GameData::getDataFromQuestsData(const int id)
 {
 	QuestListData* questlistData = NULL;
 	if (m_mapQuestsData.find(id) != m_mapQuestsData.end()) {
@@ -78,7 +78,7 @@ const QuestListData * GameData::getDataFromQuestsData(const int id)
 	return questlistData;
 }
 
-const QuestDlgsData * GameData::getDataFromQuestDlgsData(const int id)
+QuestDlgsData * GameData::getDataFromQuestDlgsData(const int id)
 {
 	QuestDlgsData* questdlgsData = NULL;
 	if (m_mapQuestDlgsData.find(id) != m_mapQuestDlgsData.end()) {

@@ -21,6 +21,7 @@ public:
 	void setCallbackFunc(Ref* target, SEL_CallFuncN callfun);
 	bool addButton(const char* normalImage, const char* selectedImage, Vec2 pos, int tag = 0);
 	void popBack();
+	void flashLabel(Label* pSender);
 	virtual void onEnter();
 	virtual void onExit();
 	bool isZero();

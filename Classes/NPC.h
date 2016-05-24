@@ -23,11 +23,13 @@ public:
 	void setTiledMap(TMXTiledMap* map);
 	Vec2 tiledCoordForPosition(Vec2 pos);
 	const NpcsData* getData() { return data; }
+	vector<QuestListData*> quests;
 private:
 	bool isPop;
 	bool isPop2;
 	int page;
 	const NpcsData* data;
+	//vector<QuestListData*> quests;
 	Player* m_player;
 	TMXTiledMap* m_map;
 	TMXTiledMap* m_parrent;

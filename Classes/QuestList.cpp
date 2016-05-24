@@ -1,5 +1,5 @@
 #include "QuestList.h"
-
+#include "PopManager.h"
 QuestList::QuestList() :
 	m__s9BackGround(NULL)
 	, m__sfBackGround(NULL)
@@ -119,8 +119,13 @@ void QuestList::menuCallback(Ref* pSender) {
 
 void QuestList::buttonCallback(Ref * pSender, Widget::TouchEventType type)
 {
-	if (type == Widget::TouchEventType::ENDED)
-		menuCallback(pSender);
+	if (type == Widget::TouchEventType::ENDED) {
+		Sequence* a = Sequence::create(CallFunc::create([&]() {
+			static_cast<PopLayer*>(PopManager::getInstance()->getLayerByTag(1)->layer)->popBack();
+		}), DelayTime::create(0.3), CallFunc::create([&]() {
+			PopManager::getInstance()->setPopped(1, false); }), NULL);
+		runAction(a);
+	}
 }
 
 void QuestList::onEnter() {

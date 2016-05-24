@@ -61,8 +61,8 @@ void NPC::popLayer()
 	pl->addButton("UI/UI_Quest_06.png", "UI/UI_Quest_06.png", Vec2(19, 3), 2);
 	pl->addButton("UI/UI_Quest_04.png", "UI/UI_Quest_04.png", Vec2(136, 4), 0);
 	pl->addButton("UI/UI_Quest_03.png", "UI/UI_Quest_03.png", Vec2(252, 3), 1);
-	pl->setTitle(gb2312_to_utf8(data->name).c_str(), Color3B::BLACK, 30, "arial.ttf");
-	pl->setContentText(gb2312_to_utf8(data->dlgs[page]).c_str(), 20, 40, 400, "arial.ttf", Color3B::RED);
+	pl->setTitle(gb2312_to_utf8(data->name), Color3B::BLACK, 30, "arial.ttf");
+	pl->setContentText(gb2312_to_utf8(data->dlgs[page]), 20, 40, 400, "arial.ttf", Color3B::RED);
 	// 添加到当前层  
 	PopManager::getInstance()->addChild(pl);
 	//isPop = true;
@@ -83,10 +83,9 @@ void NPC::questLayer()
 	auto bg = ql->getSpriteBackGround();
 	// 添加按钮，设置图片，文字，tag, 颜色(颜色默认是白色（Color3B）), 字体信息 
 	ql->addButton("UI/UI_QuestPanel_close.png", "UI_QuestPanel_close.png", Vec2(4, bg->getContentSize().height / 2), 0);
-	//获取任务信息
-	auto quests = QuestDispatcher::getInstance()->getQuest(this)->questData;
+	
 	for (int i = 0; i < data->quest_id.size(); i++) {
-		ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests->title), gb2312_to_utf8(quests->instruct), i + 1, "arial.ttf");
+		ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests[i]->title), gb2312_to_utf8(quests[i]->instruct), quests[i]->id, "arial.ttf");
 	}
 	// 添加到Menu层  
 	PopManager::getInstance()->getLayerByTag(0)->layer->getChildByTag(0)->addChild(ql);
@@ -101,29 +100,20 @@ void NPC::buttonCallback(Node * pNode)
 		static_cast<PopLayer*>(PopManager::getInstance()->getLayerByTag(0)->layer)->popBack();
 	}), DelayTime::create(0.3), CallFunc::create([&]() {
 		PopManager::getInstance()->releaseLayer(0); }), NULL);
-
-	Sequence* b = Sequence::create(CallFunc::create([&]() {
-		static_cast<PopLayer*>(PopManager::getInstance()->getLayerByTag(0)->layer)->popBack();
-	}), DelayTime::create(0.3), CallFunc::create([&]() {
-		PopManager::getInstance()->releaseLayer(0); }), DelayTime::create(0.02), CallFunc::create([=]() {
-		popLayer(); }), NULL);
 	//通过获取按钮TAG调用功能
 	switch (btnTag)
 	{
 	case 0:
+		log("page:%d", page);
 		runAction(a);
+		page++;
+		if (page >= data->dlgs.size()) {
+			page = 0;
+		}
 		//弹出标记
 		PopManager::getInstance()->setPopped(1, false);
 		break;
 	case 1:
-		if (page >= data->dlgs.size() - 1) {
-			runAction(a);
-			page = 0;
-			break;
-		}
-		page++;
-		runAction(b);
-		PopManager::getInstance()->setPopped(1, false);
 		break;
 	case 2:
 		if (PopManager::getInstance()->getPopped(1))	break;
@@ -136,21 +126,13 @@ void NPC::buttonCallback(Node * pNode)
 
 void NPC::ItemCallback(Node * pNode)
 {
-	auto btnTag = pNode->getTag();
-	Sequence* a = Sequence::create(CallFunc::create([&]() {
-		static_cast<PopLayer*>(PopManager::getInstance()->getLayerByTag(1)->layer)->popBack();
-	}), DelayTime::create(0.3), CallFunc::create([&]() {
-		PopManager::getInstance()->setPopped(1, false); }), NULL);
 	log("Item call back. tag: %d", pNode->getTag());
 	auto btn = pNode->getTag();
-	switch (btn)
-	{
-	case 0:
-		runAction(a);
-		break;
-	default:
-		break;
-	}
+	auto item = static_cast<PopLayer*>(PopManager::getInstance()->getLayerByTag(0)->layer);
+	item->setTitle(gb2312_to_utf8(quests[btn]->title), Color3B::BLACK, 30, "arial.ttf");
+	item->setContentText(gb2312_to_utf8(quests[btn]->instruct), 20, 40, 400, "arial.ttf", Color3B::RED);
+	item->flashLabel(item->getLabelTitle());
+	item->flashLabel(item->getLabelContentText());
 }
 
 //初始化NPC数据和任务数据
@@ -158,6 +140,8 @@ void NPC::initDataWithName(const string & sender)
 {
 	data = GameData::getInstance()->getDataFromNpcsData(sender);
 	QuestDispatcher::getInstance()->initQuest(this);
+	//获取任务信息
+	quests = QuestDispatcher::getInstance()->getQuest(this)->questData;
 }
 
 void NPC::setTiledMap(TMXTiledMap* map)

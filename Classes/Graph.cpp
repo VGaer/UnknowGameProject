@@ -27,7 +27,7 @@ void Graph::init(Vec2 center)
 			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
-				addEdgesForVertex(vId, newVec, 10);
+				addEdgesForVertex(vId, newVec,10);
 				if (!vertices[newVec]->get_isFill())
 				{
 					points.push_back(vertices[newVec]);
@@ -41,8 +41,8 @@ void Graph::init(Vec2 center)
 			newVec.x = vId.x + 1; newVec.y = vId.y;
 			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
-				addVertex(newVec, positionForTiledCoord(newVec));
-				addEdgesForVertex(vId, newVec, 10);
+				addVertex(newVec,positionForTiledCoord(newVec));
+				addEdgesForVertex(vId, newVec,10);
 				if (!vertices[newVec]->get_isFill())
 				{
 					points.push_back(vertices[newVec]);
@@ -57,7 +57,7 @@ void Graph::init(Vec2 center)
 			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
-				addEdgesForVertex(vId, newVec, 10);
+				addEdgesForVertex(vId, newVec,10);
 				if (!vertices[newVec]->get_isFill())
 				{
 					points.push_back(vertices[newVec]);
@@ -72,7 +72,7 @@ void Graph::init(Vec2 center)
 			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
-				addEdgesForVertex(vId, newVec, 10);
+				addEdgesForVertex(vId, newVec,10);
 				if (!vertices[newVec]->get_isFill())
 				{
 					points.push_back(vertices[newVec]);
@@ -177,7 +177,7 @@ void Graph::addVertex(Vec2 vertexId, Vec2 point)
 {
 	if (vertices.find(vertexId) == vertices.end())
 	{
-		auto vertex = new Vertex(vertexId, point);
+		auto vertex = new Vertex(vertexId,point);
 		vertices[vertexId] = vertex;
 	}
 }
@@ -239,14 +239,14 @@ bool Graph::findPath(Vec2 startId, Vec2 endId)
 		for (int i = 0, size = vertex->getVertexOutEdgeSize(); i < size; i++)
 		{
 			Vec2 endVertexId = vertex->getVertex_ithOutEdge_EndvertexId(i);
-
-			if (vertices[endVertexId]->getIsinclose()) {
+			
+			if (vertices[endVertexId]->getIsinclose()){
 				;
 			}
-			else if (vertices[endVertexId]->getIsinopen()) {
+			else if (vertices[endVertexId]->getIsinopen()){
 				relax(vertexId, endVertexId, vertex->getVertex_ithOutEdge_Weight(i));
 			}
-			else {
+			else{
 				float G = vertex->get_cost() + vertex->getVertex_ithOutEdge_Weight(i);
 				float H = getDistance(endVertexId, targetId);
 				float F = G + H;
@@ -281,7 +281,7 @@ bool Graph::relax(Vec2 startId, Vec2 endId, float weight)
 	auto v1 = vertices[startId];
 	auto v2 = vertices[endId];
 	float G = v1->get_cost() + weight;
-	float H = getDistance(endId, targetId);
+	float H = getDistance(endId,targetId);
 	float F = G + H;
 	if (H < v2->get_heuristic())
 	{
@@ -307,7 +307,7 @@ Vertex* Graph::findMinHeurisVertex(std::vector < Vertex*>& Q)
 {
 	Vertex* minVertex = Q.front();
 	int pos = 0;
-	for (int i = 1, size = Q.size(); i < size; i++)
+	for (int i = 1,size = Q.size(); i < size; i++)
 	{
 		auto vertex = Q.at(i);
 		if (vertex->get_heuristic() < minVertex->get_heuristic())
@@ -347,7 +347,7 @@ Vec2 Graph::positionForTiledCoord(Vec2 pos)
 {
 	Size tiledSize = m_map->getTileSize();
 	int x = pos.x * tiledSize.width + tiledSize.width / 2;
-	int y = pos.y * tiledSize.height + tiledSize.height / 2;
+	int y = pos.y * tiledSize.height + tiledSize.height / 2; 
 	return Vec2(x, y);
 }
 
@@ -366,15 +366,15 @@ Vertex* Graph::getGraphVertexByVertexId(Vec2 vertexId)
 bool Graph::IsNot_CollidableTile(Vec2 tileCoord)
 {
 	if (tileCoord.x >= 0 && tileCoord.x < m_map->getMapSize().width //不超出瓦片地图坐标
-		&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height) {
+		&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height){
 		int tileGid = m_map->getLayer("barrier")->getTileGIDAt(tileCoord);
-		if (tileGid > 0) {
+		if (tileGid > 0){
 			Value prop = m_map->getPropertiesForGID(tileGid);
 			ValueMap proValueMap = prop.asValueMap();
 
-			if (proValueMap.find("Collidable") != proValueMap.end()) {
+			if (proValueMap.find("Collidable") != proValueMap.end()){
 				std::string collision = proValueMap.at("Collidable").asString();
-				if (collision == "true") {
+				if (collision == "true"){
 					return false;
 				}
 

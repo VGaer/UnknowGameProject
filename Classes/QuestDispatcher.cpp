@@ -18,12 +18,12 @@ QuestDispatcher::~QuestDispatcher()
 
 void QuestDispatcher::initQuestsDataWithID(int tag, const int id)
 {
-	Data[tag]->questData = GameData::getInstance()->getDataFromQuestsData(id);
+	mData[tag]->questData.push_back(GameData::getInstance()->getDataFromQuestsData(id));
 }
 
 void QuestDispatcher::initQuestDlgsDataWithID(int tag, const int id)
 {
-	Data[tag]->qDlgsdata = GameData::getInstance()->getDataFromQuestDlgsData(id);
+	mData[tag]->qDlgsdata[id] = GameData::getInstance()->getDataFromQuestDlgsData(id);
 }
 
 
@@ -31,20 +31,40 @@ void QuestDispatcher::initQuest(NPC* pSender)
 {
 	auto npc_id = pSender->getData()->id;
 	auto quest_id = pSender->getData()->quest_id;
-	for (int i = 0; i < quest_id.size(); i++) {
-		Data[npc_id] = new QuestData();
+	mData[npc_id] = new QuestData();
+	for (int i = 0; i < quest_id.size(); i++) {		
 		initQuestsDataWithID(npc_id, quest_id[i]);
 		initQuestDlgsDataWithID(npc_id, quest_id[i]);
 	}
 }
 
-void QuestDispatcher::getQuestStatus()
+int QuestDispatcher::getQuestStatus(NPC* pSender, const int id)
 {
+	auto npc_id = pSender->getData()->id;
+	return mData[npc_id]->questData[id]->status;
+}
 
+void QuestDispatcher::QuestStatusControl(NPC * pSender, QuestControl ctr, const int id)
+{
+	auto npc_id = pSender->getData()->id;
+	switch (ctr)
+	{
+	case accpet:
+		mData[npc_id]->questData[id]->status = QuestStatus::active;
+		break;
+	case complete:
+		mData[npc_id]->questData[id]->status = QuestStatus::finish;
+		break;
+	case cancel:
+		mData[npc_id]->questData[id]->status = QuestStatus::start;
+		break;
+	default:
+		break;
+	}
 }
 
 QuestData * QuestDispatcher::getQuest(NPC* pSender)
 {
 	auto npc_id = pSender->getData()->id;
-	return Data[npc_id];
+	return mData[npc_id];
 }
