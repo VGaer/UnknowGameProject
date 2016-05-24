@@ -10,6 +10,9 @@ Graph* Graph::getInstance()
 void Graph::init(Vec2 center)
 {
 	TMXLayer* barrier = m_map->getLayer("barrier");
+	// 删除顶点和边
+	for (auto vert : vertices)
+		removeVertex(vert.second->getId());
 	std::vector<Vertex*> points;
 	this->addVertex(center, positionForTiledCoord(center));
 	points.push_back(vertices[center]);
@@ -24,7 +27,7 @@ void Graph::init(Vec2 center)
 		{
 			newVec.x = vId.x - 1; newVec.y = vId.y;
 			//无碰撞
-			if (barrier->getTileGIDAt(newVec) == 0)
+			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec,10);
@@ -39,7 +42,7 @@ void Graph::init(Vec2 center)
 		if (vId.x < m_map->getMapSize().width - 1)
 		{
 			newVec.x = vId.x + 1; newVec.y = vId.y;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
 				addVertex(newVec,positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec,10);
@@ -54,7 +57,7 @@ void Graph::init(Vec2 center)
 		if (vId.y > 0)
 		{
 			newVec.x = vId.x, newVec.y = vId.y - 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec,10);
@@ -69,7 +72,7 @@ void Graph::init(Vec2 center)
 		if (vId.y < m_map->getMapSize().height - 1)
 		{
 			newVec.x = vId.x; newVec.y = vId.y + 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			if (barrier->getTileGIDAt(newVec) == 0 || IsNot_CollidableTile(newVec))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec,10);
@@ -84,7 +87,14 @@ void Graph::init(Vec2 center)
 		if (vId.x > 0 && vId.y > 0)
 		{
 			newVec.x = vId.x - 1; newVec.y = vId.y - 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前左边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x - 1; temp.y = vId.y;
+			//判断上面是否有障碍物
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y - 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0
+				|| (IsNot_CollidableTile(newVec) && IsNot_CollidableTile(temp) && IsNot_CollidableTile(temp1)))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));
@@ -99,7 +109,13 @@ void Graph::init(Vec2 center)
 		if (vId.x < m_map->getMapSize().width - 1 && vId.y < m_map->getMapSize().height - 1)
 		{
 			newVec.x = vId.x + 1; newVec.y = vId.y + 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前右边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x + 1; temp.y = vId.y;
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y + 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0
+				|| (IsNot_CollidableTile(newVec) && IsNot_CollidableTile(temp) && IsNot_CollidableTile(temp1)))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));
@@ -114,7 +130,13 @@ void Graph::init(Vec2 center)
 		if (vId.x > 0 && vId.y < m_map->getMapSize().height - 1)
 		{
 			newVec.x = vId.x - 1; newVec.y = vId.y + 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前左边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x - 1; temp.y = vId.y;
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y + 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0
+				|| (IsNot_CollidableTile(newVec) && IsNot_CollidableTile(temp) && IsNot_CollidableTile(temp1)))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));
@@ -129,7 +151,13 @@ void Graph::init(Vec2 center)
 		if (vId.x < m_map->getMapSize().width - 1 && vId.y > 0)
 		{
 			newVec.x = vId.x + 1; newVec.y = vId.y - 1;
-			if (barrier->getTileGIDAt(newVec) == 0)
+			//判断当前右边是否有障碍物,有的话不能用对角线穿墙过穿墙
+			Vec2 temp;
+			temp.x = vId.x + 1; temp.y = vId.y;
+			Vec2 temp1;
+			temp1.x = vId.x; temp1.y = vId.y - 1;
+			if (barrier->getTileGIDAt(newVec) == 0 && barrier->getTileGIDAt(temp) == 0 && barrier->getTileGIDAt(temp1) == 0
+				|| (IsNot_CollidableTile(newVec) && IsNot_CollidableTile(temp) && IsNot_CollidableTile(temp1)))
 			{
 				addVertex(newVec, positionForTiledCoord(newVec));
 				addEdgesForVertex(vId, newVec, sqrt(200));
@@ -185,6 +213,7 @@ bool Graph::findPath(Vec2 startId, Vec2 endId)
 	//加上判断startId,即怪物位置那个顶点是否为空，不会因为初始化怪物在障碍物的方块而造成奔溃
 	if (vertices.find(startId) == vertices.end())
 		return false;
+	//目标点不能为空
 	if (vertices.find(endId) == vertices.end())
 		return false;
 	for (auto it = vertices.begin(); it != vertices.end(); it++)
@@ -325,18 +354,6 @@ Vec2 Graph::positionForTiledCoord(Vec2 pos)
 	return Vec2(x, y);
 }
 
-Vec2 Graph::tiledCoordForPosition(Vec2 pos)
-{
-	Size mapTiledNum = m_map->getMapSize();
-	Size tiledSize = m_map->getTileSize();
-	Size visiblesize = Director::getInstance()->getVisibleSize();
-
-	int x = (int)(pos.x / tiledSize.width);
-	int y = (int)(m_map->getMapSize().height * m_map->getTileSize().height - pos.y) / m_map->getTileSize().height;
-
-	return Vec2(x, y);
-}
-
 Vertex* Graph::getGraphVertexByVertexId(Vec2 vertexId)
 {
 	if (vertices.find(vertexId) != vertices.end())
@@ -347,4 +364,25 @@ Vertex* Graph::getGraphVertexByVertexId(Vec2 vertexId)
 	{
 		return NULL;
 	}
+}
+
+bool Graph::IsNot_CollidableTile(Vec2 tileCoord)
+{
+	if (tileCoord.x >= 0 && tileCoord.x < m_map->getMapSize().width //不超出瓦片地图坐标
+		&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height){
+		int tileGid = m_map->getLayer("barrier")->getTileGIDAt(tileCoord);
+		if (tileGid > 0){
+			Value prop = m_map->getPropertiesForGID(tileGid);
+			ValueMap proValueMap = prop.asValueMap();
+
+			if (proValueMap.find("Collidable") != proValueMap.end()){
+				std::string collision = proValueMap.at("Collidable").asString();
+				if (collision == "true"){
+					return false;
+				}
+
+			}
+		}
+	}
+	return true;
 }

@@ -1,11 +1,9 @@
 #include "FindPath.h"
 #include "Graph.h"
 
-void FindPath::run(Vec2 startPos, Vec2 endPos)
+void FindPath::run(Vec2 startId, Vec2 endId)
 {
 	auto graph = Graph::getInstance();
-	Vec2 startId = graph->tiledCoordForPosition(startPos);
-	Vec2 endId = graph->tiledCoordForPosition(endPos);
 	std::vector<Vec2> result;
 	if (graph->findPath(startId, endId))
 	{
@@ -17,25 +15,27 @@ void FindPath::run(Vec2 startPos, Vec2 endPos)
 			auto pos = Vec2(vertex->getVertex_posx(), vertex->getVertex_posy());
 			pos.y = graph->getMap()->getMapSize().height * graph->getMap()->getTileSize().height - pos.y;
 			Vec2 vec = pos - monster->getPosition();
-			// 获取移动方向
-			auto direction = monster->getAnimBase()->getDirectionByTargetPos(pos);
+
+			//根据要到达的位置设置monster方向控制器方向
+			monster->getAnimBase()->setCurDirection(pos);
+
 			auto delay = DelayTime::create(i * 0.5);
 			// 播放转身动画
-			auto call = CallFunc::create([&](){
-				monster->getAnimBase()->playMoveAnim(direction);
-			}); 
-			if (vec.x == 0 || vec.y == 0)//直角走,0.6f是为了大概平衡下对角线走的速度，0.1f怪兽停顿应该没什么问题
+			auto call = CallFunc::create([=](){
+				monster->getAnimBase()->playMoveAnim();
+			});
+			if (vec.x == 0 || vec.y == 0)//直角走路,根据怪物的速度
 			{
-				auto move = MoveTo::create(0.6f, pos);
+				auto move = MoveTo::create(monster->moveSpeed, pos);
 				monster->runAction(Sequence::create(delay, call, move, NULL));
 			}
-			//对角线走 
+			//对角线走,根据怪物的速度，
 			else
 			{
-				auto move = MoveTo::create(0.7f, pos);
+				auto move = MoveTo::create(sqrt(2.0) * monster->moveSpeed, pos);
 				monster->runAction(Sequence::create(delay, call, move, NULL));
-			}			
-			// if 状态 == 追踪
+			}
+			
 			break;//只取第一步
 		}
 	}	

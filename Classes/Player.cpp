@@ -1,5 +1,15 @@
 #include "Player.h"
 
+Player* Player::getInstance()
+{
+	static Player* instance = NULL;
+	if (instance == NULL)
+	{
+		instance = new Player();
+	}
+	return instance;
+}
+
 Player* Player::createWithparent(TMXTiledMap* parent)
 {
 	Player* player = new Player();
@@ -36,6 +46,8 @@ bool Player::init()
 	this->addChild(timecounter_right);
 	timecounter_J = TimeCounter::create();
 	this->addChild(timecounter_J);
+	timecounter_attacked = TimeCounter::create();
+	this->addChild(timecounter_attacked);
 
 	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
 	frameCache->addSpriteFramesWithFile("dwalk/dwalk.plist", "dwalk/dwalk.png");
@@ -67,15 +79,22 @@ bool Player::init()
 	frameCache->addSpriteFramesWithFile("hswordwave/hswordwave.plist", "hswordwave/hswordwave.png");
 
 	frameCache->addSpriteFramesWithFile("remoteskills/playerskill.plist", "remoteskills/playerskill.png");
+	frameCache->addSpriteFramesWithFile("player_skill/laser.plist", "player_skill/laser.png");
 
 	PlayerState = enum_initNone;//初始化为什么都没有状态，一运行游戏如果没操作就会转为enum_static,有操作转为对应操作的walk or run状态 
 	PlayerDir = em_down;//初始化时
 
-	swordwaveNum = 20;
+	swordwaveNum = 20; 
 	createSwordWave();
 
 	m_player_magnification = 2;
 
+	m_hp = 100;
+
+	this->bindSprite(Sprite::create("player.png"));
+	m_playerColor = this->getSprite()->getColor();
+
+	skillControl = new SkillControl(this);
 	return true;
 }
 
@@ -213,7 +232,229 @@ void Player::update(float dt)
 			}
 		}
 	}
+	//////////////////////////////////////////主角被攻击
+	if(attackedqueue.size() > 0){	
+		//主角被攻击过了僵直时间,才pop掉队列
+		if (timecounter_attacked->getCurTime() > 0.11f){	
+			attackedqueue.pop();
+			//设置计时为0，当被攻击信息队列增加消息size再次大于0时，不会马上被pop掉，而是重新调用了timecouter_attacked->start才判断是否pop掉
+			timecounter_attacked->setstartTimeZeroAndOpenSchedule();
+		}
 
+		//被攻击僵直间隔
+		if(attackedqueue.size() > 0 && timecounter_attacked->getCurTime() == 0.0f)
+		{
+			int attack = attackedqueue.front();
+			switch (attack)
+			{
+			case enum_playerattackedfromleft:{
+				auto backMove = MoveBy::create(0.05f, Vec2(20, 0));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(-20, 0));
+				auto backRotate = RotateBy::create(0.05f, 5, 0);
+				auto forwardRotate = RotateBy::create(0.05f, -5, 0);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(6, 0));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromleft;
+
+				break;
+			}
+			case enum_playerattackedfromright:{
+				auto backMove = MoveBy::create(0.05f, Vec2(-20, 0));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(20, 0));
+				auto backRotate = RotateBy::create(0.05f, -5, 0);
+				auto forwardRotate = RotateBy::create(0.05f, 5, 0);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(-6, 0));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromright;
+
+				break;
+			}
+			case enum_playerattackedfromup:{
+				auto backMove = MoveBy::create(0.05f, Vec2(0, -20));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(0, 20));
+				auto backRotate = RotateBy::create(0.05f, 0, -5);
+				auto forwardRotate = RotateBy::create(0.05f, 0, 5);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(0, -6));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromup;
+				break;
+			}
+			case enum_playerattackedfromdown:{
+				auto backMove = MoveBy::create(0.05f, Vec2(0, 20));
+				auto forwardMove = MoveBy::create(0.05f, Vec2(0, -20));
+				auto backRotate = RotateBy::create(0.05f, 0, 5);
+				auto forwardRotate = RotateBy::create(0.05f, 0, -5);
+				CCTintTo* action1 = CCTintTo::create(0.05f, 255, 0, 0);
+				CCTintTo* action2 = CCTintTo::create(0.05f, m_playerColor);
+				auto backActions = Spawn::create(backMove, backRotate, action1, NULL);
+				auto forwardActions = Spawn::create(forwardMove, forwardRotate, action2, NULL);
+				auto actions = Sequence::create(backActions, forwardActions, NULL);
+				this->stopAllActions();
+				this->getSprite()->stopAllActions();
+				this->getSprite()->runAction(actions);
+				timecounter_attacked->start();
+				//如果后面没障碍物，就被击退
+				this->setPlayerPosition(this->getPosition() + Vec2(0, 6));
+				//扣主角hp
+				m_hp--;
+
+				//如果是run状态下被攻击了，把run转化为walk
+				switch (PlayerState)
+				{
+				case enum_doubleup:{
+					vec[0] = enum_up;
+					break;
+				}
+				case enum_doubledown:{
+					vec[0] = enum_down;
+					break;
+				}
+				case enum_doubleleft:{
+					vec[0] = enum_left;
+					break;
+				}
+				case enum_doubleright:{
+					vec[0] = enum_right;
+					break;
+				}
+				default:
+					break;
+				}
+
+				//被攻击状态下无法释放主角技能
+				playerIsattacked = true;
+
+				//设置主角的状态
+				PlayerState = enum_playerattackedfromup;
+
+				break;
+			}
+			}
+		}
+
+		return;//队列为空时，即不再被攻击了,就可以执行下面的动作了
+	}
+	
+
+	playerIsattacked = false;//标志主角不为被击状态
+	
 	/////////////////////攻击优先于走或跑
 	if (vecskill.size() == 1){
 		switch (PlayerDir)
@@ -516,6 +757,12 @@ void Player::update(float dt)
 		{
 			/*两个方向一起的快走,,由于快走时在静止时才有的，所以快走永远是vec[0],*/
 			if (vec[0] == enum_doubleup && vec.back() == enum_left){
+				//上左快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2,-m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("urun", 0.15f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleup){
@@ -523,12 +770,29 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleup;
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, 6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或上边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup)))
+					{
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, 6));
+					}
+				}
+					
 				PlayerDir = em_up;
 				return;
 			}
 			else if (vec[0] == enum_doubleup && vec.back() == enum_right){
+				//上右快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2,-m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("urun", 0.15f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleup){
@@ -536,12 +800,28 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleup;
-				this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或上边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
+					}
+				}
+						
 				PlayerDir = em_up;
 				return;
 			}
 			else if (vec[0] == enum_doubledown && vec.back() == enum_left){
+				//下左
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2,m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("drun", 0.18f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubledown){
@@ -549,12 +829,28 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubledown;
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, -6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或下边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0 ||
+						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdleft))){
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, -6));
+					}
+				}
+			
 				PlayerDir = em_down;
 				return;
 			}
 			else if (vec[0] == enum_doubledown && vec.back() == enum_right){
+				//下右
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2,m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("drun", 0.18f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubledown){
@@ -562,12 +858,28 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubledown;
-				this->setPlayerPosition(this->getPosition() + Vec2(4, -6));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				//如果左边或下边有障碍物，防止对角线穿墙跑过去
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIddown))){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, -6));
+					}
+				}
+			
 				PlayerDir = em_down;
 				return;
 			}
 			else if (vec[0] == enum_doubleleft && vec.back() == enum_up){
+				//左上快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleleft){
@@ -576,12 +888,27 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleleft;
-				this->setPlayerPosition(this->getPosition() + Vec2(-6, 4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup))){
+						this->setPlayerPosition(this->getPosition() + Vec2(-6, 4));
+					}
+				}
+			
 				PlayerDir = em_left;
 				return;
 			}
 			else if (vec[0] == enum_doubleleft && vec.back() == enum_down){
+				//左下
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleleft){
@@ -590,12 +917,27 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleleft;
-				this->setPlayerPosition(this->getPosition() + Vec2(-6, -4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIddown) == 0 ||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIddown))){
+						this->setPlayerPosition(this->getPosition() + Vec2(-6, -4));
+					}
+				}
+			
 				PlayerDir = em_left;
 				return;
 			}
 			else if (vec[0] == enum_doubleright && vec.back() == enum_up){
+				//右上快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleright){
@@ -604,12 +946,27 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleright;
-				this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))){
+						this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
+					}
+				}
+				
 				PlayerDir = em_right;
 				return;
 			}
 			else if (vec[0] == enum_doubleright && vec.back() == enum_down){
+				//右下
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
 				if (PlayerState != enum_doubleright){
@@ -618,8 +975,17 @@ void Player::update(float dt)
 					this->getPlayerSprite()->runAction(animate);
 				}
 				PlayerState = enum_doubleright;
-				this->setPlayerPosition(this->getPosition() + Vec2(6, -4));
-
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIddown) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIddown))){
+						this->setPlayerPosition(this->getPosition() + Vec2(6, -4));
+					}
+				}
+			
 				PlayerDir = em_right;
 				return;
 			}
@@ -644,7 +1010,13 @@ void Player::update(float dt)
 			if (vec.back() == enum_up && vec[vec.size() - 2] == enum_left
 				|| vec[vec.size() - 2] == enum_up && vec.back() == enum_left)
 			{
-				if (vec.back() == enum_up){
+				//(上左、左上)走
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
+				if (vec.back() == enum_up){			
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
 					if (PlayerState != enum_left){
@@ -665,12 +1037,28 @@ void Player::update(float dt)
 					PlayerState = enum_up;
 					PlayerDir = em_up;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, 4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 /*||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup))*/){
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, 4));
+					}
+				}
+						
 				return;
 			}
 			else if (vec.back() == enum_up && vec[vec.size() - 2] == enum_right
 				|| vec[vec.size() - 2] == enum_up && vec.back() == enum_right)
 			{
+				//(右上、上右)快跑
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+
 				if (vec.back() == enum_up){
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
@@ -692,12 +1080,28 @@ void Player::update(float dt)
 					PlayerState = enum_up;
 					PlayerDir = em_up;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)){
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 /*||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))*/){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
+					}
+				}
+						
 				return;
 			}
 			else if (vec.back() == enum_down && vec[vec.size() - 2] == enum_left
 				|| vec[vec.size() - 2] == enum_down && vec.back() == enum_left)
 			{
+				//(左下、下左）
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				if (vec.back() == enum_down){
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
@@ -719,12 +1123,28 @@ void Player::update(float dt)
 					PlayerState = enum_down;
 					PlayerDir = em_down;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(-4, -4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0 /*||
+						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdleft))*/){
+						this->setPlayerPosition(this->getPosition() + Vec2(-4, -4));
+					}
+				}
+					
 				return;
 			}
 			else if ((vec.back() == enum_down && vec[vec.size() - 2] == enum_right
 				|| vec[vec.size() - 2] == enum_down && vec.back() == enum_right))
 			{
+				//(右下、下右)
+				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
+				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+
 				if (vec.back() == enum_down){
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
 					Animate* animate = Animate::create(animation);
@@ -746,7 +1166,17 @@ void Player::update(float dt)
 					PlayerState = enum_down;
 					PlayerDir = em_down;
 				}
-				this->setPlayerPosition(this->getPosition() + Vec2(4, -4));
+				TMXLayer* barrier = m_map->getLayer("barrier");
+				int xMax = m_map->getMapSize().width - 1;
+				int yMax = m_map->getMapSize().height - 1;
+				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
+					(vIdright.y >= 0 && vIdright.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)){
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdright) == 0||
+						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdright))){
+						this->setPlayerPosition(this->getPosition() + Vec2(4, -4));
+					}
+				}			
+				
 				return;
 			}
 		}
@@ -1014,14 +1444,17 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		//设置J技能的攻击冷却时间
 		float curtime = timecounter_J->getCurTime();
-		//第一次按J时才有curtime = 0,此后每隔0.3f秒才能按放一次技能
-		if (curtime == 0 || curtime > 0.3f){
+		//第一次按J时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
+		//主角非被击状态才能放技能
+		if (curtime == 0 || curtime > 0.5f && (playerIsattacked == false)){
+		
 			timecounter_J->start();//一直计时
 			//size为0才有普通的攻击
 			if (vecskill.size() == 0){
 				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
 					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright){
 					vecskill.push_back(enum_basepoke);
+					vecskillstr.push_back(baseskillstr(enum_basepoke, false));
 					switch (PlayerState)//run状态下一帧使用basepoke技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup:{
@@ -1046,6 +1479,7 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 				}
 				else{
 					vecskill.push_back(enum_baseattack);
+					vecskillstr.push_back(baseskillstr(enum_baseattack, false));
 				}
 			}
 		}
@@ -1055,8 +1489,9 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		//设置K技能的攻击冷却时间//剑气
 		float curtime = timecounter_J->getCurTime();
-		//第一次按J时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
-		if (curtime == 0 || curtime > 0.5f){
+		//第一次按K时才有curtime = 0,此后每隔0.8f秒才能按放一次技能
+		//主角非被击状态才能放技能
+		if (curtime == 0 || curtime > 0.7f && (playerIsattacked == false)){
 			timecounter_J->start();//一直计时
 			//size为0才有剑气
 			if (vecskill.size() == 0){
@@ -1090,6 +1525,10 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 				}
 			}
 		}
+	}
+	if (keyCode == EventKeyboard::KeyCode::KEY_L)
+	{
+		skillControl->skill_laser();
 	}
 }
 
@@ -1176,6 +1615,7 @@ void Player::keyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 void Player::setTiledMap(TMXTiledMap* map)
 {
 	m_map = map;
+	m_map->addChild(this, m_map->getChildren().size());
 }
 
 Vec2 Player::tiledCoordForPosition(Vec2 pos)
@@ -1481,6 +1921,8 @@ void Player::CallBack1()
 {
 	if (vecskill.size() == 1){
 		vecskill.erase(vecskill.begin());
+		if (vecskillstr.size() == 1)
+			vecskillstr.erase(vecskillstr.begin());
 	}
 }
 
@@ -1509,4 +1951,45 @@ void Player::setPlayerparent(TMXTiledMap* parent)
 int Player::getPlayer_magnification()
 {
 	return m_player_magnification;
+}
+
+bool Player::IsNot_CollidableTile(Vec2 tileCoord)
+{
+	if (tileCoord.x >= 0 && tileCoord.x < m_map->getMapSize().width //不超出瓦片地图坐标
+		&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height){
+		int tileGid = m_map->getLayer("barrier")->getTileGIDAt(tileCoord);
+		if (tileGid > 0){
+			Value prop = m_map->getPropertiesForGID(tileGid);
+			ValueMap proValueMap = prop.asValueMap();
+
+			if (proValueMap.find("Collidable") != proValueMap.end()){
+				std::string collision = proValueMap.at("Collidable").asString();
+				if (collision == "true"){
+					return false;
+				}
+
+			}
+		}
+	}
+	return true;
+}
+
+Vector<RemoteSkill*> Player::getPlayerUsing_swordwave_Arr()
+{
+	return m_Using_swordwave_Arr;
+}
+
+std::vector<int> Player::getVecSkill()
+{
+	return vecskill;
+}
+
+int Player::getPlayerDir()
+{
+	return PlayerDir;
+}
+
+std::vector<baseskillstr>& Player::getvecskillstr()
+{
+	return vecskillstr;
 }

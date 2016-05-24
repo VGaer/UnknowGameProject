@@ -9,11 +9,16 @@
  <tileset firstgid="148" name="treepag" tilewidth="320" tileheight="384" tilecount="6" columns="3">
   <image source="treepag.png" width="960" height="768"/>
  </tileset>
- <tileset firstgid="154" name="barrier" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="barrier.png" width="64" height="64"/>
+ <tileset firstgid="154" name="meta_tiles" tilewidth="64" tileheight="64" tilecount="4" columns="4">
+  <image source="meta_tiles.png" width="280" height="70"/>
   <tile id="0">
    <properties>
     <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="patrolpoint" value="true"/>
    </properties>
   </tile>
  </tileset>
@@ -43,7 +48,7 @@
  </layer>
  <layer name="barrier" width="35" height="30">
   <data encoding="base64" compression="zlib">
-   eJztVkEOwCAI8/9P8LW7mk1coSBuoYkHUdsuaLPWzkIfxmwepYNoZ3opPNGJEcWHzi1eUA0EqA9pr+e9RPktPf0jTvjmXdko6d5r6N5V3eqH9YLUdnth39cXvUhr0T3SZJp37mae9+Ri+pGRWat9s0xF7z76f6LhiYLWi7Rm0dVoFApavOU6+q4ZHstZyQ/LdQEOXJZl
+   eJztVlsOwCAI8/5HMB52X0sWR6W85j5swgdYoZnKaE1GB/Fq9IdJflUdpvZOLQdv9IBV5WN9ae8geZrPgP0miJt5L9n8njOVMHRKOjJr/qE3fNUbUd05xnJXca+eqBYmNkO6T5laou/95o/JX3ERP0sL8rU17xmxWiw9Lbvv7tyfmStyHtX/DrbGqqeyd5+dTyx5qmDVgtY8dS01DjAic4117465zQOtp1vedSSPVweasSJ2AfsknRc=
   </data>
  </layer>
 </map>

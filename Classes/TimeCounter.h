@@ -9,8 +9,8 @@ public:
 	virtual bool init();
 	virtual void update(float dt);
 	void start();
-	void end();
 	float getCurTime();
+	void setstartTimeZeroAndOpenSchedule();
 private:
 	float m_fTime;
 };

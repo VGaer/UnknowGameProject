@@ -9,7 +9,6 @@ class Monster;
 
 class State {
 public:
-	// ×´Ì¬×ª»»
 	virtual void Enter(Monster*) = 0;
 	virtual void Excute(Monster*) = 0;
 	virtual void Exit(Monster*) = 0;

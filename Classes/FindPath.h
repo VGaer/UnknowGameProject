@@ -2,12 +2,14 @@
 #define __FindPath_H__
 
 #include "Monster.h"
+#include "vector"
+
 class Monster;
 
 class FindPath
 {
 public:
-	void run(Vec2 startPos, Vec2 endPos); // 参数为像素坐标
+	void run(Vec2 startId, Vec2);
 	void bindMonster(Monster* mon);
 private:
 	Monster* monster;

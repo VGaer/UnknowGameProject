@@ -52,24 +52,19 @@ public:
 
 class Idle : public State {
 public:
+	Idle() {};
 	virtual void Enter(Monster*);
 	virtual void Excute(Monster*);
 	virtual void Exit(Monster*);
-private:
-	float duration;
-	TimeCounter timeCounter;
+private:	
 };
 
 class Patrol : public State {
 private:
-	Patrol() {}
-
 	Patrol(const Patrol&);
 	Patrol& operator=(const Patrol&);
-
 public:
-	static Patrol* Instance();
-
+	Patrol() {}
 	virtual void Enter(Monster*);
 	virtual void Excute(Monster*);
 	virtual void Exit(Monster*);
@@ -77,29 +72,31 @@ public:
 
 class Track : public State {
 private:
-	Track() {}
-
 	Track(const Track&);
 	Track& operator=(const Track&);
-
 public:
-	static Track* Instance();
-
+	Track() {}
 	virtual void Enter(Monster*);
 	virtual void Excute(Monster*);
 	virtual void Exit(Monster*);
 };
 
 class Attack : public State {
-private:
-	Attack() {}
-
+private:	
 	Attack(const Attack&);
 	Attack& operator=(const Attack&);
 
 public:
-	static Attack* Instance();
+	Attack() {}
+	virtual void Enter(Monster*);
+	virtual void Excute(Monster*);
+	virtual void Exit(Monster*);
+};
 
+//±»¹¥»÷×´Ì¬
+class Attacked : public State{
+public:
+	Attacked() {}
 	virtual void Enter(Monster*);
 	virtual void Excute(Monster*);
 	virtual void Exit(Monster*);

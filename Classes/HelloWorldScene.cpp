@@ -29,7 +29,22 @@ bool HelloWorld::init()
 	{
 		return false;
 	}
+	/*加载动画*/
+	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdattack/treemonsterdattack.plist", "monster/treemonster/treemonsterdattack/treemonsterdattack.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdrun/treemonsterdrun.plist", "monster/treemonster/treemonsterdrun/treemonsterdrun.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdstatic/treemonsterdstatic.plist", "monster/treemonster/treemonsterdstatic/treemonsterdstatic.png");
 
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterhattack/treemonsterhattack.plist", "monster/treemonster/treemonsterhattack/treemonsterhattack.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterhrun/treemonsterhrun.plist", "monster/treemonster/treemonsterhrun/treemonsterhrun.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterhstatic/treemonsterhstatic.plist", "monster/treemonster/treemonsterhstatic/treemonsterhstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsteruattack/treemonsteruattack.plist", "monster/treemonster/treemonsteruattack/treemonsteruattack.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterurun/treemonsterurun.plist", "monster/treemonster/treemonsterurun/treemonsterurun.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterustatic/treemonsterustatic.plist", "monster/treemonster/treemonsterustatic/treemonsterustatic.png");
+
+
+	/*加载动画*/
 	TMXTiledMap* map = TMXTiledMap::create("home.tmx");
 	map->getLayer("barrier")->setVisible(false);
 	m_map = map;
@@ -43,7 +58,6 @@ bool HelloWorld::init()
 
 	Player* player = Player::createWithparent(map);
 	//bindSprite后主角便有个ContenSize,即不再是默认的0，0 ContenSize
-	player->bindSprite(Sprite::create("player.png"));
 	//放大主角精灵
 	player->getSprite()->setScale(player->getPlayer_magnification());
 	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
@@ -58,7 +72,7 @@ bool HelloWorld::init()
 
 
 	player->setTiledMap(map);
-	player->setPosition(Vec2(100, 150));
+	player->setPosition(Vec2(100, 250));
 
 	Sprite* dian = Sprite::create("dian.jpg");
 	dian->setPosition(player->getContentSize().width, 0);
@@ -93,7 +107,44 @@ bool HelloWorld::init()
 	drawNode4->drawLine(Vec2(682, 0), Vec2(682, 2000), Color4F::BLACK);
 	map->addChild(drawNode4);
 
+	//读入怪物数据
+	GameData* gamedata = GameData::getInstance();
 	
+	//初始化怪物寻路图 
+	initGraph();
+
+	//m_monster = Monster::create("bear");
+	//map->addChild(m_monster, (int)map->getChildren().size());
+	//m_monster->setMonsterParent(map);
+	//m_monster->setvecPatrolpoint();//设置巡逻点
+	//m_monster->setPosition(32, 384);
+	////m_monster->setPosition(32, 32);
+	//m_monster->bindPlayer(m_player);
+	//m_monster->getAnimBase()->setCurDirection(m_player->getPosition());//初始化控制器方向
+
+	//m_monster->getSprite()->setScale(m_monster->getMonster_magnification());//放大怪物
+	//m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width * 2 / 2,
+	//	m_monster->getContentSize().height * 2 / 2));
+	//m_monster->setContentSize(m_monster->getContentSize() * 2);
+	//Sprite* sprite222 = Sprite::create("dian.jpg");
+	//m_monster->addChild(sprite222);
+	//sprite222->setPosition(Vec2(m_monster->getContentSize().width / 2,m_monster->getContentSize().height / 2));
+	//sprite222->setPosition(Vec2());
+
+
+	/*加载树怪测试*/
+	m_monster = Monster::create("bear");
+	map->addChild(m_monster, (int)map->getChildren().size());
+	m_monster->getSprite()->setScale(1.5);
+	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+	m_monster->setAnchorPoint(Vec2(0.5,0.2));
+	m_monster->setMonsterParent(map);
+	m_monster->setvecPatrolpoint();
+	m_monster->setPosition(32, 384);
+	m_monster->bindPlayer(m_player);
+	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
+
+
 	return true;
 }
 
@@ -115,11 +166,12 @@ void HelloWorld::update(float dt)
 {
 	auto p = m_player->getPosition();
 	p = CC_POINT_POINTS_TO_PIXELS(p);
-
 	m_player->setVertexZ(-((p.y + 64) / 64));
 
+	p = m_monster->getPosition();
+	p = CC_POINT_POINTS_TO_PIXELS(p);
+	m_monster->setVertexZ(-((p.y + 64) / 64));
 	setViewpointCenter(m_player->getPosition());
-
 }
 
 void HelloWorld::setViewpointCenter(Vec2 Position)
@@ -134,4 +186,12 @@ void HelloWorld::setViewpointCenter(Vec2 Position)
 
 	Vec2 offset = pointA - pointB;
 	this->setPosition(offset);
+}
+
+void HelloWorld::initGraph()
+{
+	graph = Graph::getInstance();
+	graph->setTildMap(m_map);
+	graph->init(Vec2(16,20));
+	return;
 }

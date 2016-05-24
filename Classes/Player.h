@@ -7,6 +7,8 @@
 #include "AnimationUtil.h"
 #include "SimpleAudioEngine.h"
 #include "RemoteSkill.h"
+#include "SkillControl.h"
+#include <queue>
 
 USING_NS_CC;
 typedef enum
@@ -38,10 +40,29 @@ typedef enum
 	em_right
 }FourDir;
 
+struct baseskillstr
+{
+	int i;//技能编号
+	bool b;//单段普通攻击判断完成标志,true代表已判断
+	baseskillstr(int ii, bool bb) : i(ii), b(bb){}
+};
+
+typedef enum
+{
+	enum_playerattackedfromleft = 1,
+	enum_playerattackedfromright,
+	enum_playerattackedfromup,
+	enum_playerattackedfromdown
+};
+
+class SkillControl;
+
 class Player : public Entity
 {
 public:
+	std::queue<int> attackedqueue;
 	//CREATE_FUNC(Player);
+	static Player* getInstance();
 	static Player* createWithparent(TMXTiledMap* parent);
 	virtual bool init();
 	virtual void update(float dt);
@@ -55,15 +76,23 @@ public:
 	void CallBack1();
 	void setPlayerparent(TMXTiledMap* layerparent);
 	int getPlayer_magnification();
+	Vector<RemoteSkill*> getPlayerUsing_swordwave_Arr();
+	std::vector<int> getVecSkill();
+	std::vector<baseskillstr>& getvecskillstr(); //返回引用
+	int getPlayerDir();
+	bool playerIsattacked;//主角是否被攻击
+	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
 private:
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
 	std::vector<int> vecskill;
+	std::vector<baseskillstr> vecskillstr;
 	TimeCounter* timecounter_up;
 	TimeCounter* timecounter_down;
 	TimeCounter* timecounter_left;
 	TimeCounter* timecounter_right;
 	TimeCounter* timecounter_J;
+	TimeCounter* timecounter_attacked;//用来被攻击的计时
 	int PlayerState;
 	int PlayerDir;
 	Vector<RemoteSkill*> m_swordwave_Arr;
@@ -72,5 +101,8 @@ private:
 	int swordwaveNum;
 	TMXTiledMap* m_parrent;
 	int m_player_magnification;//玩家精灵放大倍数
+	int m_hp;
+	Color3B m_playerColor;
+	SkillControl* skillControl;
 };
 #endif 

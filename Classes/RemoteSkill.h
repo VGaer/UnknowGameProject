@@ -24,12 +24,13 @@ public:
 	void hide();
 	void show();
 	void SetStart(bool a);
-	bool isSetedStart();
+	bool isVisible();
 	void setSkillMove(Vec2 movespeed);
 	void setSkillDir(int dir);
 	int  getSkillDir();
 private:
 	int m_skillDir;
+	bool m_isvisible;
 };
 
 #endif

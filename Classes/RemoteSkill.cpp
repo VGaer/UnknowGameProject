@@ -19,11 +19,18 @@ bool RemoteSkill::init()
 void RemoteSkill::hide()
 {
 	this->setVisible(false);
+	m_isvisible = false;
 }
 
 void RemoteSkill::show()
 {
 	this->setVisible(true);
+	m_isvisible = true;
+}
+
+bool RemoteSkill::isVisible()
+{
+	return m_isvisible;
 }
 
 void RemoteSkill::setSkillMove(Vec2 movespeed)

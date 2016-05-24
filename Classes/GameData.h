@@ -5,7 +5,8 @@
 #include "map"
 using namespace std;
 
-#define MONS_DATA_PATH "..."	// 怪物数据文件路径
+//#define MONS_DATA_PATH "..."	// 怪物数据文件路径
+#define MONS_DATA_PATH "monattribute.json"
 
 struct MonsData
 {
@@ -15,7 +16,12 @@ struct MonsData
 	float moveSpeed;   // 行走一条边的时间
 	float attackInter; // 攻击间隔
 	float attackRange; // 攻击范围
-	float eyeRange;	   // 视野半径
+	float eyeRange;	   // 视野半径，
+	float patrolRange; // 巡逻半径，
+	float perceptionRange; //感知半径
+	float attackedrestoretimes; //被攻击恢复时间 //恢复时间约快说明硬直越高
+	float beforeattacktimes; //前摇时间
+	float attackAnimatetimePer; //攻击动画播放时间
 	string imagePath;  // 图片路径
 };
 
