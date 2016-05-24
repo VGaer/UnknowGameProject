@@ -40,6 +40,7 @@ public:
 	Action* m_stanAnimArray[3];         // 静止动作容器
 	Action* m_moveAnimArray[3];			// 移动动作容器
 	Action* m_attaAnimArray[3];			// 攻击动作容器
+	Action* m_attaBigAnimArray[3];      // 攻击大技能
 };
 
 #endif

@@ -25,18 +25,10 @@ Monster::~Monster()
 bool Monster::init(const std::string& name)
 {
 	auto data = GameData::getInstance()->getDataFromMonsData(name);
-	this->name = data->name;
-	hp = data->hp;
-	damage = data->damage;
-	moveSpeed = data->moveSpeed;
-	attackInter = data->attackInter;
-	attackRange = data->attackRange;
-	eyeRange = data->eyeRange;
-	patrolRange = data->patrolRange;
-	perceptionRange = data->perceptionRange;
-	attackedrestoretimes = data->attackedrestoretimes;
-	beforeattacktimes = data->beforeattacktimes;
-	attackAnimatetimePer = data->attackAnimatetimePer;
+	
+	//初始化怪物数据，
+	this->monsdata = *data;
+
 	bindSprite(Sprite::create(data->imagePath));
 	//记录怪物颜色
 	m_monstercolor = this->getSprite()->getColor();
@@ -48,11 +40,19 @@ bool Monster::init(const std::string& name)
 
 	animBase = new AnimBase(this);//设置控制器,控制器用到了monster精灵。
 
-
-
 	//设置定时器
 	m_timecounter = TimeCounter::create();
 	this->addChild(m_timecounter);
+	m_bigskill_timecounter = TimeCounter::create();
+	this->addChild(m_bigskill_timecounter);
+	//直接开始计时
+	m_bigskill_timecounter->start();
+	m_remoteskill_timecounter = TimeCounter::create();
+	this->addChild(m_remoteskill_timecounter);
+	m_remoteskill_timecounter->start();
+	m_baseskill_timecounter = TimeCounter::create();
+	this->addChild(m_baseskill_timecounter);
+	m_baseskill_timecounter->start();
 
 	//每个Node都设置为0.5 0.5的锚点
 	this->setAnchorPoint(Vec2(0.5, 0.5));
@@ -68,6 +68,24 @@ bool Monster::init(const std::string& name)
 	m_magnification = 1;//精灵放大倍数
 
 	Is_firstFindplayer_Track = true;
+
+	Isattacking = false;//初始化攻击状态为false
+
+	baseAttackRange = bigSkillAttackRang = remoteSkillAttackRang = -1;
+
+	//初始化攻击范围
+	if (monsdata.skillmap.find("baseskill") != monsdata.skillmap.end())
+	{
+		baseAttackRange = monsdata.skillmap["baseskill"].attackRange;
+	}
+	if (monsdata.skillmap.find("bigskill") != monsdata.skillmap.end())
+	{
+		bigSkillAttackRang = monsdata.skillmap["bigskill"].attackRange;
+	}
+	if (monsdata.skillmap.find("remoteskill") != monsdata.skillmap.end())
+	{
+		remoteSkillAttackRang = monsdata.skillmap["remoteskill"].attackRange;
+	}
 
 	return true;
 }
@@ -130,8 +148,8 @@ void Monster::cmd_stop()
 
 bool Monster::cmd_hurt(float damage)
 {
-	hp -= damage;
-	if (hp <= 0)
+	monsdata.hp -= damage;
+	if (monsdata.hp <= 0)
 		return true;
 	return false;
 }
@@ -140,8 +158,6 @@ void Monster::cmd_attack()
 {
 	//进入攻击范围时，是以怪物前面判定的，此时怪物控制器的方向已经面向主角了
 	animBase->playAttaAnim();
-
-	
 }
 
 bool Monster::checkInEyeRange()
@@ -192,7 +208,7 @@ bool Monster::checkInEyeRange()
 	//非首次发现主角，以怪物为中点，一个圆的区域去追踪主角，除非主角跑出圆区域，否则走不掉
 	else{
 		Vec2 distanceVec = player->getPosition() - this->getPosition();
-		if (distanceVec.getLength() < eyeRange)
+		if (distanceVec.getLength() < monsdata.eyeRange)
 		{
 			return true;
 		}
@@ -206,7 +222,7 @@ bool Monster::checkInEyeRange()
 bool Monster::checkInPerceptionRange()
 {
 	Vec2 distanceVec = player->getPosition() - this->getPosition();
-	if (distanceVec.getLength() < perceptionRange)
+	if (distanceVec.getLength() < monsdata.perceptionRange)
 	{
 		return true;
 	}
@@ -217,55 +233,49 @@ bool Monster::checkInPerceptionRange()
 }
 
 //攻击范围写为圆形的，状态机那里写方向以主角方向定
+//普通攻击（无cd），的攻击范围判断
 bool Monster::checkInAttaRange()
 {
 	if (player != NULL)
 	{
 		Vec2 posdif = player->getPosition() - getPosition();
 		float distance = posdif.getLength();
-		if (distance <= attackRange){
-			/*switch (animBase->getCurDirection())
-			{
-			case Dir_up:{
-				if (posdif.y > 0) return true;
-			}
-				break;
-			case Dir_down:{
-				if (posdif.y < 0) return true;
-			}
-				break;
-			case Dir_left:
-				if (posdif.x < 0) return true;
-				break;
-			case Dir_right:
-				if (posdif.x > 0) return true;
-				break;
-			case Dir_upleft:
-				if (posdif.y < 0) return true;
-				break;
-			case Dir_upright:
-				if (posdif.y > 0) return true;
-				break;
-			case Dir_downleft:
-				if (posdif.y < 0) return true;
-				break;
-			case Dir_downright:
-				if (posdif.y > 0) return true;
-				break;
-			case Dir_leftup:
-				if (posdif.x < 0) return true;
-			case Dir_leftdown:
-				if (posdif.x < 0) return true;
-			case Dir_rightup:
-				if (posdif.x > 0) return true;
-			case Dir_rightdown:
-				if (posdif.x > 0) return true;
-			default:
-				break;
-			}*/
+		if (baseAttackRange < 0)
+			return false;
+		if (distance <= baseAttackRange){
 			return true;
 		}
 			
+	}
+	return false;
+}
+
+bool Monster::checkInBigSkillRange()
+{
+	if (player != NULL)
+	{
+		Vec2 posdif = player->getPosition() - getPosition();
+		float distance = posdif.getLength();
+		if (bigSkillAttackRang < 0)
+			return false;
+		if (distance <= bigSkillAttackRang){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Monster::checkInRemoteSkillRange()
+{
+	if (player != NULL)
+	{
+		Vec2 posdif = player->getPosition() - getPosition();
+		float distance = posdif.getLength();
+		if (remoteSkillAttackRang < 0)
+			return false;
+		if (distance <= remoteSkillAttackRang){
+			return true;
+		}
 	}
 	return false;
 }
@@ -287,7 +297,7 @@ int Monster::checkInSectorRange()
 	{
 		float distance = (player->getPosition() - getPosition()).getLength();
 		//在圆内
-		if (distance < eyeRange){
+		if (distance < monsdata.eyeRange){
 			//判断在哪个扇形区域
 			double vecX = player->getPositionX() - this->getPositionX();
 			double vecY = player->getPositionY() - this->getPositionY();

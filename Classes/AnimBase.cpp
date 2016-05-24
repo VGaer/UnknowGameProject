@@ -227,8 +227,14 @@ void AnimBase::playAttaAnim()
 		break;
 	}
 	m_sprite->stopAllActions();
-	if (direction >= 0 && direction < 3)
+	if (direction >= 0 && direction < 3 && m_monster->m_curskill == "baseskill")
 		m_sprite->runAction(m_attaAnimArray[direction]);
+	if (direction >= 0 && direction < 3 && m_monster->m_curskill == "bigskill")
+	{
+		m_sprite->runAction(m_attaBigAnimArray[direction]);
+		log("aaa");
+	}
+		
 }
 
 void AnimBase::setAction()
@@ -269,19 +275,36 @@ void AnimBase::setAction()
 	
 
 	//攻击动画时间安排要跟怪物的攻击间隔对应上
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterhattack", m_monster->attackAnimatetimePer, 1);
+	animation = AnimationUtil::createWithSingleFrameName("treemonsterhattack", m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_attaAnimArray[0] = animate;
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsteruattack", m_monster->attackAnimatetimePer, 1);
+	animation = AnimationUtil::createWithSingleFrameName("treemonsteruattack", m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_attaAnimArray[1] = animate;
 
-
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterdattack", m_monster->attackAnimatetimePer, 1);
+	
+	animation = AnimationUtil::createWithSingleFrameName("treemonsterdattack", m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_attaAnimArray[2] = animate;
+
+	///大技能测试
+	animation = AnimationUtil::createWithSingleFrameName("treemonsterhbigskill", 0.1f, 1);
+	animate = Animate::create(animation);
+	animate->retain();
+	m_attaBigAnimArray[0] = animate;
+
+	animation = AnimationUtil::createWithSingleFrameName("treemonsterubigskill", 0.1f, 1);
+	animate = Animate::create(animation);
+	animate->retain();
+	m_attaBigAnimArray[1] = animate;
+
+
+	animation = AnimationUtil::createWithSingleFrameName("treemonsterdbigskill", 0.1f, 1);
+	animate = Animate::create(animation);
+	animate->retain();
+	m_attaBigAnimArray[2] = animate;
 }

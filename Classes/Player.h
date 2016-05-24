@@ -29,7 +29,7 @@ typedef enum
 	enum_baseattack = 200,
 	enum_basepoke,
 	enum_swordwave //½£Æø
-}Skill;
+}playerskill;
 
 typedef enum
 {

@@ -43,6 +43,10 @@ bool HelloWorld::init()
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterurun/treemonsterurun.plist", "monster/treemonster/treemonsterurun/treemonsterurun.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterustatic/treemonsterustatic.plist", "monster/treemonster/treemonsterustatic/treemonsterustatic.png");
 
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterubigskill/treemonsterubigskill.plist", "monster/treemonster/treemonsterubigskill/treemonsterubigskill.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdbigskill/treemonsterdbigskill.plist", "monster/treemonster/treemonsterdbigskill/treemonsterdbigskill.png");
+	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.plist", "monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.png");
+
 
 	/*¼ÓÔØ¶¯»­*/
 	TMXTiledMap* map = TMXTiledMap::create("home.tmx");
@@ -98,7 +102,7 @@ bool HelloWorld::init()
 	
 
 	/*¼ÓÔØÊ÷¹Ö²âÊÔ*/
-	m_monster = Monster::create("bear");
+	m_monster = Monster::create("treemonster");
 	map->addChild(m_monster, (int)map->getChildren().size());
 	m_monster->getSprite()->setScale(1.5);
 	m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width * 1.5 / 2, m_monster->getContentSize().height * 1.5 / 2));

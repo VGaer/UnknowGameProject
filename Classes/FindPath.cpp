@@ -35,13 +35,13 @@ void FindPath::run(Vec2 startId, Vec2 endId)
 			});
 			if (vec.x == 0 || vec.y == 0)//直角走路,根据怪物的速度
 			{
-				auto move = MoveTo::create(monster->moveSpeed, pos);
+				auto move = MoveTo::create(monster->monsdata.moveSpeed, pos);
 				monster->runAction(Sequence::create(delay, call, move, NULL));
 			}
 			//对角线走,根据怪物的速度，
 			else
 			{
-				auto move = MoveTo::create(sqrt(2.0) * monster->moveSpeed, pos);
+				auto move = MoveTo::create(sqrt(2.0) * monster->monsdata.moveSpeed, pos);
 				monster->runAction(Sequence::create(delay, call, move, NULL));
 			}
 			
