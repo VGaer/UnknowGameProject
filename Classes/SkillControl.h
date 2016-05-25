@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "TimeCounter.h"
 
-#define MAX_SKILL_NUM 5		// 未定
+#define MAX_SKILL_NUM 1		// 未定
 
 #define SKILL_LASER_CD 2
 
@@ -15,11 +15,12 @@ enum SkillType
 	skillType_laser = 0,
 };
 
-class SkillControl
+class SkillControl: public Node
 {
 public:
 	// 初始化属性
-	SkillControl(Player* player);
+	CREATE_FUNC(SkillControl);
+	virtual bool init();
 public:
 	void useSkill(int id);  // 绑定快捷键可能用得上
 	// 技能列表
@@ -28,7 +29,7 @@ private:
 	// 玩家
 	Player* m_player;
 	// 技能计时器
-	TimeCounter skillCounter[MAX_SKILL_NUM];
+	TimeCounter* skillCounter[MAX_SKILL_NUM];
 };
 
 #endif

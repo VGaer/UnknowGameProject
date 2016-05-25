@@ -10,22 +10,22 @@ Player* Player::getInstance()
 	return instance;
 }
 
-Player* Player::createWithparent(TMXTiledMap* parent)
-{
-	Player* player = new Player();
-	if (player){
-		parent->addChild(player, (int)parent->getChildren().size());
-	}
-	if (player && player->init()){
-		player->autorelease();
-		return player;
-	}
-	else{
-		delete player;
-		player = NULL;
-		return NULL;
-	}
-}
+//Player* Player::createWithparent(TMXTiledMap* parent)
+//{
+//	Player* player = new Player();
+//	if (player){
+//		parent->addChild(player, (int)parent->getChildren().size());
+//	}
+//	if (player && player->init()){
+//		player->autorelease();
+//		return player;
+//	}
+//	else{
+//		delete player;
+//		player = NULL;
+//		return NULL;
+//	}
+//}
 
 bool Player::init()
 {
@@ -94,7 +94,8 @@ bool Player::init()
 	this->bindSprite(Sprite::create("player.png"));
 	m_playerColor = this->getSprite()->getColor();
 
-	skillControl = new SkillControl(this);
+	skillControl = SkillControl::create();
+	addChild(skillControl);
 	return true;
 }
 

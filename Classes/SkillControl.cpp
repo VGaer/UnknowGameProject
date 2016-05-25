@@ -1,13 +1,15 @@
 #include "SkillControl.h"
 #include "Projectile.h"
 
-SkillControl::SkillControl(Player* player)
+bool SkillControl::init()
 {
-	m_player = player;
+	m_player = Player::getInstance();
 	for (int i = 0; i < MAX_SKILL_NUM; i++)
 	{
-		skillCounter[i].init();
+		skillCounter[i] = TimeCounter::create();
+		addChild(skillCounter[i]);
 	}
+	return true;
 }
 
 void SkillControl::useSkill(int id)
@@ -17,12 +19,11 @@ void SkillControl::useSkill(int id)
 
 void SkillControl::skill_laser()
 {
-	float time = skillCounter[skillType_laser].getCurTime();
-	//log("%f", time);
-	skillCounter[skillType_laser].start();
-	// 判断是否在cd范围内
+	float time = skillCounter[skillType_laser]->getCurTime();
 	if (time > 0 && time < SKILL_LASER_CD)
 		return;
+	skillCounter[skillType_laser]->start();
+	// 判断是否在cd范围内
 	auto laser = Laser::create();
 	// 数值设定
 	laser->attr_damage = 10;

@@ -63,7 +63,6 @@ public:
 	std::queue<int> attackedqueue;
 	//CREATE_FUNC(Player);
 	static Player* getInstance();
-	static Player* createWithparent(TMXTiledMap* parent);
 	virtual bool init();
 	virtual void update(float dt);
 	void keyPressed(EventKeyboard::KeyCode keyCode, Event* event);

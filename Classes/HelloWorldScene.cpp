@@ -56,7 +56,8 @@ bool HelloWorld::init()
 
 	this->addChild(map, 0, 1);
 
-	Player* player = Player::createWithparent(map);
+	//Player* player = Player::createWithparent(map);
+	Player* player;
 	//bindSprite后主角便有个ContenSize,即不再是默认的0，0 ContenSize
 	//放大主角精灵
 	player->getSprite()->setScale(player->getPlayer_magnification());
