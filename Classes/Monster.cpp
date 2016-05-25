@@ -87,6 +87,8 @@ bool Monster::init(const std::string& name)
 		remoteSkillAttackRang = monsdata.skillmap["remoteskill"].attackRange;
 	}
 
+	isAttackedByProjectile = false;
+
 	return true;
 }
 
@@ -436,6 +438,13 @@ std::vector<Vec2> Monster::getPatrolpointvec()
 
 bool Monster::IsattackedByPlayer()
 {
+	// 判断是否被投射物击中
+	if (isAttackedByProjectile)
+	{
+		isAttackedByProjectile = false;
+		return true;
+	}
+
 	//获取主角剑气
 	auto vec = player->getPlayerUsing_swordwave_Arr();
 	if (vec.size() > 0){

@@ -63,6 +63,7 @@ public:
 	bool IspatrolEnd;//巡逻完成
 	int index; //巡逻点记录
 	bool IsattackedByPlayer();	//是否被主角攻击
+	bool isAttackedByProjectile; // 是否被投射物攻击
 	Color3B m_monstercolor; //怪物颜色
 	bool Isrestartbaseattack;	//记录怪物是否重新普通攻击
 	bool IstrackNoresult;    //追踪时记录怪物前一次的位置

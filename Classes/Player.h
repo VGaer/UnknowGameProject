@@ -7,6 +7,7 @@
 #include "AnimationUtil.h"
 #include "SimpleAudioEngine.h"
 #include "RemoteSkill.h"
+#include "SkillControl.h"
 #include <queue>
 
 USING_NS_CC;
@@ -28,7 +29,8 @@ typedef enum
 {
 	enum_baseattack = 200,
 	enum_basepoke,
-	enum_swordwave //剑气
+	enum_swordwave, //剑气
+	enum_laserskill//雷电
 }playerskill;
 
 typedef enum
@@ -54,13 +56,15 @@ typedef enum
 	enum_playerattackedfromdown
 };
 
+class SkillControl;
 
 class Player : public Entity
 {
 public:
 	std::queue<int> attackedqueue;
 	//CREATE_FUNC(Player);
-	static Player* createWithparent(TMXTiledMap* parent);
+	static Player* getInstance();
+	//static Player* createWithparent(TMXTiledMap* parent);
 	virtual bool init();
 	virtual void update(float dt);
 	void keyPressed(EventKeyboard::KeyCode keyCode, Event* event);
@@ -78,8 +82,8 @@ public:
 	std::vector<baseskillstr>& getvecskillstr(); //返回引用
 	int getPlayerDir();
 	bool playerIsattacked;//主角是否被攻击
-private:
 	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
+private:	
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
 	std::vector<int> vecskill;
@@ -100,5 +104,6 @@ private:
 	int m_player_magnification;//玩家精灵放大倍数
 	int m_hp;
 	Color3B m_playerColor;
+	SkillControl* skillControl;
 };
 #endif 

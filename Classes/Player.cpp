@@ -1,21 +1,16 @@
 #include "Player.h"
 
-Player* Player::createWithparent(TMXTiledMap* parent)
+
+Player* Player::getInstance()
 {
-	Player* player = new Player();
-	if (player){
-		parent->addChild(player, (int)parent->getChildren().size());
+	static Player* instance = NULL;
+	if (instance == NULL)
+	{
+		instance = new Player();
 	}
-	if (player && player->init()){
-		player->autorelease();
-		return player;
-	}
-	else{
-		delete player;
-		player = NULL;
-		return NULL;
-	}
+	return instance;
 }
+
 
 bool Player::init()
 {
@@ -69,6 +64,7 @@ bool Player::init()
 	frameCache->addSpriteFramesWithFile("hswordwave/hswordwave.plist", "hswordwave/hswordwave.png");
 
 	frameCache->addSpriteFramesWithFile("remoteskills/playerskill.plist", "remoteskills/playerskill.png");
+	frameCache->addSpriteFramesWithFile("player_skill/laser.plist", "player_skill/laser.png");
 
 	PlayerState = enum_initNone;//初始化为什么都没有状态，一运行游戏如果没操作就会转为enum_static,有操作转为对应操作的walk or run状态 
 	PlayerDir = em_down;//初始化时
@@ -82,6 +78,9 @@ bool Player::init()
 
 	this->bindSprite(Sprite::create("player.png"));
 	m_playerColor = this->getSprite()->getColor();
+
+	skillControl = SkillControl::create();
+	addChild(skillControl);
 
 	return true;
 }
@@ -516,9 +515,23 @@ void Player::update(float dt)
 				PlayerState = enum_swordwave;
 				return;
 			}
+			case enum_laserskill:{	
+				if (PlayerState != enum_laserskill){
+					Animation* animation = AnimationUtil::createWithSingleFrameName("uswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_laserskill;
+				return;
+			}
 			default:
 				break;
 			}
+
+			break;
 		}
 		case em_down:{
 			switch (vecskill[0])
@@ -585,9 +598,23 @@ void Player::update(float dt)
 				PlayerState = enum_swordwave;
 				return;
 			}
+			case enum_laserskill:{
+				if (PlayerState != enum_laserskill){
+					Animation* animation = AnimationUtil::createWithSingleFrameName("dswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_laserskill;
+				return;
+			}
 			default:
 				break;
 			}
+
+			break;
 		}
 		case em_left:{
 			switch (vecskill[0])
@@ -658,9 +685,23 @@ void Player::update(float dt)
 				PlayerState = enum_swordwave;
 				return;
 			}
+			case enum_laserskill:{
+				if (PlayerState != enum_laserskill){
+					Animation* animation = AnimationUtil::createWithSingleFrameName("hswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_laserskill;
+				return;
+			}
 			default:
 				break;
 			}
+
+			break;
 		}
 		case em_right:{
 			switch (vecskill[0])
@@ -731,9 +772,23 @@ void Player::update(float dt)
 				PlayerState = enum_swordwave;
 				return;
 			}
+			case enum_laserskill:{
+				if (PlayerState != enum_laserskill){
+					Animation* animation = AnimationUtil::createWithSingleFrameName("hswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_laserskill;
+				return;
+			}
 			default:
 				break;
 			}
+
+			break;
 		}
 		default:
 			break;
@@ -1477,7 +1532,7 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		//设置K技能的攻击冷却时间//剑气
 		float curtime = timecounter_J->getCurTime();
-		//第一次按K时才有curtime = 0,此后每隔0.8f秒才能按放一次技能
+		//第一次按K时才有curtime = 0,此后每隔07f秒才能按放一次技能
 		//主角非被击状态才能放技能
 		if (curtime == 0 || curtime > 0.7f && (playerIsattacked == false)){
 			timecounter_J->start();//一直计时
@@ -1513,6 +1568,45 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 				}
 			}
 		}
+	}
+
+	if (keyCode == EventKeyboard::KeyCode::KEY_L)
+	{
+		if (playerIsattacked == false)
+		{
+			if (vecskill.size() == 0 && skillControl->skill_laser())
+			{
+				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
+					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright){
+					vecskill.push_back(enum_laserskill);
+					switch (PlayerState)//run状态下一帧使用雷电技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
+					{
+					case enum_doubleup:{
+						vec[0] = enum_up;
+						break;
+					}
+					case enum_doubledown:{
+						vec[0] = enum_down;
+						break;
+					}
+					case enum_doubleleft:{
+						vec[0] = enum_left;
+						break;
+					}
+					case enum_doubleright:{
+						vec[0] = enum_right;
+						break;
+					}
+					default:
+						break;
+					}
+				}
+				else{
+					vecskill.push_back(enum_laserskill);//walk状态也是swordwave技能
+				}
+			}
+		}
+			
 	}
 }
 
@@ -1599,6 +1693,7 @@ void Player::keyReleased(EventKeyboard::KeyCode keyCode, Event* event)
 void Player::setTiledMap(TMXTiledMap* map)
 {
 	m_map = map;
+	m_map->addChild(this, m_map->getChildren().size());
 }
 
 Vec2 Player::tiledCoordForPosition(Vec2 pos)
