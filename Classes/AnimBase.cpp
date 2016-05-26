@@ -228,11 +228,16 @@ void AnimBase::playAttaAnim()
 	}
 	m_sprite->stopAllActions();
 	if (direction >= 0 && direction < 3 && m_monster->m_curskill == "baseskill")
+	{
 		m_sprite->runAction(m_attaAnimArray[direction]);
-	if (direction >= 0 && direction < 3 && m_monster->m_curskill == "bigskill")
+	}
+	else if (direction >= 0 && direction < 3 && m_monster->m_curskill == "bigskill")
 	{
 		m_sprite->runAction(m_attaBigAnimArray[direction]);
-		log("aaa");
+	}
+	else if (direction >= 0 && direction < 3 && m_monster->m_curskill == "remoteskill")
+	{
+		m_sprite->runAction(m_attaRemoteAnimArray[direction]);
 	}
 		
 }
@@ -274,37 +279,64 @@ void AnimBase::setAction()
 	m_moveAnimArray[2] = animate;
 	
 
-	//攻击动画时间安排要跟怪物的攻击间隔对应上
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterhattack", m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
-	animate = Animate::create(animation);
-	animate->retain();
-	m_attaAnimArray[0] = animate;
+	//攻击动画时间安排要跟怪物的每帧时间对应
+	if (m_monster->monsdata.skillmap.find("baseskill") != m_monster->monsdata.skillmap.end())
+	{
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.skillmap["baseskill"].hAnimateName.c_str(), m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaAnimArray[0] = animate;
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsteruattack", m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
-	animate = Animate::create(animation);
-	animate->retain();
-	m_attaAnimArray[1] = animate;
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.skillmap["baseskill"].uAnimateName.c_str(), m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaAnimArray[1] = animate;
 
+
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.skillmap["baseskill"].dAnimateName.c_str(), m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaAnimArray[2] = animate;
+	}
 	
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterdattack", m_monster->monsdata.skillmap["baseskill"].attackAnimatetimePer, 1);
-	animate = Animate::create(animation);
-	animate->retain();
-	m_attaAnimArray[2] = animate;
 
 	///大技能测试
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterhbigskill", 0.1f, 1);
-	animate = Animate::create(animation);
-	animate->retain();
-	m_attaBigAnimArray[0] = animate;
+	if (m_monster->monsdata.skillmap.find("bigskill") != m_monster->monsdata.skillmap.end())
+	{
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.skillmap["bigskill"].hAnimateName.c_str(),m_monster->monsdata.skillmap["bigskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaBigAnimArray[0] = animate;
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterubigskill", 0.1f, 1);
-	animate = Animate::create(animation);
-	animate->retain();
-	m_attaBigAnimArray[1] = animate;
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.skillmap["bigskill"].uAnimateName.c_str(), m_monster->monsdata.skillmap["bigskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaBigAnimArray[1] = animate;
 
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterdbigskill", 0.1f, 1);
-	animate = Animate::create(animation);
-	animate->retain();
-	m_attaBigAnimArray[2] = animate;
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.skillmap["bigskill"].dAnimateName.c_str(), m_monster->monsdata.skillmap["bigskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaBigAnimArray[2] = animate;
+	}
+
+	//远程技能测试
+	if (m_monster->monsdata.remoteskillmap.find("remoteskill") != m_monster->monsdata.remoteskillmap.end())
+	{
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.remoteskillmap["remoteskill"].hAnimateName.c_str(), m_monster->monsdata.remoteskillmap["remoteskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaRemoteAnimArray[0] = animate;
+
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.remoteskillmap["remoteskill"].uAnimateName.c_str(), m_monster->monsdata.remoteskillmap["remoteskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaRemoteAnimArray[1] = animate;
+
+		animation = AnimationUtil::createWithSingleFrameName(m_monster->monsdata.remoteskillmap["remoteskill"].dAnimateName.c_str(), m_monster->monsdata.remoteskillmap["remoteskill"].attackAnimatetimePer, 1);
+		animate = Animate::create(animation);
+		animate->retain();
+		m_attaRemoteAnimArray[2] = animate;
+
+	}
 }

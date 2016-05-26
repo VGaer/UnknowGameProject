@@ -3,6 +3,8 @@
 
 #include "Player.h"
 #include "MonsterManager.h"
+#include "NPC.h"
+#include "PopManager.h"
 
 class GameScene : public Layer
 {

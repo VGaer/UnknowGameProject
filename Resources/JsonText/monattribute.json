@@ -1,0 +1,4 @@
+[
+{"name":"bear","hp":100,"damage":10,"moveSpeed":0.5,"attackInter":0.7,"attackRange":55,"eyeRange":640,"patrolRange":640,"perceptionRange":320,"attackedrestoretimes":0.1,"beforeattacktimes":0.5,"attackAnimatetimePer":0.1,"imagePath":"monster/treemonster/treemonster.png"},
+{"name":"bull","hp":100,"damage":10,"moveSpeed":0.5,"attackInter":3,"attackRange":32,"eyeRange":640,"patrolRange":640,"perceptionRange":320,"attackedrestoretimes":0.1,"beforeattacktimes":0.5,"attackAnimatetimePer":0.1,"imagePath":"player.png"}
+]

@@ -45,7 +45,7 @@ struct baseskillstr
 {
 	int i;//技能编号
 	bool b;//单段普通攻击判断完成标志,true代表已判断
-	baseskillstr(int ii, bool bb) : i(ii), b(bb){}
+	baseskillstr(int ii, bool bb) : i(ii), b(bb) {}
 };
 
 typedef enum
@@ -83,7 +83,8 @@ public:
 	int getPlayerDir();
 	bool playerIsattacked;//主角是否被攻击
 	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
-private:	
+	int m_hp;
+private:
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
 	std::vector<int> vecskill;
@@ -101,8 +102,7 @@ private:
 	void createSwordWave();
 	int swordwaveNum;
 	TMXTiledMap* m_parrent;
-	int m_player_magnification;//玩家精灵放大倍数
-	int m_hp;
+	int m_player_magnification;//玩家精灵放大倍数	
 	Color3B m_playerColor;
 	SkillControl* skillControl;
 };

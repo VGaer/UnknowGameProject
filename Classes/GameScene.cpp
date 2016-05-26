@@ -51,6 +51,22 @@ bool GameScene::init(int sceneId)
 	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
 	MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
 
+	{
+		NPC* npc = NPC::createWithparent(m_map);
+		npc->bindSprite(Sprite::create("player11.png"));
+		npc->setAnchorPoint(Vec2(.5f, .5f));
+		npc->setTiledMap(m_map);
+		npc->setPosition(Vec2(1000, 400));
+		npc->setPlayer(player);
+		npc->initDataWithName("ÁÎºÆÐÛ");
+		auto p = npc->getPosition();
+		p = CC_POINT_POINTS_TO_PIXELS(p);
+		npc->setVertexZ(-((p.y + 64) / 64));
+		PopManager::getInstance()->setAnchorPoint(Vec2(0.5, 0));
+		PopManager::getInstance()->setPosition(Vec2(npc->getPosition().x, npc->getPosition().y - 50));
+		this->addChild(PopManager::getInstance(), 3);
+	}
+
 	scheduleUpdate();
 	return true;
 }
@@ -132,4 +148,6 @@ void GameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterubigskill/treemonsterubigskill.plist", "monster/treemonster/treemonsterubigskill/treemonsterubigskill.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdbigskill/treemonsterdbigskill.plist", "monster/treemonster/treemonsterdbigskill/treemonsterdbigskill.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.plist", "monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.png");
+
+	frameCache->addSpriteFramesWithFile("MonsterProj/treemonster/treemonproj.plist", "MonsterProj/treemonster/treemonproj.png");
 }
