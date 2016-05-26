@@ -25,18 +25,10 @@ Monster::~Monster()
 bool Monster::init(const std::string& name)
 {
 	auto data = GameData::getInstance()->getDataFromMonsData(name);
-	this->name = data->name;
-	hp = data->hp;
-	damage = data->damage;
-	moveSpeed = data->moveSpeed;
-	attackInter = data->attackInter;
-	attackRange = data->attackRange;
-	eyeRange = data->eyeRange;
-	patrolRange = data->patrolRange;
-	perceptionRange = data->perceptionRange;
-	attackedrestoretimes = data->attackedrestoretimes;
-	beforeattacktimes = data->beforeattacktimes;
-	attackAnimatetimePer = data->attackAnimatetimePer;
+	
+	//初始化怪物数据，
+	this->monsdata = *data;
+
 	bindSprite(Sprite::create(data->imagePath));
 	//记录怪物颜色
 	m_monstercolor = this->getSprite()->getColor();
@@ -48,11 +40,26 @@ bool Monster::init(const std::string& name)
 
 	animBase = new AnimBase(this);//设置控制器,控制器用到了monster精灵。
 
-
-
 	//设置定时器
 	m_timecounter = TimeCounter::create();
 	this->addChild(m_timecounter);
+	m_bigskill_timecounter = TimeCounter::create();
+	this->addChild(m_bigskill_timecounter);
+	//直接开始计时
+	m_bigskill_timecounter->start();
+	m_remoteskill_timecounter = TimeCounter::create();
+	this->addChild(m_remoteskill_timecounter);
+	m_remoteskill_timecounter->start();
+	m_baseskill_timecounter = TimeCounter::create();
+	this->addChild(m_baseskill_timecounter);
+	m_baseskill_timecounter->start();
+
+	m_bigskill_attackNumsInter_timecounter = TimeCounter::create();
+	this->addChild(m_bigskill_attackNumsInter_timecounter);
+	m_remoteskill_projectile_timecounter = TimeCounter::create();
+	this->addChild(m_remoteskill_projectile_timecounter);
+	m_baseskill_attackNumsInter_timecounter = TimeCounter::create();
+	this->addChild(m_baseskill_attackNumsInter_timecounter);
 
 	//每个Node都设置为0.5 0.5的锚点
 	this->setAnchorPoint(Vec2(0.5, 0.5));
@@ -62,13 +69,27 @@ bool Monster::init(const std::string& name)
 	stateMachine->CurrentState()->Enter(this);
 
 	IspatrolEnd = true;//初始化为true，巡逻状态时才可以第一次寻路。
-	isAttackedByProjectile = false;
 
 	this->scheduleUpdate();
 
 	m_magnification = 1;//精灵放大倍数
 
 	Is_firstFindplayer_Track = true;
+
+	baseAttackRange = bigSkillAttackRang = -1;
+
+	//初始化攻击范围
+	if (monsdata.skillmap.find("baseskill") != monsdata.skillmap.end())
+	{
+		baseAttackRange = monsdata.skillmap["baseskill"].attackRange;
+	}
+	if (monsdata.skillmap.find("bigskill") != monsdata.skillmap.end())
+	{
+		bigSkillAttackRang = monsdata.skillmap["bigskill"].attackRange;
+	}
+	
+
+	isAttackedByProjectile = false;
 
 	return true;
 }
@@ -131,8 +152,14 @@ void Monster::cmd_stop()
 
 bool Monster::cmd_hurt(float damage)
 {
-	hp -= damage;
-	if (hp <= 0)
+	/*播放染色动作*/
+	//两个染色时间合起来小于恢复时间就行
+	CCTintTo* action1 = CCTintTo::create(this->monsdata.attackedrestoretime / 3, 255, 0, 0);
+	CCTintTo* action2 = CCTintTo::create(this->monsdata.attackedrestoretime / 3, this->m_monstercolor);
+	this->getSprite()->runAction(Sequence::create(action1, action2, NULL));
+
+	monsdata.hp -= damage;
+	if (monsdata.hp <= 0)
 		return true;
 	return false;
 }
@@ -141,8 +168,6 @@ void Monster::cmd_attack()
 {
 	//进入攻击范围时，是以怪物前面判定的，此时怪物控制器的方向已经面向主角了
 	animBase->playAttaAnim();
-
-	
 }
 
 bool Monster::checkInEyeRange()
@@ -193,7 +218,7 @@ bool Monster::checkInEyeRange()
 	//非首次发现主角，以怪物为中点，一个圆的区域去追踪主角，除非主角跑出圆区域，否则走不掉
 	else{
 		Vec2 distanceVec = player->getPosition() - this->getPosition();
-		if (distanceVec.getLength() < eyeRange)
+		if (distanceVec.getLength() < monsdata.eyeRange)
 		{
 			return true;
 		}
@@ -207,7 +232,7 @@ bool Monster::checkInEyeRange()
 bool Monster::checkInPerceptionRange()
 {
 	Vec2 distanceVec = player->getPosition() - this->getPosition();
-	if (distanceVec.getLength() < perceptionRange)
+	if (distanceVec.getLength() < monsdata.perceptionRange)
 	{
 		return true;
 	}
@@ -218,55 +243,234 @@ bool Monster::checkInPerceptionRange()
 }
 
 //攻击范围写为圆形的，状态机那里写方向以主角方向定
+//普通攻击（无cd），的攻击范围判断
 bool Monster::checkInAttaRange()
 {
 	if (player != NULL)
 	{
 		Vec2 posdif = player->getPosition() - getPosition();
 		float distance = posdif.getLength();
-		if (distance <= attackRange){
-			/*switch (animBase->getCurDirection())
-			{
-			case Dir_up:{
-				if (posdif.y > 0) return true;
-			}
-				break;
-			case Dir_down:{
-				if (posdif.y < 0) return true;
-			}
-				break;
-			case Dir_left:
-				if (posdif.x < 0) return true;
-				break;
-			case Dir_right:
-				if (posdif.x > 0) return true;
-				break;
-			case Dir_upleft:
-				if (posdif.y < 0) return true;
-				break;
-			case Dir_upright:
-				if (posdif.y > 0) return true;
-				break;
-			case Dir_downleft:
-				if (posdif.y < 0) return true;
-				break;
-			case Dir_downright:
-				if (posdif.y > 0) return true;
-				break;
-			case Dir_leftup:
-				if (posdif.x < 0) return true;
-			case Dir_leftdown:
-				if (posdif.x < 0) return true;
-			case Dir_rightup:
-				if (posdif.x > 0) return true;
-			case Dir_rightdown:
-				if (posdif.x > 0) return true;
-			default:
-				break;
-			}*/
+		if (baseAttackRange < 0)
+			return false;
+		if (distance <= baseAttackRange){
 			return true;
 		}
 			
+	}
+	return false;
+}
+
+bool Monster::checkInBigSkillRange()
+{
+	if (player != NULL)
+	{
+		Vec2 posdif = player->getPosition() - getPosition();
+		float distance = posdif.getLength();
+		if (bigSkillAttackRang < 0)
+			return false;
+		if (distance <= bigSkillAttackRang){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Monster::checkInRemoteSkillRange()
+{
+	if (player != NULL)
+	{
+		//如果远程技能存在
+		if (monsdata.remoteskillmap.find("remoteskill") != monsdata.remoteskillmap.end())
+		{
+			switch (animBase->getCurDirection())
+			{
+			case Dir_up:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.x - this->getPositionX()) <= width / 2 && playerpos.y - this->getPositionY() <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_down:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.x - this->getPositionX()) <= width / 2 && this->getPositionY() - playerpos.y <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}				
+			case Dir_left:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_right:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_upleft:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.x - this->getPositionX()) <= width / 2 && playerpos.y - this->getPositionY() <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_upright:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.x - this->getPositionX()) <= width / 2 && playerpos.y - this->getPositionY() <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_downleft:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.x - this->getPositionX()) <= width / 2 && this->getPositionY() - playerpos.y <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_downright:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.x - this->getPositionX()) <= width / 2 && this->getPositionY() - playerpos.y <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_leftup:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_leftdown:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_rightup:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			case Dir_rightdown:{
+				//技能宽度
+				float width = monsdata.remoteskillmap["remoteskill"].skillheight;
+				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
+				Vec2 playerpos = player->getPosition();
+				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
+				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			}
+		}
+		//远程技能不存在
+		else
+		{
+			return false;
+		}
 	}
 	return false;
 }
@@ -288,7 +492,7 @@ int Monster::checkInSectorRange()
 	{
 		float distance = (player->getPosition() - getPosition()).getLength();
 		//在圆内
-		if (distance < eyeRange){
+		if (distance < monsdata.eyeRange){
 			//判断在哪个扇形区域
 			double vecX = player->getPositionX() - this->getPositionX();
 			double vecY = player->getPositionY() - this->getPositionY();
@@ -433,6 +637,7 @@ bool Monster::IsattackedByPlayer()
 		isAttackedByProjectile = false;
 		return true;
 	}
+
 	//获取主角剑气
 	auto vec = player->getPlayerUsing_swordwave_Arr();
 	if (vec.size() > 0){
@@ -447,6 +652,8 @@ bool Monster::IsattackedByPlayer()
 					this->getContentSize().height);
 				if (rect.containsPoint(swordwave->getPosition())){
 					swordwave->hide();
+					//扣怪物血,
+					this->cmd_hurt(5);
 					return true;
 				}
 			}
@@ -478,28 +685,45 @@ bool Monster::IsattackedByPlayer()
 						vec = player->getPosition();
 						vec.y += playerattackRange;
 						if (rect.containsPoint(vec))
+						{
+							//扣怪物血,普通攻击伤害
+							this->cmd_hurt(7);
 							return true;
+						}
+							
 						break;
 					}
 					case em_down:{
 						vec = player->getPosition();
 						vec.y -= playerattackRange;
 						if (rect.containsPoint(vec))
+						{
+							//扣怪物血,普通攻击伤害
+							this->cmd_hurt(7);
 							return true;
+						}			
 						break;
 					}
 					case em_left:{
 						vec = player->getPosition();
 						vec.x -= playerattackRange;
 						if (rect.containsPoint(vec))
+						{
+							//扣怪物血,普通攻击伤害
+							this->cmd_hurt(7);
 							return true;
+						}
 						break;
 					}
 					case em_right:{
 						vec = player->getPosition();
 						vec.x += playerattackRange;
 						if (rect.containsPoint(vec))
+						{
+							//扣怪物血,普通攻击伤害
+							this->cmd_hurt(7);
 							return true;
+						}
 						break;
 					}
 					}

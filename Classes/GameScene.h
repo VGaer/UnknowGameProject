@@ -3,6 +3,8 @@
 
 #include "Player.h"
 #include "MonsterManager.h"
+#include "NPC.h"
+#include "PopManager.h"
 
 class GameScene : public Layer
 {
@@ -13,7 +15,7 @@ public:
 	virtual void onEnter() override;
 	virtual void onExit() override;
 	virtual void update(float dt);
-public:	
+public:
 	void setMapInfo(int id);
 	void setViewpointCenter(Vec2 Position);
 	void addMonster(const std::string& name, Point pos);  // 还需要更改详细属性

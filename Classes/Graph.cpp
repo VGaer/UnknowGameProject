@@ -10,9 +10,6 @@ Graph* Graph::getInstance()
 void Graph::init(Vec2 center)
 {
 	TMXLayer* barrier = m_map->getLayer("barrier");
-	// 删除顶点和边
-	for (auto vert : vertices)
-		removeVertex(vert.second->getId());
 	std::vector<Vertex*> points;
 	this->addVertex(center, positionForTiledCoord(center));
 	points.push_back(vertices[center]);
@@ -265,17 +262,22 @@ bool Graph::findPath(Vec2 startId, Vec2 endId)
 
 	path.clear();
 	Vec2 curId = endId;
+
+	if (curId == startId)
+		return true;//即寻到的路还是同一个瓦片
+
 	while (curId != NONE_ID && curId != startId)
 	{
 		path.push_back(curId);
 		auto vertex = vertices.at(curId);
 		if (vertex->getVertexFrontVertexId() == startId)
-		{
+		{			
 			//vertices.at(startId)->
 			return true;
 		}
 		curId = vertex->getVertexFrontVertexId();
 	}
+	
 	return false;
 }
 

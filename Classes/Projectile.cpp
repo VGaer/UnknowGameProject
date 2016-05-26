@@ -5,6 +5,10 @@
 bool Laser::init()
 {
 	dt = 0;
+	attr_damage = 0;
+	attr_moveSpeed = 0;
+	attr_duration = 0;
+	attr_direction = 0;
 	auto animation = AnimationUtil::createWithSingleFrameName("laser", 0.1, -1);
 	auto action = Animate::create(animation);
 	auto sprite = Sprite::createWithSpriteFrameName("laser1.png");
@@ -37,7 +41,7 @@ void Laser::update(float dt)
 	}
 	// ŒÔÃÂ“∆∂Ø
 	Vec2 move(0, 0);
-	if (attr_direction == em_up) 
+	if (attr_direction == em_up)
 		move.y = attr_moveSpeed;
 	else if (attr_direction == em_down)
 		move.y = -attr_moveSpeed;

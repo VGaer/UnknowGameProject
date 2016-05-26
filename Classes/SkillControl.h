@@ -6,7 +6,7 @@
 
 #define MAX_SKILL_NUM 1		// 未定
 
-#define SKILL_LASER_CD 2
+
 
 class Player;
 
@@ -15,7 +15,7 @@ enum SkillType
 	skillType_laser = 0,
 };
 
-class SkillControl: public Node
+class SkillControl : public Node
 {
 public:
 	// 初始化属性
@@ -24,7 +24,7 @@ public:
 public:
 	void useSkill(int id);  // 绑定快捷键可能用得上
 	// 技能列表
-	void skill_laser();
+	bool skill_laser();
 private:
 	// 玩家
 	Player* m_player;

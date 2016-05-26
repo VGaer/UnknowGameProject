@@ -12,6 +12,7 @@ public:
 	// 初始化
 	CREATE_FUNC(Laser);
 	virtual bool init();
+	static const int attr_inter = 3; //攻击cd
 private:
 	// 属性列表	
 	float attr_damage;

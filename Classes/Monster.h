@@ -9,6 +9,7 @@
 #include "TimeCounter.h"
 #include "cocos2d.h"
 #include <vector>
+#include "GameData.h"
 
 class FindPath;
 class StateMachine;
@@ -32,18 +33,7 @@ public:
 	bool init(const std::string& name);
 public:
 	// 属性部分
-	std::string name;  // 名字
-	float hp;		   // 生命值
-	float damage;	   // 攻击力
-	float moveSpeed;   // 行走一条边的时间
-	float attackInter; // 攻击间隔
-	float attackRange; // 攻击范围
-	float patrolRange; // 巡逻半径
-	float eyeRange;    // 视野半径
-	float perceptionRange; //感知半径
-	float attackedrestoretimes; //硬直时间
-	float beforeattacktimes;      //前摇时间
-	float attackAnimatetimePer; //攻击动画播放时间
+	MonsData monsdata;
 	// 对外接口
 	AnimBase* getAnimBase();
 	StateMachine* getStateMachine();
@@ -75,8 +65,19 @@ public:
 	bool IsattackedByPlayer();	//是否被主角攻击
 	bool isAttackedByProjectile; // 是否被投射物攻击
 	Color3B m_monstercolor; //怪物颜色
-	bool Isrestartbaseattack;	//记录怪物是否重新普通攻击
-	Vec2 prePosition;    //追踪时记录怪物前一次的位置
+	bool IstrackNoresult;    //追踪时记录怪物是否有寻路结果
+	TimeCounter* m_bigskill_timecounter; //怪物大技能cd计时器
+	TimeCounter* m_bigskill_attackNumsInter_timecounter;//怪物大技能多段攻击间隔计时器
+	TimeCounter* m_remoteskill_timecounter; //怪物远程技能cd计时器
+	TimeCounter* m_remoteskill_projectile_timecounter;//怪物远程投掷物生成间隔计时器
+	TimeCounter* m_baseskill_timecounter; //怪物普通攻击技能cd计时器
+	TimeCounter* m_baseskill_attackNumsInter_timecounter;//怪物普通攻击多段攻击间隔计时器
+	bool checkInBigSkillRange();	//是否在大技能的攻击范围
+	bool checkInRemoteSkillRange(); //是否在远程技能的攻击范围
+	// -1代表没有技能
+	float baseAttackRange;
+	float bigSkillAttackRang;
+	std::string m_curskill;//记录当前释放的技能
 private:
 	Player* player;
 	AnimBase* animBase;             // 动作控制器

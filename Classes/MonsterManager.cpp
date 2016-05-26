@@ -5,7 +5,7 @@ MonsterManager* MonsterManager::getInstance()
 	static MonsterManager* instance = NULL;
 	if (instance == NULL)
 		instance = new MonsterManager();
-	return instance;	
+	return instance;
 }
 
 Vector<Monster*>& MonsterManager::getMonsterVec()
