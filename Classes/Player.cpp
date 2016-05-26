@@ -65,6 +65,8 @@ bool Player::init()
 
 	frameCache->addSpriteFramesWithFile("remoteskills/playerskill.plist", "remoteskills/playerskill.png");
 	frameCache->addSpriteFramesWithFile("player_skill/laser.plist", "player_skill/laser.png");
+	frameCache->addSpriteFramesWithFile("player_skill/fire.plist", "player_skill/fire.png");
+	frameCache->addSpriteFramesWithFile("player_skill/bomb.plist", "player_skill/bomb.png");
 
 	PlayerState = enum_initNone;//初始化为什么都没有状态，一运行游戏如果没操作就会转为enum_static,有操作转为对应操作的walk or run状态 
 	PlayerDir = em_down;//初始化时
@@ -527,6 +529,18 @@ void Player::update(float dt)
 				PlayerState = enum_laserskill;
 				return;
 			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("uswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_fireskill;
+				return;
+			}
 			default:
 				break;
 			}
@@ -608,6 +622,18 @@ void Player::update(float dt)
 				}
 
 				PlayerState = enum_laserskill;
+				return;
+			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("dswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_fireskill;
 				return;
 			}
 			default:
@@ -697,6 +723,18 @@ void Player::update(float dt)
 				PlayerState = enum_laserskill;
 				return;
 			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("hswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_fireskill;
+				return;
+			}
 			default:
 				break;
 			}
@@ -782,6 +820,18 @@ void Player::update(float dt)
 				}
 
 				PlayerState = enum_laserskill;
+				return;
+			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("hswordwave", 0.1f, 1);//放雷电技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_fireskill;
 				return;
 			}
 			default:
@@ -1606,7 +1656,43 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 				}
 			}
 		}
-
+	}
+	if (keyCode == EventKeyboard::KeyCode::KEY_U)
+	{
+		if (playerIsattacked == false)
+		{
+			if (vecskill.size() == 0 && skillControl->skill_fire())
+			{
+				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
+					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright) {
+					vecskill.push_back(enum_fireskill);
+					switch (PlayerState)
+					{
+					case enum_doubleup: {
+						vec[0] = enum_up;
+						break;
+					}
+					case enum_doubledown: {
+						vec[0] = enum_down;
+						break;
+					}
+					case enum_doubleleft: {
+						vec[0] = enum_left;
+						break;
+					}
+					case enum_doubleright: {
+						vec[0] = enum_right;
+						break;
+					}
+					default:
+						break;
+					}
+				}
+				else {
+					vecskill.push_back(enum_fireskill);//walk状态也是swordwave技能
+				}
+			}
+		}
 	}
 }
 
