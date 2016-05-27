@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "TimeCounter.h"
 
-#define MAX_SKILL_NUM 1		// 未定
+#define MAX_SKILL_NUM 2	// 未定
 
 
 
@@ -13,6 +13,7 @@ class Player;
 enum SkillType
 {
 	skillType_laser = 0,
+	skillType_fire = 1,
 };
 
 class SkillControl : public Node
@@ -25,6 +26,7 @@ public:
 	void useSkill(int id);  // 绑定快捷键可能用得上
 	// 技能列表
 	bool skill_laser();
+	bool skill_fire();
 private:
 	// 玩家
 	Player* m_player;

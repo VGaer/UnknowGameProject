@@ -2,6 +2,15 @@
 #include "Monster.h"
 #include "Graph.h"
 #include "GameData.h"
+#include "algorithm"
+
+bool comp(Entity* a, Entity*b)
+{
+	if (a->getPositionY() > b->getPositionY())
+		return true;
+	else
+		return false;
+}
 
 Scene* GameScene::createSceneWithId(int sceneId)
 {
@@ -25,6 +34,7 @@ bool GameScene::init(int sceneId)
 	// test
 	Player* player = Player::getInstance();
 	player->setTiledMap(m_map);
+	log("Zorder%d",player->getZOrder());
 	player->init();
 	player->getSprite()->setScale(player->getPlayer_magnification());
 	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
@@ -39,17 +49,22 @@ bool GameScene::init(int sceneId)
 	player->addChild(dian2);
 	m_player = player;
 
-	m_monster = Monster::create("treemonster");
-	m_map->addChild(m_monster, (int)m_map->getChildren().size());
-	m_monster->getSprite()->setScale(1.5);
-	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
-	m_monster->setAnchorPoint(Vec2(0.5, 0.2));
-	m_monster->setMonsterParent(m_map);
-	m_monster->setvecPatrolpoint();
-	m_monster->setPosition(32, 384);
-	m_monster->bindPlayer(m_player);
-	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
-	MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
+	int i = 5;
+	do{
+		i--;
+		m_monster = Monster::create("treemonster");
+		m_map->addChild(m_monster, (int)m_map->getChildren().size());
+		m_monster->getSprite()->setScale(1.5);
+		m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+		m_monster->setAnchorPoint(Vec2(0.5, 0.2));
+		m_monster->setMonsterParent(m_map);
+		m_monster->setvecPatrolpoint();
+		m_monster->setPosition(32 + rand() % 200, 384 + rand() % 200);
+		m_monster->bindPlayer(m_player);
+		m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
+		MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
+	} while (i);
+	
 
 	{
 		NPC* npc = NPC::createWithparent(m_map);
@@ -110,9 +125,30 @@ void GameScene::update(float dt)
 	p = CC_POINT_POINTS_TO_PIXELS(p);
 	m_player->setVertexZ(-((p.y + 64) / 64));
 
-	p = m_monster->getPosition();
+	auto Vec1 = MonsterManager::getInstance()->getMonsterVec();
+	Vector<Entity*> Vec;
+	for (int i = 0; i < Vec1.size(); i++)
+	{
+		Vec.pushBack(Vec1.at(i));
+	}	
+	for (int i = 0; i < Vec.size(); i++)
+	{
+		auto monster = Vec.at(i);
+		p = monster->getPosition();
+		p = CC_POINT_POINTS_TO_PIXELS(p);
+		monster->setVertexZ(-((p.y + 64) / 64));
+	}
+	Vec.pushBack(m_player);
+	sort(Vec.begin(), Vec.end(), comp);
+	for (int i = 0; i < Vec.size(); i++)
+	{
+		Vec.at(i)->setZOrder(4 + i);
+	}
+
+	
+	/*p = m_monster->getPosition();
 	p = CC_POINT_POINTS_TO_PIXELS(p);
-	m_monster->setVertexZ(-((p.y + 64) / 64));
+	m_monster->setVertexZ(-((p.y + 64) / 64));*/
 	setViewpointCenter(m_player->getPosition());
 }
 

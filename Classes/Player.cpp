@@ -20,6 +20,7 @@ bool Player::init()
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 
 	this->scheduleUpdate();
+	this->schedule(schedule_selector(Player::baseskillcollidUpdata));
 
 	timecounter_up = TimeCounter::create();
 	this->addChild(timecounter_up);
@@ -65,6 +66,8 @@ bool Player::init()
 
 	frameCache->addSpriteFramesWithFile("remoteskills/playerskill.plist", "remoteskills/playerskill.png");
 	frameCache->addSpriteFramesWithFile("player_skill/laser.plist", "player_skill/laser.png");
+	frameCache->addSpriteFramesWithFile("player_skill/fire.plist", "player_skill/fire.png");
+	frameCache->addSpriteFramesWithFile("player_skill/bomb.plist", "player_skill/bomb.png");
 
 	PlayerState = enum_initNone;//初始化为什么都没有状态，一运行游戏如果没操作就会转为enum_static,有操作转为对应操作的walk or run状态 
 	PlayerDir = em_down;//初始化时
@@ -225,7 +228,7 @@ void Player::update(float dt)
 		if (timecounter_attacked->getCurTime() > 0.11f) {
 			attackedqueue.pop();
 			//设置计时为0，当被攻击信息队列增加消息size再次大于0时，不会马上被pop掉，而是重新调用了timecouter_attacked->start才判断是否pop掉
-			timecounter_attacked->setstartTimeZeroAndOpenSchedule();
+			timecounter_attacked->setstartTimeZeroAndcloseSchedule();
 		}
 
 		//被攻击僵直间隔
@@ -442,7 +445,12 @@ void Player::update(float dt)
 
 	playerIsattacked = false;//标志主角不为被击状态
 
-							 /////////////////////攻击优先于走或跑
+	/*防止主角击退效果被打歪*/
+	this->getSprite()->setRotation(0);
+	this->getSprite()->setPosition(Vec2(this->getContentSize().width * this->getAnchorPoint().x,this->getContentSize().height * this->getAnchorPoint().y));
+	/*防止主角击退效果被打歪*/
+
+	/////////////////////攻击优先于走或跑
 	if (vecskill.size() == 1) {
 		switch (PlayerDir)
 		{
@@ -530,7 +538,18 @@ void Player::update(float dt)
 			default:
 				break;
 			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("uswordwave", 0.1f, 1);//放火球技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
 
+				PlayerState = enum_fireskill;
+				return;
+			}
 			break;
 		}
 		case em_down: {
@@ -608,6 +627,18 @@ void Player::update(float dt)
 				}
 
 				PlayerState = enum_laserskill;
+				return;
+			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("dswordwave", 0.1f, 1);//放火球技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_fireskill;
 				return;
 			}
 			default:
@@ -697,6 +728,18 @@ void Player::update(float dt)
 				PlayerState = enum_laserskill;
 				return;
 			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("hswordwave", 0.1f, 1);//放火球技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_fireskill;
+				return;
+			}
 			default:
 				break;
 			}
@@ -782,6 +825,18 @@ void Player::update(float dt)
 				}
 
 				PlayerState = enum_laserskill;
+				return;
+			}
+			case enum_fireskill: {
+				if (PlayerState != enum_fireskill) {
+					Animation* animation = AnimationUtil::createWithSingleFrameName("hswordwave", 0.1f, 1);//放火球技能动作
+					Animate* animate = Animate::create(animation);
+					this->getPlayerSprite()->stopAllActions();
+					CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
+					this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
+				}
+
+				PlayerState = enum_fireskill;
 				return;
 			}
 			default:
@@ -1606,7 +1661,44 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 				}
 			}
 		}
+	}
 
+	if (keyCode == EventKeyboard::KeyCode::KEY_U)
+	{
+		if (playerIsattacked == false)
+		{
+			if (vecskill.size() == 0 && skillControl->skill_fire())
+			{
+				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
+					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright) {
+					vecskill.push_back(enum_fireskill);
+					switch (PlayerState)
+					{
+					case enum_doubleup: {
+						vec[0] = enum_up;
+						break;
+					}
+					case enum_doubledown: {
+						vec[0] = enum_down;
+						break;
+					}
+					case enum_doubleleft: {
+						vec[0] = enum_left;
+						break;
+					}
+					case enum_doubleright: {
+						vec[0] = enum_right;
+						break;
+					}
+					default:
+						break;
+					}
+				}
+				else {
+					vecskill.push_back(enum_fireskill);
+				}
+			}
+		}
 	}
 }
 
@@ -2071,3 +2163,126 @@ std::vector<baseskillstr>& Player::getvecskillstr()
 {
 	return vecskillstr;
 }
+
+void Player::baseskillcollidUpdata(float dt)
+{
+	//获取主角技能J、K按键容器（在主角类写了vecskill元素最多为一个）
+	auto vecskill = this->getVecSkill();
+	if (PlayerState != enum_baseattack || PlayerState != enum_basepoke)
+	{
+		collidedVector.clear();
+	}
+
+	if (vecskill.size() > 0)
+	{
+		//如果是普通攻击或者前冲攻击
+		if (vecskill.back() == enum_baseattack || vecskill.back() == enum_basepoke)
+		{
+			auto& vecskillstruct = this->getvecskillstr();//获取到的是一个引用
+			if (vecskillstruct.size() > 0)
+			{
+				if (vecskillstruct.back().b == false)
+				{
+					vecskillstruct.back().b = true;//标志单段普通攻击已判断完成;
+
+					// 碰撞检测
+					Vector<Monster*> monsVec = MonsterManager::getInstance()->getMonsterVec();
+					int playerattackRange = 32;
+					Vec2 vec;
+					//主角的普通攻击暂时写成一个点。
+					for (auto mons : monsVec)
+					{
+						switch (this->getPlayerDir())
+						{
+						case em_up:{
+							vec = this->getPosition();
+							vec.y += playerattackRange;
+							if (mons->getBoundingBox().containsPoint(vec))
+							{
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == mons)
+										break;
+								}
+								if (i < 0)
+								{
+									mons->cmd_hurt(6); //普通攻击的伤害
+									mons->isAttackedByPlayerBaseskill = true;
+									collidedVector.pushBack(mons);
+								}
+							}
+
+							break;
+						}
+						case em_down:{
+							vec = this->getPosition();
+							vec.y -= playerattackRange;
+							if (mons->getBoundingBox().containsPoint(vec))
+							{
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == mons)
+										break;
+								}
+								if (i < 0)
+								{
+									mons->cmd_hurt(6); //普通攻击的伤害
+									mons->isAttackedByPlayerBaseskill = true;
+									collidedVector.pushBack(mons);
+								}
+							}
+
+							break;
+						}
+						case em_left:{
+							vec = this->getPosition();
+							vec.x -= playerattackRange;
+							if (mons->getBoundingBox().containsPoint(vec))
+							{
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == mons)
+										break;
+								}
+								if (i < 0)
+								{
+									mons->cmd_hurt(6); //普通攻击的伤害
+									mons->isAttackedByPlayerBaseskill = true;
+									collidedVector.pushBack(mons);
+								}
+							}
+
+							break;
+						}
+						case em_right:{
+							vec = this->getPosition();
+							vec.x += playerattackRange;
+							if (mons->getBoundingBox().containsPoint(vec))
+							{
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == mons)
+										break;
+								}
+								if (i < 0)
+								{
+									mons->cmd_hurt(6); //普通攻击的伤害
+									mons->isAttackedByPlayerBaseskill = true;
+									collidedVector.pushBack(mons);
+								}
+							}
+
+							break;
+						}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+	

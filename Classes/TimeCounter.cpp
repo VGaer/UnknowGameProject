@@ -22,7 +22,7 @@ void TimeCounter::start()
 	this->scheduleUpdate();
 }
 
-void TimeCounter::setstartTimeZeroAndOpenSchedule()
+void TimeCounter::setstartTimeZeroAndcloseSchedule()
 {
 	m_fTime = 0;
 	this->unscheduleUpdate();

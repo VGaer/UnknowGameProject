@@ -9,6 +9,8 @@
 #include "RemoteSkill.h"
 #include "SkillControl.h"
 #include <queue>
+#include "MonsterManager.h"
+#include "Monster.h"
 
 USING_NS_CC;
 typedef enum
@@ -30,7 +32,8 @@ typedef enum
 	enum_baseattack = 200,
 	enum_basepoke,
 	enum_swordwave, //剑气
-	enum_laserskill//雷电
+	enum_laserskill,//雷电
+	enum_fireskill, //火球
 }playerskill;
 
 typedef enum
@@ -57,6 +60,7 @@ typedef enum
 };
 
 class SkillControl;
+class Monster;
 
 class Player : public Entity
 {
@@ -105,5 +109,7 @@ private:
 	int m_player_magnification;//玩家精灵放大倍数	
 	Color3B m_playerColor;
 	SkillControl* skillControl;
+	Vector<Monster*> collidedVector;	// 碰撞清单
+	void baseskillcollidUpdata(float dt);
 };
 #endif 

@@ -90,6 +90,7 @@ bool Monster::init(const std::string& name)
 	
 
 	isAttackedByProjectile = false;
+	isAttackedByPlayerBaseskill = false;
 
 	return true;
 }
@@ -638,6 +639,13 @@ bool Monster::IsattackedByPlayer()
 		return true;
 	}
 
+	// 判断是否被主角普通攻击打中
+	if (isAttackedByPlayerBaseskill)
+	{
+		isAttackedByPlayerBaseskill = false;
+		return true;
+	}
+
 	//获取主角剑气
 	auto vec = player->getPlayerUsing_swordwave_Arr();
 	if (vec.size() > 0){
@@ -660,79 +668,6 @@ bool Monster::IsattackedByPlayer()
 		}
 	}
 
-	//获取主角技能J、K按键容器（在主角类写了vecskill元素最多为一个）
-	auto vecskill = player->getVecSkill();
-	if (vecskill.size() > 0){
-		//如果是普通攻击或者前冲攻击
-		if (vecskill.back() == enum_baseattack || vecskill.back() == enum_basepoke){
-			auto& vecskillstruct = player->getvecskillstr();//获取到的是一个引用
-			if (vecskillstruct.size() > 0){
-				if (vecskillstruct.back().b == false){
-					vecskillstruct.back().b = true;//标志单段普通攻击已判断完成;
-					//先写死测试下，到时主角攻击范围也设置在json文件里
-					Rect rect;
-					rect.setRect(this->getPositionX() - this->getContentSize().width * this->getAnchorPoint().x,
-						this->getPositionY() - this->getContentSize().height * this->getAnchorPoint().y,
-						this->getContentSize().width,
-						this->getContentSize().height);
-					int playerattackRange = 32;
-					Vec2 vec;
-
-					//主角的普通攻击暂时写成一个点。
-					switch (player->getPlayerDir())
-					{
-					case em_up:{
-						vec = player->getPosition();
-						vec.y += playerattackRange;
-						if (rect.containsPoint(vec))
-						{
-							//扣怪物血,普通攻击伤害
-							this->cmd_hurt(7);
-							return true;
-						}
-							
-						break;
-					}
-					case em_down:{
-						vec = player->getPosition();
-						vec.y -= playerattackRange;
-						if (rect.containsPoint(vec))
-						{
-							//扣怪物血,普通攻击伤害
-							this->cmd_hurt(7);
-							return true;
-						}			
-						break;
-					}
-					case em_left:{
-						vec = player->getPosition();
-						vec.x -= playerattackRange;
-						if (rect.containsPoint(vec))
-						{
-							//扣怪物血,普通攻击伤害
-							this->cmd_hurt(7);
-							return true;
-						}
-						break;
-					}
-					case em_right:{
-						vec = player->getPosition();
-						vec.x += playerattackRange;
-						if (rect.containsPoint(vec))
-						{
-							//扣怪物血,普通攻击伤害
-							this->cmd_hurt(7);
-							return true;
-						}
-						break;
-					}
-					}
-				}
-				else{
-					return false;//普通单段攻击在普通攻击动画结束前已判断过一次，return false;
-				}
-			}			
-		}
-	}
+	
 	return false;
 }

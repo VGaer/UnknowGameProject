@@ -24,6 +24,7 @@ typedef enum
 };
 
 class AnimBase;
+class Player;
 
 class Monster : public Entity
 {
@@ -64,6 +65,7 @@ public:
 	int index; //巡逻点记录
 	bool IsattackedByPlayer();	//是否被主角攻击
 	bool isAttackedByProjectile; // 是否被投射物攻击
+	bool isAttackedByPlayerBaseskill; //是否被主角普通攻击打中
 	Color3B m_monstercolor; //怪物颜色
 	bool IstrackNoresult;    //追踪时记录怪物是否有寻路结果
 	TimeCounter* m_bigskill_timecounter; //怪物大技能cd计时器
