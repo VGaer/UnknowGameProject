@@ -3,6 +3,7 @@
 #include "Graph.h"
 #include "GameData.h"
 #include "algorithm"
+#include "SceneIdManager.h"
 
 bool comp(Entity* a, Entity*b)
 {
@@ -88,13 +89,16 @@ bool GameScene::init(int sceneId)
 
 void GameScene::setMapInfo(int id)
 {
-	m_map = TMXTiledMap::create("home.tmx");
-	m_map->getLayer("barrier")->setVisible(false);
-	addChild(m_map, 0, 1);
-	auto graph = Graph::getInstance();
-	graph->setTildMap(m_map);
-	graph->init(Point(16, 20));
-
+	//m_map = TMXTiledMap::create("home.tmx");
+	if (SceneIdManager::getInstance()->map_sceneIdToname.find(id) != SceneIdManager::getInstance()->map_sceneIdToname.end())
+	{
+		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToname[id]);
+		m_map->getLayer("barrier")->setVisible(false);
+		addChild(m_map, 0, 1);
+		auto graph = Graph::getInstance();
+		graph->setTildMap(m_map);
+		graph->init(Point(16, 20));
+	}
 }
 
 void GameScene::addMonster(const std::string& name, Point pos)

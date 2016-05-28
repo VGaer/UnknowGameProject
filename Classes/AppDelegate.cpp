@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "SimpleAudioEngine.h"
 #include "GameScene.h"
+#include "StartGameScene.h"
 
 USING_NS_CC;
 
@@ -44,12 +45,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	// create a scene. it's an autorelease object
 	//auto scene = HelloWorld::createScene();
-	auto scene = GameScene::createSceneWithId(1);
+	//auto scene = GameScene::createSceneWithId(2);
+	auto scene = StartGameScene::createScene();
 
 	// run
 	director->runWithScene(scene);
 
 	//初始化背景音乐
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/startgamebgm.mp3");
+	//初始化音效
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/Blip.wav");
+
 
 	//初始化音效
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/swordsound.wav");
@@ -62,7 +68,7 @@ void AppDelegate::applicationDidEnterBackground() {
 	Director::getInstance()->stopAnimation();
 
 	// if you use SimpleAudioEngine, it must be pause
-	// SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
+	 CocosDenshion::SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
@@ -70,5 +76,5 @@ void AppDelegate::applicationWillEnterForeground() {
 	Director::getInstance()->startAnimation();
 
 	// if you use SimpleAudioEngine, it must resume here
-	// SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
+	CocosDenshion::SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
 }
