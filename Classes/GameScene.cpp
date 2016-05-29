@@ -42,7 +42,11 @@ bool GameScene::init(int sceneId)
 		player->getContentSize().height * player->getPlayer_magnification() / 2));
 	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
 	player->setAnchorPoint(Vec2(0.5, 0.5));
-	player->setPosition(Vec2(100, 250));
+	/*¼ÓÔØÖ÷½Ç×ø±ê*/
+	ValueMap playerPointMap = objGroup->getObject("PlayerPoint");
+	float playerX = playerPointMap["x"].asFloat();
+	float playerY = playerPointMap["y"].asFloat();
+	player->setPosition(Vec2(playerX,playerY));
 	Sprite* dian = Sprite::create("dian.jpg");
 	dian->setPosition(player->getContentSize().width, 0);
 	player->addChild(dian);
@@ -114,6 +118,7 @@ void GameScene::setMapInfo(int id)
 		auto graph = Graph::getInstance();
 		graph->setTildMap(m_map);
 		graph->init(Point(16, 20));
+		objGroup = m_map->getObjectGroup("objects");
 	}
 }
 

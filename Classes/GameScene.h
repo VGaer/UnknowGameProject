@@ -25,6 +25,7 @@ private:
 	Player* m_player;
 	TMXTiledMap* m_map;
 	Monster* m_monster;
+	TMXObjectGroup* objGroup;
 };
 
 #endif
