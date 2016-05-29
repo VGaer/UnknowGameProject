@@ -4,6 +4,16 @@
 #include "GameData.h"
 #include "algorithm"
 #include "SceneIdManager.h"
+#include <sstream>
+
+string convertToString(double x)
+{
+	ostringstream o;
+	if (o << x)
+		return o.str();
+	else
+		return "error";
+}
 
 bool comp(Entity* a, Entity*b)
 {
@@ -54,37 +64,28 @@ bool GameScene::init(int sceneId)
 	player->addChild(dian2);
 	m_player = player;
 
-	int i = 2;
-	do{
-		i--;
-		m_monster = Monster::create("treemonster");
-		m_map->addChild(m_monster, (int)m_map->getChildren().size());
-		m_monster->getSprite()->setScale(1.5);
-		m_monster->setContentSize(m_monster->getContentSize() * 1.5);
-		m_monster->setAnchorPoint(Vec2(0.5, 0.2));
-		m_monster->setMonsterParent(m_map);
-		m_monster->setvecPatrolpoint();
-		m_monster->setPosition(32 + rand() % 200, 384 + rand() % 200);
-		m_monster->bindPlayer(m_player);
-		m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
-		MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
-	} while (i);
-	i = 1;
-	do{
-		i--;
-		m_monster = Monster::create("gdragonmonster");
-		m_map->addChild(m_monster, (int)m_map->getChildren().size());
-		m_monster->getSprite()->setScale(1.5);
-		m_monster->setContentSize(m_monster->getContentSize() * 1.5);
-		m_monster->setAnchorPoint(Vec2(0.5, 0.2));
-		m_monster->setMonsterParent(m_map);
-		m_monster->setvecPatrolpoint();
-		m_monster->setPosition(32 + rand() % 200, 384 + rand() % 200);
-		m_monster->bindPlayer(m_player);
-		m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
-		MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
-	} while (i);
+	string monname[3] = { "treemonster", "gdragonmonster", "bonemonster" };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			m_monster = Monster::create(monname[i]);
+			m_map->addChild(m_monster, (int)m_map->getChildren().size());
+			m_monster->getSprite()->setScale(1.5);
+			m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+			m_monster->setAnchorPoint(Vec2(0.5, 0.5));
+			m_monster->setMonsterParent(m_map);
+			m_monster->setvecPatrolpoint();
+			m_monster->bindPlayer(m_player);
+			m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
+			MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
 
+			ValueMap monpos = objGroup->getObject("Mon" + convertToString(i * 2 + j + 1));
+			float monposx = monpos["x"].asFloat();
+			float monposy = monpos["y"].asFloat();
+			m_monster->setPosition(Vec2(monposx,monposy));
+		}
+	}
 	
 
 	{
@@ -225,4 +226,17 @@ void GameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.plist", "monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.png");
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.plist", "monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.png");
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.plist", "monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.png");
+
+	/*Ê¯¹Ö*/
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterdattack/bonemonsterdattack.plist", "monster/bonemonster/bonemonsterdattack/bonemonsterdattack.png");
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterdrun/bonemonsterdrun.plist", "monster/bonemonster/bonemonsterdrun/bonemonsterdrun.png");
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterdstatic/bonemonsterdstatic.plist", "monster/bonemonster/bonemonsterdstatic/bonemonsterdstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterhattack/bonemonsterhattack.plist", "monster/bonemonster/bonemonsterhattack/bonemonsterhattack.png");
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterhrun/bonemonsterhrun.plist", "monster/bonemonster/bonemonsterhrun/bonemonsterhrun.png");
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterhstatic/bonemonsterhstatic.plist", "monster/bonemonster/bonemonsterhstatic/bonemonsterhstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsteruattack/bonemonsteruattack.plist", "monster/bonemonster/bonemonsteruattack/bonemonsteruattack.png");
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterurun/bonemonsterurun.plist", "monster/bonemonster/bonemonsterurun/bonemonsterurun.png");
+	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterustatic/bonemonsterustatic.plist", "monster/bonemonster/bonemonsterustatic/bonemonsterustatic.png");
 }

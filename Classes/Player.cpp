@@ -226,6 +226,10 @@ void Player::update(float dt)
 	if (attackedqueue.size() > 0) {
 		//主角被攻击过了僵直时间,才pop掉队列
 		if (timecounter_attacked->getCurTime() > 0.11f) {
+			/*防止主角击退效果被打歪*/
+			this->getSprite()->setRotation(0);
+			this->getSprite()->setPosition(Vec2(this->getContentSize().width * this->getAnchorPoint().x, this->getContentSize().height * this->getAnchorPoint().y));
+			/*防止主角击退效果被打歪*/
 			attackedqueue.pop();
 			//设置计时为0，当被攻击信息队列增加消息size再次大于0时，不会马上被pop掉，而是重新调用了timecouter_attacked->start才判断是否pop掉
 			timecounter_attacked->setstartTimeZeroAndcloseSchedule();
