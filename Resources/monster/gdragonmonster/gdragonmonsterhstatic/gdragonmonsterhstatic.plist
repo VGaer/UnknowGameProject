@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>frames</key>
+        <dict>
+            <key>gdragonmonsterhstatic1.png</key>
+            <dict>
+                <key>frame</key>
+                <string>{{2,2},{93,94}}</string>
+                <key>offset</key>
+                <string>{0,0}</string>
+                <key>rotated</key>
+                <false/>
+                <key>sourceColorRect</key>
+                <string>{{0,0},{93,94}}</string>
+                <key>sourceSize</key>
+                <string>{93,94}</string>
+            </dict>
+        </dict>
+        <key>metadata</key>
+        <dict>
+            <key>format</key>
+            <integer>2</integer>
+            <key>realTextureFileName</key>
+            <string>gdragonmonsterhstatic.png</string>
+            <key>size</key>
+            <string>{97,98}</string>
+            <key>smartupdate</key>
+            <string>$TexturePacker:SmartUpdate:beba8ba84d0bae105f84a4ea7b818243:e7c18125eaae3d80f25bac5e3e3b1fce:f83dfdf84af757fe2e635c140297a334$</string>
+            <key>textureFileName</key>
+            <string>gdragonmonsterhstatic.png</string>
+        </dict>
+    </dict>
+</plist>

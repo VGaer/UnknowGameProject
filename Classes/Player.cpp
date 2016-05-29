@@ -1542,9 +1542,9 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 	{
 		//设置J技能的攻击冷却时间
 		float curtime = timecounter_J->getCurTime();
-		//第一次按J时才有curtime = 0,此后每隔0.5f秒才能按放一次技能
+		//第一次按J时才有curtime = 0,此后每隔0.4f秒才能按放一次技能
 		//主角非被击状态才能放技能
-		if (curtime == 0 || curtime > 0.5f && (playerIsattacked == false)) {
+		if (curtime == 0 || curtime > 0.3f && (playerIsattacked == false)) {
 
 			timecounter_J->start();//一直计时
 								   //size为0才有普通的攻击

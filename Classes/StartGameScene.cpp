@@ -107,10 +107,12 @@ void StartGameScene::menuItemStartCallback(Ref* pSender)
 
 void StartGameScene::menuItemSettingCallback(Ref* pSender)
 {
+	if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
+	}
 	auto sc = SettingScene::createScene();
 	auto reScene = TransitionJumpZoom::create(1.0f, sc);
 	Director::getInstance()->pushScene(reScene);
-	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
 }
 
 

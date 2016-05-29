@@ -50,7 +50,7 @@ bool GameScene::init(int sceneId)
 	player->addChild(dian2);
 	m_player = player;
 
-	int i = 5;
+	int i = 2;
 	do{
 		i--;
 		m_monster = Monster::create("treemonster");
@@ -65,6 +65,22 @@ bool GameScene::init(int sceneId)
 		m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
 		MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
 	} while (i);
+	i = 1;
+	do{
+		i--;
+		m_monster = Monster::create("gdragonmonster");
+		m_map->addChild(m_monster, (int)m_map->getChildren().size());
+		m_monster->getSprite()->setScale(1.5);
+		m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+		m_monster->setAnchorPoint(Vec2(0.5, 0.2));
+		m_monster->setMonsterParent(m_map);
+		m_monster->setvecPatrolpoint();
+		m_monster->setPosition(32 + rand() % 200, 384 + rand() % 200);
+		m_monster->bindPlayer(m_player);
+		m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
+		MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
+	} while (i);
+
 	
 
 	{
@@ -173,6 +189,7 @@ void GameScene::setViewpointCenter(Vec2 Position)
 void GameScene::loadPlistFile()
 {
 	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
+	/*ส๗นึ*/
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdattack/treemonsterdattack.plist", "monster/treemonster/treemonsterdattack/treemonsterdattack.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdrun/treemonsterdrun.plist", "monster/treemonster/treemonsterdrun/treemonsterdrun.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdstatic/treemonsterdstatic.plist", "monster/treemonster/treemonsterdstatic/treemonsterdstatic.png");
@@ -190,4 +207,17 @@ void GameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.plist", "monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.png");
 
 	frameCache->addSpriteFramesWithFile("MonsterProj/treemonster/treemonproj.plist", "MonsterProj/treemonster/treemonproj.png");
+
+	/*วเม๚*/
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterdattack/gdragonmonsterdattack.plist", "monster/gdragonmonster/gdragonmonsterdattack/gdragonmonsterdattack.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterdrun/gdragonmonsterdrun.plist", "monster/gdragonmonster/gdragonmonsterdrun/gdragonmonsterdrun.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterdstatic/gdragonmonsterdstatic.plist", "monster/gdragonmonster/gdragonmonsterdstatic/gdragonmonsterdstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterhattack/gdragonmonsterhattack.plist", "monster/gdragonmonster/gdragonmonsterhattack/gdragonmonsterhattack.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterhrun/gdragonmonsterhrun.plist", "monster/gdragonmonster/gdragonmonsterhrun/gdragonmonsterhrun.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterhstatic/gdragonmonsterhstatic.plist", "monster/gdragonmonster/gdragonmonsterhstatic/gdragonmonsterhstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.plist", "monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.plist", "monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.plist", "monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.png");
 }
