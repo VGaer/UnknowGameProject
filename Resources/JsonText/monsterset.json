@@ -30,7 +30,7 @@
 [
 {
 "skilltype":"bigskill",
-"attackRange":100,
+"attackRange":90,
 "beforeattacktimes":0.3,
 "attackAnimatetimePer":0.1,
 "attackInter":10,
@@ -113,7 +113,7 @@
 
 "name":"bonemonster",
 "hp":100,
-"moveSpeed":0.46,
+"moveSpeed":0.47,
 "eyeRange":640,
 "perceptionRange":500,
 "attackedrestoretime":0.1,

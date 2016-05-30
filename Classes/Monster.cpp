@@ -62,7 +62,7 @@ bool Monster::init(const std::string& name)
 	this->addChild(m_baseskill_attackNumsInter_timecounter);
 
 	//每个Node都设置为0.5 0.5的锚点
-	this->setAnchorPoint(Vec2(0.5, 0.5));
+	this->setAnchorPoint(Vec2(0.5, 0));
 
 	//怪物的初态都弄为悠闲吧
 	stateMachine->SetCurrState(new Idle());
@@ -256,7 +256,6 @@ bool Monster::checkInAttaRange()
 		if (distance <= baseAttackRange){
 			return true;
 		}
-			
 	}
 	return false;
 }
@@ -321,7 +320,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
 				{
 					return true;
 				}
@@ -336,7 +335,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
 				{
 					return true;
 				}
@@ -411,7 +410,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
 				{
 					return true;
 				}
@@ -426,7 +425,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
 				{
 					return true;
 				}
@@ -441,7 +440,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
 				{
 					return true;
 				}
@@ -456,7 +455,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
 				{
 					return true;
 				}
@@ -478,6 +477,11 @@ bool Monster::checkInRemoteSkillRange()
 
 void Monster::update(float dt)
 {
+	if (this->monsdata.hp <= 0)
+	{
+		this->removeFromParent();
+		return;
+	}
 	stateMachine->Update();
 }
 
@@ -653,12 +657,7 @@ bool Monster::IsattackedByPlayer()
 			auto swordwave = vec.at(i);
 			if (swordwave->isVisible())
 			{
-				Rect rect;
-				rect.setRect(this->getPositionX()- this->getContentSize().width * this->getAnchorPoint().x,
-					this->getPositionY() - this->getContentSize().height * this->getAnchorPoint().y,
-					this->getContentSize().width,
-					this->getContentSize().height);
-				if (rect.containsPoint(swordwave->getPosition())){
+				if (getBoundingBox().containsPoint(swordwave->getPosition())){
 					swordwave->hide();
 					//扣怪物血,
 					this->cmd_hurt(5);

@@ -20,6 +20,7 @@ MonsterRemoteskill* MonsterRemoteskill::createWithName_width_height_damage_durat
 
 bool MonsterRemoteskill::init(std::string projectile, std::string projectileAnimate, float width, float height, float damage, float duration, float speed, int direction)
 {
+	name = projectileAnimate;
 	Sprite* sprite = Sprite::create(projectile);
 	Animation* animation = AnimationUtil::createWithSingleFrameName(projectileAnimate.c_str(),0.1f,-1);
 	sprite->runAction(Animate::create(animation));
@@ -42,6 +43,12 @@ void MonsterRemoteskill::update(float dt)
 	{
 		if (m_player->getBoundingBox().intersectsRect(getBoundingBox()))
 		{
+			//如果是树怪的石头技能
+			if (name == "treemonproj")
+			{
+				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/hitedbybone.wav");
+			}
+
 			//扣主角hp
 			if (m_player->m_hp > 0)
 			{

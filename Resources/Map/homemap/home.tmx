@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="24">
- <tileset firstgid="1" name="background" tilewidth="64" tileheight="64" tilecount="35" columns="5">
-  <image source="background.png" width="320" height="448"/>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="12">
+ <tileset firstgid="1" name="background01" tilewidth="64" tileheight="64" tilecount="64" columns="16">
+  <image source="background01.png" width="1024" height="256"/>
  </tileset>
- <tileset firstgid="36" name="foreground" tilewidth="64" tileheight="64" tilecount="112" columns="8">
-  <image source="foreground.png" width="512" height="896"/>
+ <tileset firstgid="65" name="foreground01" tilewidth="64" tileheight="128" tilecount="91" columns="13">
+  <image source="foreground01.png" width="832" height="896"/>
  </tileset>
- <tileset firstgid="148" name="treepag" tilewidth="320" tileheight="384" tilecount="6" columns="3">
-  <image source="treepag.png" width="960" height="768"/>
+ <tileset firstgid="156" name="tree" tilewidth="256" tileheight="320" tilecount="1" columns="1">
+  <image source="tree.png" width="256" height="320"/>
  </tileset>
- <tileset firstgid="154" name="meta_tiles" tilewidth="64" tileheight="64" tilecount="4" columns="4">
+ <tileset firstgid="157" name="meta_tiles" tilewidth="64" tileheight="64" tilecount="4" columns="4">
   <image source="meta_tiles.png" width="280" height="70"/>
   <tile id="0">
    <properties>
@@ -27,7 +27,7 @@
    <property name="cc_vertexz" value="-1000"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzFmOduwzAMhC21lds63RMd6Hj/hywD5IAPF9lR6owfB1sSRZ5JatC567ocSIEez1zBcmyAXIFsvxoT2FcwN6Ovr7RdTn2yJ1nqpO1+hbLSQdmM92Rj4pJM3mULdMtugnzGu/hwjuvvK0+9uxzH2C8/0Pf8TrUZD/o725ya/QFj6l8+FwcE/cscPTQPQTwU53wkHgJz4Zg8BOXalMzJTJwGzhpjtSk+5zNxEbhs5OIx0rpV+2omrgM30Df27R4j7mvk4vpa4XO1R/meyvWkvVJcpvTN5bIw22oXtMmjTOjbhV+4LxfYFFf1+763Sy7MiwS78oX30Vf74MIzk35ReyrHd8mFOcvzWD6QfV/L+/IL7xTkwrN7G33CbeAucB942DC3tkZ9Tdf2OvpristT4DnwEnhtjBF9nyp2yZM5lTZweQu8Bz4Cn41cerz7PjtYW7LkOcblK/Ad+An8NnBhfiy6dT/01se79djaemxALfcUE955F936fdn5pq6eby18xtaBc2CsBtj0eLVgGx41sD7h3Zw1wH/5bMuDtln71c5z+Yr1k9dyivNg4wVzfa/lfdvrT8aqVlt5LCnjsWYdyTOZNRZzhHcW6uAZyjsN68dstugPyhSz79/Empm+Ya5wbi02vdl1Lty3PSf9XwD7lvgDDg0mZg==
+   eJytl+tOGzEQhZ1oWQloI7XcJJZQCgqE+6VAo2xvj9ZH4VH6KH0UbOEjTg5jrxPy48hexzvz7czYjofOuaGhRtrc+L7XV69Dr6MOe6nnEt9dNoOuhOWikKUp9H9ZqMDxKCz3CZ4SKcuI9NChwFEJSxV5eB7bnJcDftpoexpVRU2ob7HoPLCNXBnXKPoO6huaSMsCC+qgEv0g27k4NTTej+/ueH3y+lyoQ1Jqzgax3UcfynJAHGA5oW9dlpA/zm/weyMsxxRL8NyKrbuMSuZ98xpL7toESxPnjt3bOjgiRkup2rUU7J/Ss7K0Mr+ek6VU7OdLgoWZOTbLYhlLG3RNLFh/BxS3WnJ0S7l+b1xCzfZi/4z6Vlx+e/2h/KitZbBY48qC2CGfWu/vYakTTNjHkSOtl77MWybLqtea17p72ec0LqgX1Id+A3NYsVqUpXKvZ4VVL6hb1AufO7Wb3ZcX4VGWVL1orfD5yH2/Dp/8vvD0i/qW75/G72FvwPrgeFksiAnWNOqmRzmqSfPGKbDsGvFSFrXZxhxNYr8h37z/BJ2/6L/XP6+/5xkW5VCWocQMa66NfnFO8f49FZ7SM92qaeYYeG2Tf147tfEuM1hnBeZq3adyp//pBmQD9vW8xJqeullOi4V5mAVxTnEozyJ7B59blbP/Z6bikbo7cb5KtBKF+PBz0JahD5l4qD5mNCCbgbknvlfcbK3o+9Y9pDH6pfdEMH2PPGABx2bm+y17OYbU/BQTONBuCkfX/bWLLXe317F9ig9isjfH92PsGRwTXOA=
   </data>
  </layer>
  <layer name="foreground" width="35" height="30">
@@ -35,7 +35,7 @@
    <property name="cc_vertexz" value="automatic"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt1gdLAzEYxvF8GK2jtY4qVnFCXeDee4+6915Vv7j/0haOl6SX3F0RpA/8OHIk7700ba5KKRVXhZiuUUVXV95L+Vyjiq6uvJf2uUYVXd1KPSts6tGARtQ5jnVxreEdt6AVbWh2HOviWsM7HizqRqfjWBfXGt6xTWIaut973DC3HR2Wz/JLUkP3e08Z5vagN6JeTOlDPwaU/WccdTIYwjBGMIox5bbvQVKDWnFvHBOYxBSmMYNZzGlqsD5HnVzYXhJoEvfmsYBFLGEZK1jFmqYG63MJ0UvQd12XGK9jA5vYwjZ2sIs9MTcj1st3oGtPpVqZon0c4BBHyOIYJzgts97bg2ns2ssZznGBS1zhGje49elFvgNd34lyj+5wjwc84gnPeMGrxfogPZhqveEdH/hUhS/lF77xY9lL0ISt9R96ya/z7qXurHONPOvSyu77EhPj0lmXFspFzpVnnXyGKUnLeWFi+wy5R5WI7R5VU025hD07okr+DJL/k/4q+TPoF5xYR4E=
+   eJzt1mlLAkEAxnG/mmmpWSqklVeXCpVXBXm9Es1eluEJftn+i7OxiIurjbMO+sCPWWbYmYddFvV4DtEtAwzX9L2wR9/BPSMHPVTGro/qHmasfQYu9jAzmndoL1s7UlvlEMk5QQBBcW0I4RRhnOFc+BLru55jCXtcII6EuDZc4grXSCIlzMS4D0kjg6xlvMEt7nCPB+SQR2HDc2S8Q5V5xBOeLWMRJZRRQRUveMWbOzXXilfCHh10F7yjhjoaaFrWWhLO1DXms/pAD59iPoIoYv/Ye9vfkw/+JfM//G8Yb/nsVZnOe/zFrT5Tm3nVfex6mDH6TBxyErt7V/XQObr9fumaX7umQb0=
   </data>
  </layer>
  <layer name="tree" width="35" height="30">
@@ -43,21 +43,21 @@
    <property name="cc_vertexz" value="automatic"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztzVkKACAIRdGW3iKyYbf9RhRBYQPdAyKC+oxBSxjMWjmaWb+Roksxt/ak2gcAnBWrDkCfuzwjbboBXuUnqvPHrv7JYc8aSw==
+   eJztzgENAAAIA6D3z2BYY3xTSEACAHDHtAMA8NwCqfQAnQ==
   </data>
  </layer>
- <layer name="barrier" width="35" height="30">
+ <layer name="barrier" width="35" height="30" opacity="0.23">
   <data encoding="base64" compression="zlib">
-   eJztVlsOwCAI8/5HMB52X0sWR6W85j5swgdYoZnKaE1GB/Fq9IdJflUdpvZOLQdv9IBV5WN9ae8geZrPgP0miJt5L9n8njOVMHRKOjJr/qE3fNUbUd05xnJXca+eqBYmNkO6T5laou/95o/JX3ERP0sL8rU17xmxWiw9Lbvv7tyfmStyHtX/DrbGqqeyd5+dTyx5qmDVgtY8dS01DjAic4117465zQOtp1vedSSPVweasSJ2AfsknRc=
+   eJzdV1sKwDAI6/3vMHbVfQ2KKMbYabvAforTEB+1Y+yP+8N/GN/duMiP8eHxqIQVr5qHFhfRC6m1TN16+a7EzKErPy9knjrhcbHyn+13jQOrS1TDU7hoNjO/1fNQ2ls9zfiv0mV3LjJvu+kSvacj8Su5eHdOdu4y8007Q/qY5RLZm1Db1dD6AeGzak9G7jd5Vgm0zxhENYzWEbMLoP5OQbZO//xu7MQDi5twWA==
   </data>
  </layer>
  <objectgroup name="objects">
-  <object id="6" name="Mon4" x="130" y="1278" width="62" height="62"/>
-  <object id="7" name="Mon5" x="960" y="1536" width="64" height="66"/>
-  <object id="8" name="Mon2" x="1730" y="638" width="64" height="64"/>
-  <object id="9" name="Mon1" x="642" y="638" width="64" height="62"/>
-  <object id="10" name="Mon6" x="1538" y="1596" width="60" height="66"/>
-  <object id="12" name="Mon3" x="386" y="956" width="64" height="64"/>
-  <object id="20" name="PlayerPoint" x="1024" y="1216" width="63.3333" height="63.3333"/>
+  <object id="1" name="PlayerPoint" x="1088" y="1342" width="66" height="64"/>
+  <object id="3" name="Mon3" x="705.333" y="384" width="61.3333" height="62.6667"/>
+  <object id="4" name="Mon4" x="384" y="1792" width="66" height="66"/>
+  <object id="5" name="Mon1" x="448" y="60" width="68" height="64"/>
+  <object id="6" name="Mon2" x="1216" y="60" width="64" height="60"/>
+  <object id="7" name="Mon5" x="1216" y="1792" width="64" height="68"/>
+  <object id="10" name="Mon6" x="1793.33" y="1729.33" width="61.3333" height="62.6667"/>
  </objectgroup>
 </map>

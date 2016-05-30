@@ -48,10 +48,11 @@ bool GameScene::init(int sceneId)
 	log("Zorder%d",player->getZOrder());
 	player->init();
 	player->getSprite()->setScale(player->getPlayer_magnification());
+	player->getSprite()->setAnchorPoint(Vec2(0.5,0));
 	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
-		player->getContentSize().height * player->getPlayer_magnification() / 2));
+		0));
 	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
-	player->setAnchorPoint(Vec2(0.5, 0.5));
+	player->setAnchorPoint(Vec2(0.5, 0));
 	/*¼ÓÔØÖ÷½Ç×ø±ê*/
 	ValueMap playerPointMap = objGroup->getObject("PlayerPoint");
 	float playerX = playerPointMap["x"].asFloat();
@@ -62,6 +63,10 @@ bool GameScene::init(int sceneId)
 	player->addChild(dian);
 	Sprite* dian2 = Sprite::create("dian.jpg");
 	player->addChild(dian2);
+	Sprite* dian3 = Sprite::create("dian.jpg");
+	player->addChild(dian3);
+	dian3->setPosition(Vec2(player->getContentSize().width * player->getAnchorPoint().x,
+		player->getContentSize().height * player->getAnchorPoint().y));
 	m_player = player;
 
 	string monname[3] = { "treemonster", "gdragonmonster", "bonemonster" };
@@ -72,8 +77,10 @@ bool GameScene::init(int sceneId)
 			m_monster = Monster::create(monname[i]);
 			m_map->addChild(m_monster, (int)m_map->getChildren().size());
 			m_monster->getSprite()->setScale(1.5);
+			m_monster->getSprite()->setAnchorPoint(Vec2(0.5,0));
 			m_monster->setContentSize(m_monster->getContentSize() * 1.5);
-			m_monster->setAnchorPoint(Vec2(0.5, 0.5));
+			m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width / 2, 0));
+			m_monster->setAnchorPoint(Vec2(0.5, 0));
 			m_monster->setMonsterParent(m_map);
 			m_monster->setvecPatrolpoint();
 			m_monster->bindPlayer(m_player);

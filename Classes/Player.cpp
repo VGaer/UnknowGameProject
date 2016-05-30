@@ -75,7 +75,7 @@ bool Player::init()
 	swordwaveNum = 20;
 	createSwordWave();
 
-	m_player_magnification = 2;
+	m_player_magnification = 2.5;
 
 	m_hp = 100;
 
@@ -222,6 +222,8 @@ void Player::update(float dt)
 			}
 		}
 	}
+
+
 	//////////////////////////////////////////主角被攻击
 	if (attackedqueue.size() > 0) {
 		//主角被攻击过了僵直时间,才pop掉队列
@@ -239,6 +241,10 @@ void Player::update(float dt)
 		if (attackedqueue.size() > 0 && timecounter_attacked->getCurTime() == 0.0f)
 		{
 			int attack = attackedqueue.front();
+
+			/*主角被击中声音*/
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/playerhited.wav");
+
 			switch (attack)
 			{
 			case enum_playerattackedfromleft: {
@@ -406,8 +412,6 @@ void Player::update(float dt)
 				timecounter_attacked->start();
 				//如果后面没障碍物，就被击退
 				this->setPlayerPosition(this->getPosition() + Vec2(0, 6));
-				//扣主角hp
-				m_hp--;
 
 				//如果是run状态下被攻击了，把run转化为walk
 				switch (PlayerState)
@@ -517,7 +521,7 @@ void Player::update(float dt)
 						RemoteSkill* swordwave = m_swordwave_Arr.back();
 						swordwave->setSkillDir(enum_remoteskill_up);
 						swordwave->show();
-						swordwave->setPosition(this->getPosition() + Vec2(0, this->getContentSize().height / 2));//把剑气根据玩家位置初始化
+						swordwave->setPosition(this->getPosition() + Vec2(0, this->getContentSize().height));//把剑气根据玩家位置初始化
 						m_Using_swordwave_Arr.pushBack(swordwave);//把剑气向量容器最后元素放到代表当前释放的剑气向量容器内
 						m_swordwave_Arr.popBack();//pop掉
 					}
@@ -612,7 +616,7 @@ void Player::update(float dt)
 						RemoteSkill* swordwave = m_swordwave_Arr.back();
 						swordwave->setSkillDir(enum_remoteskill_down);
 						swordwave->show();
-						swordwave->setPosition(this->getPosition() + Vec2(0, -this->getContentSize().height / 2));//把剑气根据玩家位置初始化
+						swordwave->setPosition(this->getPosition() + Vec2(0, 0));//把剑气根据玩家位置初始化
 						m_Using_swordwave_Arr.pushBack(swordwave);//把剑气向量容器最后元素放到代表当前释放的剑气向量容器内
 						m_swordwave_Arr.popBack();//pop掉
 					}
@@ -711,7 +715,7 @@ void Player::update(float dt)
 						RemoteSkill* swordwave = m_swordwave_Arr.back();
 						swordwave->setSkillDir(enum_remoteskill_left);
 						swordwave->show();
-						swordwave->setPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2, 0));//把剑气根据玩家位置初始化
+						swordwave->setPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2, this->getContentSize().height / 2));//把剑气根据玩家位置初始化
 						m_Using_swordwave_Arr.pushBack(swordwave);//把剑气向量容器最后元素放到代表当前释放的剑气向量容器内
 						m_swordwave_Arr.popBack();//pop掉
 					}
@@ -810,7 +814,7 @@ void Player::update(float dt)
 						RemoteSkill* swordwave = m_swordwave_Arr.back();
 						swordwave->setSkillDir(enum_remoteskill_right);
 						swordwave->show();
-						swordwave->setPosition(this->getPosition() + Vec2(this->getContentSize().width / 2, 0));//把剑气根据玩家位置初始化
+						swordwave->setPosition(this->getPosition() + Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2));//把剑气根据玩家位置初始化
 						m_Using_swordwave_Arr.pushBack(swordwave);//把剑气向量容器最后元素放到代表当前释放的剑气向量容器内
 						m_swordwave_Arr.popBack();//pop掉
 					}
@@ -1553,6 +1557,9 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 			timecounter_J->start();//一直计时
 								   //size为0才有普通的攻击
 			if (vecskill.size() == 0) {
+				//播放音效
+				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Jswordsound.wav");
+
 				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
 					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright) {
 					vecskill.push_back(enum_basepoke);
@@ -1597,6 +1604,8 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 			timecounter_J->start();//一直计时
 								   //size为0才有剑气
 			if (vecskill.size() == 0) {
+				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Kskill.wav"); 
+
 				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
 					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright) {
 					vecskill.push_back(enum_swordwave);
@@ -1810,18 +1819,18 @@ bool Player::setPlayerPosition(Vec2 position)
 	Vec2 positionVright;
 	switch (PlayerDir) {
 	case em_up: {
-		position.y += 2;//主角脚的大小
+		//position.y += this->getContentSize().height * this->getAnchorPoint().y;
 
-						//run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
+		//run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
 		if (vec.size() > 1) {
 			switch (vec.back())
 			{
 			case enum_left: {
-				position.x -= this->getContentSize().width / 2;
+				position.x -= this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
 			case enum_right: {
-				position.x += this->getContentSize().width / 2;
+				position.x += this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
 			default: {
@@ -1832,9 +1841,9 @@ bool Player::setPlayerPosition(Vec2 position)
 		//仅仅单上方向walk or run因为主角锚点是0.5 0.5，主角只是向上走，主角有身体的宽度，所以加多左右宽度的判断
 		else {
 			positionVleft = position;
-			positionVleft.x -= this->getContentSize().width / 2;
+			positionVleft.x -= this->getContentSize().width * this->getAnchorPoint().x;
 			positionVright = position;
-			positionVright.x += this->getContentSize().width / 2;
+			positionVright.x += this->getContentSize().width * this->getAnchorPoint().x;
 		}
 
 		break;
@@ -1846,11 +1855,11 @@ bool Player::setPlayerPosition(Vec2 position)
 			switch (vec.back())
 			{
 			case enum_left: {
-				position.x -= this->getContentSize().width / 2;
+				position.x -= this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
 			case enum_right: {
-				position.x += this->getContentSize().width / 2;
+				position.x += this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
 			default: {
@@ -1858,28 +1867,28 @@ bool Player::setPlayerPosition(Vec2 position)
 			}
 			}
 		}
-		//仅仅单上方向walk or run因为主角锚点是0.5 0.5，主角只是向上走，主角有身体的宽度，所以加多左右宽度的判断
+		//仅仅单下方向walk or run因为主角锚点是0.5 0.5，主角只是向上走，主角有身体的宽度，所以加多左右宽度的判断
 		else {
 			positionVleft = position;
-			positionVleft.x -= this->getContentSize().width / 2;
+			positionVleft.x -= this->getContentSize().width * this->getAnchorPoint().x;
 			positionVright = position;
-			positionVright.x += this->getContentSize().width / 2;
+			positionVright.x += this->getContentSize().width * this->getAnchorPoint().x;
 		}
 
 		break;
 	}
 	case em_left: {
-		position.x -= this->getContentSize().width / 2;
+		position.x -= this->getContentSize().width  * this->getAnchorPoint().x;
 		//run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
 		if (vec.size() > 1) {
 			switch (vec.back())
 			{
 			case enum_up: {
-				position.y += 2;//加上主角鞋子的大小
+				//position.y += this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			case enum_down: {
-
+				//position.y -= this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			default:
@@ -1889,17 +1898,17 @@ bool Player::setPlayerPosition(Vec2 position)
 		break;
 	}
 	case em_right: {
-		position.x += this->getContentSize().width / 2;//主角身体宽度
-													   //run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
+		position.x += this->getContentSize().width  * this->getAnchorPoint().x;//主角身体宽度
+		 //run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
 		if (vec.size() > 1) {
 			switch (vec.back())
 			{
 			case enum_up: {
-				position.y += 2;//加上主角鞋子的大小
+				//position.y += this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			case enum_down: {
-
+				//position.y -= this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			default:
@@ -1977,24 +1986,33 @@ bool Player::setPlayerPosition(Vec2 position)
 	//还原position
 	switch (PlayerDir) {
 	case em_up: {
-		position.y -= 2;//主角脚的大小
+		//position.y -= this->getContentSize().height * this->getAnchorPoint().y;
 
-						//run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
+		//run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
 		if (vec.size() > 1) {
 			switch (vec.back())
 			{
 			case enum_left: {
-				position.x += this->getContentSize().width / 2;
+				position.x += this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
 			case enum_right: {
-				position.x -= this->getContentSize().width / 2;
+				position.x -= this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
-			default:
+			default: {
 				break;
+			}
 			}
 		}
+		//仅仅单上方向walk or run因为主角锚点是0.5 0.5，主角只是向上走，主角有身体的宽度，所以加多左右宽度的判断
+		else {
+			positionVleft = position;
+			positionVleft.x += this->getContentSize().width * this->getAnchorPoint().x;
+			positionVright = position;
+			positionVright.x -= this->getContentSize().width * this->getAnchorPoint().x;
+		}
+
 		break;
 	}
 	case em_down: {
@@ -2004,31 +2022,40 @@ bool Player::setPlayerPosition(Vec2 position)
 			switch (vec.back())
 			{
 			case enum_left: {
-				position.x += this->getContentSize().width / 2;
+				position.x += this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
 			case enum_right: {
-				position.x -= this->getContentSize().width / 2;
+				position.x -= this->getContentSize().width * this->getAnchorPoint().x;
 				break;
 			}
-			default:
+			default: {
 				break;
+			}
 			}
 		}
+		//仅仅单下方向walk or run因为主角锚点是0.5 0.5，主角只是向上走，主角有身体的宽度，所以加多左右宽度的判断
+		else {
+			positionVleft = position;
+			positionVleft.x += this->getContentSize().width * this->getAnchorPoint().x;
+			positionVright = position;
+			positionVright.x -= this->getContentSize().width * this->getAnchorPoint().x;
+		}
+
 		break;
 	}
 	case em_left: {
-		position.x += this->getContentSize().width / 2;
+		position.x += this->getContentSize().width  * this->getAnchorPoint().x;
 		//run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
 		if (vec.size() > 1) {
 			switch (vec.back())
 			{
 			case enum_up: {
-				position.y -= 2;//加上主角鞋子的大小
+				//position.y -= this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			case enum_down: {
-
+				//position.y += this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			default:
@@ -2038,17 +2065,17 @@ bool Player::setPlayerPosition(Vec2 position)
 		break;
 	}
 	case em_right: {
-		position.x -= this->getContentSize().width / 2;//主角身体宽度
-													   //run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
+		position.x -= this->getContentSize().width  * this->getAnchorPoint().x;//主角身体宽度
+		//run或者walk附加的方向都是取决于vec.back(),而且附加的方向都是枚举enum_up,enum_left,enum_down,enum_right
 		if (vec.size() > 1) {
 			switch (vec.back())
 			{
 			case enum_up: {
-				position.y -= 2;//加上主角鞋子的大小
+				//position.y -= this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			case enum_down: {
-
+				//position.y += this->getContentSize().height * this->getAnchorPoint().y;
 				break;
 			}
 			default:
@@ -2203,6 +2230,9 @@ void Player::baseskillcollidUpdata(float dt)
 							vec.y += playerattackRange;
 							if (mons->getBoundingBox().containsPoint(vec))
 							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav");
+
 								int i;
 								for (i = collidedVector.size() - 1; i >= 0; i--)
 								{
@@ -2224,6 +2254,9 @@ void Player::baseskillcollidUpdata(float dt)
 							vec.y -= playerattackRange;
 							if (mons->getBoundingBox().containsPoint(vec))
 							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav");
+
 								int i;
 								for (i = collidedVector.size() - 1; i >= 0; i--)
 								{
@@ -2245,6 +2278,9 @@ void Player::baseskillcollidUpdata(float dt)
 							vec.x -= playerattackRange;
 							if (mons->getBoundingBox().containsPoint(vec))
 							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav");
+
 								int i;
 								for (i = collidedVector.size() - 1; i >= 0; i--)
 								{
@@ -2266,6 +2302,9 @@ void Player::baseskillcollidUpdata(float dt)
 							vec.x += playerattackRange;
 							if (mons->getBoundingBox().containsPoint(vec))
 							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav"); 
+
 								int i;
 								for (i = collidedVector.size() - 1; i >= 0; i--)
 								{

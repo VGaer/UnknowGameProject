@@ -50,6 +50,9 @@ bool StartGameScene::init()
 	mu->setPosition(Vec2(0,0));
 	this->addChild(mu);
 
+	startmenuItem_counter = TimeCounter::create();
+	this->addChild(startmenuItem_counter);
+
 	return true;
 }
 
@@ -96,13 +99,18 @@ void StartGameScene::menuItemHelpCallback(Ref* pSender)
 
 void StartGameScene::menuItemStartCallback(Ref* pSender)
 {
-	if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+	if (startmenuItem_counter->getCurTime() == 0.0f || startmenuItem_counter->getCurTime() > 10.0f){
+		if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
+		}
+		startmenuItem_counter->start();
+		auto sc = GameScene::createSceneWithId(2);
+		auto reScene = TransitionJumpZoom::create(0.0f, sc);
+		Director::getInstance()->replaceScene(sc);
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
+		auto m = (MenuItemSprite*)pSender;
+		m->setEnabled(false);
 	}
-	auto sc = GameScene::createSceneWithId(2);
-	auto reScene = TransitionJumpZoom::create(1.0f, sc);
-	Director::getInstance()->replaceScene(sc);
-	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
 }
 
 void StartGameScene::menuItemSettingCallback(Ref* pSender)

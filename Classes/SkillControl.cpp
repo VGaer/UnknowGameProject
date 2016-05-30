@@ -33,24 +33,29 @@ bool SkillControl::skill_laser()
 	laser->attr_direction = m_player->getPlayerDir();
 	auto map = m_player->getParent();
 	map->addChild(laser, map->getChildren().size());
+
+	/*ÒôÐ§*/
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/layersound.wav");
+
 	Point pos = m_player->getPosition();
+	pos.y += m_player->getContentSize().height / 2;
 	Point size = m_player->getContentSize();
 	switch (laser->attr_direction)
 	{
 	case em_up:
-		pos.y += size.y * m_player->getAnchorPoint().y;
+		pos.y += size.y / 2;
 		laser->setRotation(-90);
 		break;
 	case em_down:
-		pos.y -= size.y * m_player->getAnchorPoint().y;
+		pos.y -= size.y / 2;
 		laser->setRotation(90);
 		break;
 	case em_left:
-		pos.x -= size.x * m_player->getAnchorPoint().x;
+		pos.x -= size.x / 2;
 		laser->setRotation(180);
 		break;
 	case em_right:
-		pos.x += size.x * m_player->getAnchorPoint().x;
+		pos.x += size.x / 2;
 		break;
 	default:
 		break;
@@ -78,23 +83,24 @@ bool SkillControl::skill_fire()
 	auto map = m_player->getParent();
 	map->addChild(fire, map->getChildren().size());
 	Point pos = m_player->getPosition();
+	pos.y += m_player->getContentSize().height / 2;
 	Point size = m_player->getContentSize();
 	switch (fire->attr_direction)
 	{
 	case em_up:
-		pos.y += size.y * m_player->getAnchorPoint().y;
+		pos.y += size.y / 2;
 		fire->setRotation(-90);
 		break;
 	case em_down:
-		pos.y -= size.y * m_player->getAnchorPoint().y;
+		pos.y -= size.y / 2;
 		fire->setRotation(90);
 		break;
 	case em_left:
-		pos.x -= size.x * m_player->getAnchorPoint().x;
+		pos.x -= size.x / 2;
 		fire->setRotation(180);
 		break;
 	case em_right:
-		pos.x += size.x * m_player->getAnchorPoint().x;
+		pos.x += size.x / 2;
 		break;
 	default:
 		break;
