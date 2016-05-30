@@ -7,7 +7,7 @@
 
 void Idle::Enter(Monster* target)
 {
-	log("Idle");
+	//log("Idle");
 	//记录当前状态
 	target->setMachineState(enum_MonsterIdle);
 	target->cmd_stop();
@@ -17,7 +17,7 @@ void Idle::Enter(Monster* target)
 
 void Idle::Excute(Monster* target)
 {
-	log("Idle");
+	//log("Idle");
 
 	//如果被主角攻击了，进入被击状态
 	if (target->IsattackedByPlayer()){
@@ -49,7 +49,7 @@ void Patrol::Enter(Monster* target)
 {
 	//记录当前状态
 	target->setMachineState(enum_MonsterPatrol);
-	log("patrol");
+	//log("patrol");
 
 	std::vector<Vec2> patrolvec = target->getPatrolpointvec();
 	if (patrolvec.size() > 0)
@@ -67,7 +67,7 @@ void Patrol::Enter(Monster* target)
 
 void Patrol::Excute(Monster* target)
 {
-	log("patrol");
+	//log("patrol");
 
 	//如果被主角攻击了，进入被击状态
 	if (target->IsattackedByPlayer()){
@@ -116,7 +116,7 @@ void Patrol::Exit(Monster* target)
 /*攻击的技能存在会进来攻击状态*/
 void Attack::Enter(Monster* target)
 {
-	log("attack");
+	//log("attack");
 	//记录当前状态
 	target->setMachineState(enum_MonsterAttack);
 
@@ -148,8 +148,8 @@ void Attack::Enter(Monster* target)
 
 void Attack::Excute(Monster* target)
 {
-	log("attack");
-	log("%s", target->m_curskill.c_str());
+	//log("attack");
+	//log("%s", target->m_curskill.c_str());
 
 	//设置怪物朝向
 	target->getAnimBase()->setCurDirection(target->getPlayer()->getPosition());
@@ -651,7 +651,7 @@ void Attack::Exit(Monster* target)
 
 void Track::Enter(Monster* target)
 {
-	log("track");
+	//log("track");
 	//记录当前状态
 	target->setMachineState(enum_MonsterTrack);
 
@@ -667,7 +667,7 @@ void Track::Enter(Monster* target)
 
 void Track::Excute(Monster* target)
 {
-	log("track");
+	//log("track");
 	//如果被主角攻击了，进入被击状态
 	if (target->IsattackedByPlayer()){
 		target->m_curskill = "baseskill";
@@ -731,7 +731,7 @@ void Track::Excute(Monster* target)
 	//还是视野范围，继续寻路
 	else if (target->m_timecounter->getCurTime() > target->duration)
 	{
-		log("track");
+	//	log("track");
 		Vec2 tarPos = target->getPlayer()->getPosition();
 		target->duration = target->monsdata.moveSpeed;
 		target->m_timecounter->start();
@@ -739,7 +739,6 @@ void Track::Excute(Monster* target)
 		//如果怪物不动了，但是又打不到主角，说明怪物确实是寻路到主角附近了，但是攻击范围达不上，那么微调怪物位置 
 		if (target->IstrackNoresult == true)
 		{
-			log("------------------------------------------");
 			//指向主角的位移,距离不超100的，瓦片大小才64，
 			Vec2 dif = target->getPlayer()->getPosition() - target->getPosition();
 			dif = dif * 0.1;
@@ -760,7 +759,7 @@ void Track::Exit(Monster* target)
 
 void Attacked::Enter(Monster* target)
 {
-	log("Attacked!!");
+//	log("Attacked!!");
 
 	target->setMachineState(enum_MonsterAttacked);
 	
@@ -773,7 +772,7 @@ void Attacked::Excute(Monster* target)
 {
 	//如果还是被主角攻击
 	if (target->IsattackedByPlayer()){
-		log("Attacked!!");
+	//	log("Attacked!!");
 		//重新设置硬直时间
 		target->duration = target->monsdata.attackedrestoretime;
 		target->m_timecounter->start();

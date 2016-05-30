@@ -10,61 +10,94 @@ QuestDispatcher * QuestDispatcher::getInstance()
 
 QuestDispatcher::QuestDispatcher()
 {
+	initQuestDlgsData();
 }
 
 QuestDispatcher::~QuestDispatcher()
 {
 }
 
-void QuestDispatcher::initQuestsDataWithID(int tag, const int id)
+void QuestDispatcher::initQuestsDataWithID(const int id)
 {
-	mData[tag]->questData[id] = (GameData::getInstance()->getDataFromQuestsData(id));
+	mData[id] = (GameData::getInstance()->getDataFromQuestsData(id));
 }
 
-void QuestDispatcher::initQuestDlgsDataWithID(int tag, const int id)
+void QuestDispatcher::initQuestDlgsData()
 {
-	mData[tag]->qDlgsdata[id] = GameData::getInstance()->getDataFromQuestDlgsData(id);
+	qDlgsdata = GameData::getInstance()->getDataFromQuestDlgsData();
 }
 
 
 void QuestDispatcher::initQuest(NPC* pSender)
 {
-	auto npc_id = pSender->getData()->id;
 	auto quest_id = pSender->getData()->quest_id;
-	mData[npc_id] = new QuestData();
 	for (int i = 0; i < quest_id.size(); i++) {
-		initQuestsDataWithID(npc_id, quest_id[i]);
-		initQuestDlgsDataWithID(npc_id, quest_id[i]);
+		initQuestsDataWithID(quest_id[i]);
 	}
 }
 
 int QuestDispatcher::getQuestStatus(NPC* pSender, const int id)
 {
 	auto npc_id = pSender->getData()->id;
-	return mData[npc_id]->questData[id]->status;
+	return mData[id]->status;
 }
 
 void QuestDispatcher::QuestStatusControl(NPC * pSender, QuestControl ctr, const int id)
 {
-	auto npc_id = pSender->getData()->id;
 	switch (ctr)
 	{
 	case accpet:
-		mData[npc_id]->questData[id]->status = QuestStatus::active;
+		mData[id]->status = QuestStatus::active;
+		activeQuestList.push_back(mData[id]);
 		break;
 	case complete:
-		mData[npc_id]->questData[id]->status = QuestStatus::finish;
+		mData[id]->status = QuestStatus::finish;
+		for (it = activeQuestList.begin(); it != activeQuestList.end(); it++) {
+			if (*it == mData[id]) {
+				activeQuestList.erase(it);
+				break;
+			}
+		}
 		break;
 	case cancel:
-		mData[npc_id]->questData[id]->status = QuestStatus::start;
+		mData[id]->status = QuestStatus::start;
+		for (it = activeQuestList.begin(); it != activeQuestList.end(); it++) {
+			if (*it == mData[id]) {
+				activeQuestList.erase(it);
+			}
+		}
 		break;
 	default:
 		break;
 	}
 }
 
-QuestData * QuestDispatcher::getQuest(NPC* pSender)
+NPC * QuestDispatcher::getNpc(string& name)
 {
-	auto npc_id = pSender->getData()->id;
-	return mData[npc_id];
+	return mNpc[name];
+}
+
+void QuestDispatcher::addNpc(string& name, NPC * pSender)
+{
+	mNpc[name] = pSender;
+}
+
+vector<QuestListData*> QuestDispatcher::getQuest(NPC* pSender)
+{
+	auto id = pSender->getData()->quest_id;
+	vector<QuestListData*> temp;
+	for (auto i : id) {
+		temp.push_back(mData[i]);
+	}
+	return temp;
+}
+
+vector<QuestListData*>& QuestDispatcher::getQuestListVec()
+{
+	return activeQuestList;
+}
+
+map<int, QuestDlgsData*> QuestDispatcher::getQuestDlgs()
+{
+	return qDlgsdata;
 }

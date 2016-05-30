@@ -2,6 +2,7 @@
 #define _MonsterManager_H_
 
 #include "Monster.h"
+class Monster;
 
 class MonsterManager
 {

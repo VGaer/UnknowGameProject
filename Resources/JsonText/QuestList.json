@@ -5,6 +5,7 @@
     "instruct": "’“”‡”¿üˆ",
     "type": 1,
     "status": 0,
+    "targetNpc": "”‡”¿üˆ",
     "mons_id": "NULL",
     "reward": [
       "NULL"
@@ -16,6 +17,7 @@
     "instruct": "’“¡∫ºŒª‘",
     "type": 1,
     "status": 0,
+    "targetNpc": "¡∫ºŒª‘",
     "mons_id": "NULL",
     "reward": [
       "NULL"
@@ -27,6 +29,7 @@
     "instruct": "’“¡Œ∫∆–€",
     "type": 1,
     "status": 0,
+    "targetNpc": "¡Œ∫∆–€",
     "mons_id": "NULL",
     "reward": [
       "NULL"

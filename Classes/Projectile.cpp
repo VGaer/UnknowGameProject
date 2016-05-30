@@ -64,8 +64,6 @@ void Laser::update(float dt)
 		removeFromParent();
 }
 
-
-
 bool Fire::init()
 {
 	dt = 0;
@@ -122,7 +120,7 @@ void Fire::update(float dt)
 		{
 			removeFromParent();
 			return;
-		}			
+		}
 		Vec2 move(0, 0);
 		if (attr_direction == em_up)
 			move.y = attr_moveSpeed;

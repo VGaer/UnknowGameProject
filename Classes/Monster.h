@@ -24,6 +24,7 @@ typedef enum
 };
 
 class AnimBase;
+class Player;
 
 class Monster : public Entity
 {
@@ -64,6 +65,7 @@ public:
 	int index; //巡逻点记录
 	bool IsattackedByPlayer();	//是否被主角攻击
 	bool isAttackedByProjectile; // 是否被投射物攻击
+	bool isAttackedByPlayerBaseskill; //是否被主角普通攻击打中
 	Color3B m_monstercolor; //怪物颜色
 	bool IstrackNoresult;    //追踪时记录怪物是否有寻路结果
 	TimeCounter* m_bigskill_timecounter; //怪物大技能cd计时器
@@ -84,8 +86,8 @@ private:
 	FindPath* findPath;             // 自动寻路
 	StateMachine* stateMachine;		// 状态机
 	void update(float);				// 更新状态机
-	int m_CurMachineState;								// 状态机的状态
-	TMXTiledMap* m_parrent;		//
+	int m_CurMachineState;			// 状态机的状态
+	TMXTiledMap* m_parrent;
 	int m_magnification;//怪物精灵放大倍数
 	std::vector<Vec2> vecPatrolpoint; //巡逻点向量
 };

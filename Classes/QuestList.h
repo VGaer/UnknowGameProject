@@ -28,13 +28,13 @@ public:
 	int getQuestTag() { return questTag; }
 	bool addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag = 0, string font = "arial.ttf");
 	virtual bool addButton(const char* normalImage, const char* selectedImage, Vec2 pos, int tag = 0);
-
+	void setBtnPos(float durtime = 0);
 	virtual void onEnter();
 	virtual void onExit();
 
 private:
 	int questTag;
-
+	Size contentSize;
 	void menuCallback(Ref* pSender);
 	void buttonCallback(Ref* pSender, Widget::TouchEventType type);
 

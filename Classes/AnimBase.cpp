@@ -246,34 +246,40 @@ void AnimBase::setAction()
 {
 	/*到时在json文件一并处理,现在先测试*/
 
-	Animation* animation = AnimationUtil::createWithSingleFrameName("treemonsterhstatic", 0.1f, 1);
+//	Animation* animation = AnimationUtil::createWithSingleFrameName("treemonsterhstatic", 0.1f, 1);
+	Animation* animation = AnimationUtil::createWithSingleFrameName((m_monster->monsdata.name + "hstatic").c_str(),0.1f, -1);
 	Animate* animate = Animate::create(animation);
 	animate->retain();
 	m_stanAnimArray[0] = animate; //静止0
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterustatic", 0.1f, 1);
+	//animation = AnimationUtil::createWithSingleFrameName("treemonsterustatic", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName((m_monster->monsdata.name + "ustatic").c_str(), 0.1f, -1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_stanAnimArray[1] = animate; //上1
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterdstatic", 0.1f, 1);
+	//animation = AnimationUtil::createWithSingleFrameName("treemonsterdstatic", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName((m_monster->monsdata.name + "dstatic").c_str(),0.1f,-1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_stanAnimArray[2] = animate;//下2
 
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterhrun", 0.1f, 1);
+	//animation = AnimationUtil::createWithSingleFrameName("treemonsterhrun", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName((m_monster->monsdata.name + "hrun").c_str(),0.1f,-1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_moveAnimArray[0] = animate;
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterurun", 0.1f, 1);
+	//animation = AnimationUtil::createWithSingleFrameName("treemonsterurun", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName((m_monster->monsdata.name + "urun").c_str(), 0.1f, -1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_moveAnimArray[1] = animate;
 
 
-	animation = AnimationUtil::createWithSingleFrameName("treemonsterdrun", 0.1f, 1);
+	//animation = AnimationUtil::createWithSingleFrameName("treemonsterdrun", 0.1f, 1);
+	animation = AnimationUtil::createWithSingleFrameName((m_monster->monsdata.name + "drun").c_str(),0.1f,-1);
 	animate = Animate::create(animation);
 	animate->retain();
 	m_moveAnimArray[2] = animate;

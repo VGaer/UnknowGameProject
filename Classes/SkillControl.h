@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "TimeCounter.h"
 
-#define MAX_SKILL_NUM 2		// Î´¶¨
+#define MAX_SKILL_NUM 2	// Î´¶¨
 
 
 

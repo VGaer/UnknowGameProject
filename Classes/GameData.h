@@ -8,16 +8,18 @@ using namespace std;
 
 //#define MONS_DATA_PATH "JsonText/monattribute.json"	// 怪物数据文件路径
 #define MONS_DATA_PATH "JsonText/monsterset.json"	// 怪物skill文件路径
-#define NPCS_DATA_PATH "JsonText/NpcDlgs.json"	// NPC数据文件路径
+#define NPCS_DATA_PATH "JsonText/NpcDlgs.json"		// NPC数据文件路径
 #define QUESTS_DATA_PATH "JsonText/QuestList.json"	// 任务数据文件路径
 #define QDLGS_DATA_PATH "JsonText/QuestDlgs.json"	// 任务对话数据文件路径
+#define SAVE_DATA_PATH "JsonText/SaveData.json"		// 游戏存档文件路径
 
 struct NpcsData {
-	int id;				// id
-	vector<int> quest_id;		//任务id
-	string name;		// 名字
-	vector<string> dlgs;		// 对话s
-	string imagePath;	// 图片路径
+	int id;					// id
+	int status;				// npc状态（0：无、1：任务过程中）
+	vector<int> quest_id;	// 任务id
+	string name;			// 名字
+	vector<string> dlgs;	// 对话s
+	string imagePath;		// 图片路径
 };
 
 struct MonSkill
@@ -77,7 +79,8 @@ struct QuestListData {
 	string title;	//任务标题
 	string instruct; //任务简介
 	int type;		//任务类型
-	int status;		//激活状态 （0：未接、1：激活、2：完成）
+	int status;		//激活状态 （0：未接、1：激活、2：完成、3：可提交）
+	string targetNpc; //任务目标（如果有）
 	string mons_id;	//任务目标（如果有）
 };
 
@@ -87,6 +90,14 @@ struct QuestDlgsData {
 	string active;	//任务激活后对话
 	string finish;	//任务完成后对话
 	string answer;	//目标NPC回复（如果有）
+};
+
+struct SaveData
+{
+	float pyPosX;		// 玩家X坐标
+	float pyPosY;		// 玩家Y坐标
+	int direction;      // 朝向
+	int sceneId;		// 地图id
 };
 
 class GameData
@@ -101,6 +112,9 @@ public:
 	map<string, NpcsData*> m_mapNpcsData;
 	map<int, QuestListData*> m_mapQuestsData;
 	map<int, QuestDlgsData*> m_mapQuestDlgsData;
+	// 数据存档
+	void save();
+	bool readSaveDataFile();    // 读档
 public:
 	// 加入一条怪物数据
 	void addDataToMonsData(MonsData* data);
@@ -116,14 +130,21 @@ public:
 	QuestListData* getDataFromQuestsData(const int id);
 	// 加入一条任务对话数据
 	void addDataToQuestDlgsData(QuestDlgsData* data);
-	// 获取一条任务对话数据
-	QuestDlgsData* getDataFromQuestDlgsData(const int id);
+	// 获取任务对话数据
+	map<int, QuestDlgsData*> getDataFromQuestDlgsData();
+	// 保存任务信息
+	void writeQuestData();
+	// 保存玩家信息
+	void writePlayerData();
+	SaveData* getSaveData();
 private:
 	// 读取文件数据
 	void readMonsDataFile();
 	void readNpcsDataFile();
 	void readQuestsDataFile();
 	void readQuestDlgsDataFile();
+private:
+	SaveData* m_saveData;
 };
 
 #endif

@@ -47,6 +47,58 @@ void MonsterRemoteskill::update(float dt)
 			{
 				m_player->m_hp = m_player->m_hp - m_damage;
 			}
+			//把主角被攻击信息放进队列
+			switch (m_direction)
+			{
+			case Dir_up:{
+				m_player->attackedqueue.push(enum_playerattackedfromdown);
+				break;
+			}
+			case Dir_down:{
+				m_player->attackedqueue.push(enum_playerattackedfromup);
+				break;
+			}
+			case Dir_left:{
+				m_player->attackedqueue.push(enum_playerattackedfromright);
+				break;
+			}
+			case Dir_right:{
+				m_player->attackedqueue.push(enum_playerattackedfromleft);
+				break;
+			}
+			case Dir_upleft:{
+				m_player->attackedqueue.push(enum_playerattackedfromdown);
+				break;
+			}
+			case Dir_upright:{
+				m_player->attackedqueue.push(enum_playerattackedfromdown);
+				break;
+			}
+			case Dir_downleft:{
+				m_player->attackedqueue.push(enum_playerattackedfromup);
+				break;
+			}
+			case Dir_downright:{
+				m_player->attackedqueue.push(enum_playerattackedfromup);
+				break;
+			}
+			case Dir_leftup:{
+				m_player->attackedqueue.push(enum_playerattackedfromright);
+				break;
+			}
+			case Dir_rightup:{
+				m_player->attackedqueue.push(enum_playerattackedfromleft);
+				break;
+			}
+			case Dir_leftdown:{
+				m_player->attackedqueue.push(enum_playerattackedfromright);
+				break;
+			}
+			case Dir_rightdown:{
+				m_player->attackedqueue.push(enum_playerattackedfromleft);
+				break;
+			}
+			}
 			this->removeFromParent();
 			return;
 		}

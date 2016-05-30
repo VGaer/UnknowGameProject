@@ -9,6 +9,8 @@
 #include "RemoteSkill.h"
 #include "SkillControl.h"
 #include <queue>
+#include "MonsterManager.h"
+#include "Monster.h"
 
 USING_NS_CC;
 typedef enum
@@ -58,6 +60,7 @@ typedef enum
 };
 
 class SkillControl;
+class Monster;
 
 class Player : public Entity
 {
@@ -82,6 +85,7 @@ public:
 	std::vector<int> getVecSkill();
 	std::vector<baseskillstr>& getvecskillstr(); //返回引用
 	int getPlayerDir();
+	void setPlayerDir(int direction);
 	bool playerIsattacked;//主角是否被攻击
 	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
 	int m_hp;
@@ -106,5 +110,7 @@ private:
 	int m_player_magnification;//玩家精灵放大倍数	
 	Color3B m_playerColor;
 	SkillControl* skillControl;
+	Vector<Monster*> collidedVector;	// 碰撞清单
+	void baseskillcollidUpdata(float dt);
 };
 #endif 

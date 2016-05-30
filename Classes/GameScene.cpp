@@ -1,7 +1,21 @@
 #include "GameScene.h"
 #include "Monster.h"
+#include "NPC.h"
+#include "Pop.h"
 #include "Graph.h"
 #include "GameData.h"
+#include "algorithm"
+#include "SceneIdManager.h"
+
+int GameScene::curSceneId = -1;
+
+bool comp(Entity* a, Entity*b)
+{
+	if (a->getPositionY() > b->getPositionY())
+		return true;
+	else
+		return false;
+}
 
 Scene* GameScene::createSceneWithId(int sceneId)
 {
@@ -15,14 +29,120 @@ Scene* GameScene::createSceneWithId(int sceneId)
 	return scene;
 }
 
+Scene* GameScene::createSceneWithSaveData()
+{
+	auto scene = Scene::create();
+	auto layer = new GameScene();
+	if (layer && layer->initWithSaveData())
+	{
+		layer->autorelease();
+		scene->addChild(layer);
+	}
+	return scene;
+}
+
 
 bool GameScene::init(int sceneId)
 {
 	// ÏÈ²»¹Üid
 	setMapInfo(sceneId);
 	loadPlistFile();
+	addPlayer(Point(100, 250));
+	//int i = 2;
+	//do{
+	//	i--;
+	//	m_monster = Monster::create("treemonster");
+	//	m_map->addChild(m_monster, (int)m_map->getChildren().size());
+	//	m_monster->getSprite()->setScale(1.5);
+	//	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+	//	m_monster->setAnchorPoint(Vec2(0.5, 0.2));
+	//	m_monster->setMonsterParent(m_map);
+	//	m_monster->setvecPatrolpoint();
+	//	m_monster->setPosition(32 + rand() % 200, 384 + rand() % 200);
+	//	m_monster->bindPlayer(m_player);
+	//	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
+	//	MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
+	//} while (i);
+	//i = 1;
+	//do{
+	//	i--;
+	//	m_monster = Monster::create("gdragonmonster");
+	//	m_map->addChild(m_monster, (int)m_map->getChildren().size());
+	//	m_monster->getSprite()->setScale(1.5);
+	//	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+	//	m_monster->setAnchorPoint(Vec2(0.5, 0.2));
+	//	m_monster->setMonsterParent(m_map);
+	//	m_monster->setvecPatrolpoint();
+	//	m_monster->setPosition(32 + rand() % 200, 384 + rand() % 200);
+	//	m_monster->bindPlayer(m_player);
+	//	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
+	//	MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
+	//} while (i);
 
-	// test
+	
+
+	{
+		m_npc = NPC::create("ÁÎºÆÐÛ");
+		m_npc->setAnchorPoint(Vec2(.5f, .5f));
+		m_npc->setTiledMap(m_map);
+		m_npc->setPosition(Vec2(1000, 400));
+		m_npc->setPlayer(m_player);
+		m_map->addChild(m_npc, (int)m_map->getChildren().size());
+		auto p = m_npc->getPosition();
+		p = CC_POINT_POINTS_TO_PIXELS(p);
+		m_npc->setVertexZ(-((p.y + 64) / 64));
+		auto pop = Pop::create(Vec2(m_npc->getPosition().x, m_npc->getPosition().y - 50));
+		this->addChild(pop, 3);
+		PopManager::getInstance()->getPopsMap()["ÁÎºÆÐÛ"] = pop;
+		NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
+	}
+
+	{
+		m_npc = NPC::create("ÓàÓÀŸö");
+		m_npc->setAnchorPoint(Vec2(.5f, .5f));
+		m_npc->setTiledMap(m_map);
+		m_npc->setPosition(Vec2(1000, 700));
+		m_npc->setPlayer(m_player);
+		m_map->addChild(m_npc, (int)m_map->getChildren().size());
+		auto p = m_npc->getPosition();
+		p = CC_POINT_POINTS_TO_PIXELS(p);
+		m_npc->setVertexZ(-((p.y + 64) / 64));
+		auto pop = Pop::create(Vec2(m_npc->getPosition().x, m_npc->getPosition().y - 50));
+		this->addChild(pop, 3);
+		PopManager::getInstance()->getPopsMap()["ÓàÓÀŸö"] = pop;
+		NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
+	}
+	scheduleUpdate();
+	return true;
+}
+
+bool GameScene::initWithSaveData()
+{
+	SaveData* saveData = GameData::getInstance()->getSaveData();
+	setMapInfo(saveData->sceneId);
+	addPlayer(Point(saveData->pyPosX, saveData->pyPosY), saveData->direction);
+	scheduleUpdate();
+	return true;
+}
+
+void GameScene::setMapInfo(int id)
+{
+	//m_map = TMXTiledMap::create("home.tmx");
+	curSceneId = -1;
+	if (SceneIdManager::getInstance()->map_sceneIdToname.find(id) != SceneIdManager::getInstance()->map_sceneIdToname.end())
+	{
+		curSceneId = id;
+		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToname[id]);
+		m_map->getLayer("barrier")->setVisible(false);
+		addChild(m_map, 0, 1);
+		auto graph = Graph::getInstance();
+		graph->setTildMap(m_map);
+		graph->init(Point(16, 20));
+	}
+}
+
+void GameScene::addPlayer(Point pos, int direction)
+{
 	Player* player = Player::getInstance();
 	player->setTiledMap(m_map);
 	player->init();
@@ -31,57 +151,20 @@ bool GameScene::init(int sceneId)
 		player->getContentSize().height * player->getPlayer_magnification() / 2));
 	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
 	player->setAnchorPoint(Vec2(0.5, 0.5));
-	player->setPosition(Vec2(100, 250));
+	player->setPosition(pos);
+	player->setPlayerDir(direction);
 	Sprite* dian = Sprite::create("dian.jpg");
 	dian->setPosition(player->getContentSize().width, 0);
 	player->addChild(dian);
 	Sprite* dian2 = Sprite::create("dian.jpg");
 	player->addChild(dian2);
 	m_player = player;
-
-	m_monster = Monster::create("treemonster");
-	m_map->addChild(m_monster, (int)m_map->getChildren().size());
-	m_monster->getSprite()->setScale(1.5);
-	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
-	m_monster->setAnchorPoint(Vec2(0.5, 0.2));
-	m_monster->setMonsterParent(m_map);
-	m_monster->setvecPatrolpoint();
-	m_monster->setPosition(32, 384);
-	m_monster->bindPlayer(m_player);
-	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
-	MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
-
-	{
-		NPC* npc = NPC::createWithparent(m_map);
-		npc->bindSprite(Sprite::create("player11.png"));
-		npc->setAnchorPoint(Vec2(.5f, .5f));
-		npc->setTiledMap(m_map);
-		npc->setPosition(Vec2(1000, 400));
-		npc->setPlayer(player);
-		npc->initDataWithName("ÁÎºÆÐÛ");
-		auto p = npc->getPosition();
-		p = CC_POINT_POINTS_TO_PIXELS(p);
-		npc->setVertexZ(-((p.y + 64) / 64));
-		PopManager::getInstance()->setAnchorPoint(Vec2(0.5, 0));
-		PopManager::getInstance()->setPosition(Vec2(npc->getPosition().x, npc->getPosition().y - 50));
-		this->addChild(PopManager::getInstance(), 3);
-	}
-
-	scheduleUpdate();
-	return true;
 }
 
-void GameScene::setMapInfo(int id)
+void GameScene::addNpc(int npcId, Point pos)
 {
-	m_map = TMXTiledMap::create("home.tmx");
-	m_map->getLayer("barrier")->setVisible(false);
-	addChild(m_map, 0, 1);
-	auto graph = Graph::getInstance();
-	graph->setTildMap(m_map);
-	graph->init(Point(16, 20));
-
+	
 }
-
 void GameScene::addMonster(const std::string& name, Point pos)
 {
 	auto monster = Monster::create(name);
@@ -110,9 +193,30 @@ void GameScene::update(float dt)
 	p = CC_POINT_POINTS_TO_PIXELS(p);
 	m_player->setVertexZ(-((p.y + 64) / 64));
 
-	p = m_monster->getPosition();
+	auto Vec1 = MonsterManager::getInstance()->getMonsterVec();
+	Vector<Entity*> Vec;
+	for (int i = 0; i < Vec1.size(); i++)
+	{
+		Vec.pushBack(Vec1.at(i));
+	}	
+	for (int i = 0; i < Vec.size(); i++)
+	{
+		auto monster = Vec.at(i);
+		p = monster->getPosition();
+		p = CC_POINT_POINTS_TO_PIXELS(p);
+		monster->setVertexZ(-((p.y + 64) / 64));
+	}
+	Vec.pushBack(m_player);
+	sort(Vec.begin(), Vec.end(), comp);
+	for (int i = 0; i < Vec.size(); i++)
+	{
+		Vec.at(i)->setZOrder(4 + i);
+	}
+
+	
+	/*p = m_monster->getPosition();
 	p = CC_POINT_POINTS_TO_PIXELS(p);
-	m_monster->setVertexZ(-((p.y + 64) / 64));
+	m_monster->setVertexZ(-((p.y + 64) / 64));*/
 	setViewpointCenter(m_player->getPosition());
 }
 
@@ -133,6 +237,7 @@ void GameScene::setViewpointCenter(Vec2 Position)
 void GameScene::loadPlistFile()
 {
 	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
+	/*Ê÷¹Ö*/
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdattack/treemonsterdattack.plist", "monster/treemonster/treemonsterdattack/treemonsterdattack.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdrun/treemonsterdrun.plist", "monster/treemonster/treemonsterdrun/treemonsterdrun.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdstatic/treemonsterdstatic.plist", "monster/treemonster/treemonsterdstatic/treemonsterdstatic.png");
@@ -150,4 +255,22 @@ void GameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.plist", "monster/treemonster/treemonsterhbigskill/treemonsterhbigskill.png");
 
 	frameCache->addSpriteFramesWithFile("MonsterProj/treemonster/treemonproj.plist", "MonsterProj/treemonster/treemonproj.png");
+
+	/*ÇàÁú*/
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterdattack/gdragonmonsterdattack.plist", "monster/gdragonmonster/gdragonmonsterdattack/gdragonmonsterdattack.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterdrun/gdragonmonsterdrun.plist", "monster/gdragonmonster/gdragonmonsterdrun/gdragonmonsterdrun.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterdstatic/gdragonmonsterdstatic.plist", "monster/gdragonmonster/gdragonmonsterdstatic/gdragonmonsterdstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterhattack/gdragonmonsterhattack.plist", "monster/gdragonmonster/gdragonmonsterhattack/gdragonmonsterhattack.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterhrun/gdragonmonsterhrun.plist", "monster/gdragonmonster/gdragonmonsterhrun/gdragonmonsterhrun.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterhstatic/gdragonmonsterhstatic.plist", "monster/gdragonmonster/gdragonmonsterhstatic/gdragonmonsterhstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.plist", "monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.plist", "monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.png");
+	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.plist", "monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.png");
+}
+
+int GameScene::getCurSceneId()
+{
+	return curSceneId;
 }
