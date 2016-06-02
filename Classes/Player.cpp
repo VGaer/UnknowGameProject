@@ -21,6 +21,8 @@ bool Player::init()
 
 	this->scheduleUpdate();
 	this->schedule(schedule_selector(Player::baseskillcollidUpdata));
+	this->schedule(schedule_selector(Player::Playerhp_mp_Update),0.2f);
+	this->schedule(schedule_selector(Player::recoverHp_Mp), 1.0f);
 
 	timecounter_up = TimeCounter::create();
 	this->addChild(timecounter_up);
@@ -78,12 +80,21 @@ bool Player::init()
 	m_player_magnification = 2.5;
 
 	m_hp = 100;
+	m_mp = 100;
+
+	//暂时弄100
+	curLevel_Maxhp = 100;
+	curLevel_Maxmp = 100;
 
 	this->bindSprite(Sprite::create("player.png"));
 	m_playerColor = this->getSprite()->getColor();
 
 	skillControl = SkillControl::create();
 	addChild(skillControl);
+
+	k_consumemp = 4;
+	l_consumemp = 7;
+	u_consumemp = 6;
 
 	return true;
 }
@@ -229,9 +240,16 @@ void Player::update(float dt)
 		//主角被攻击过了僵直时间,才pop掉队列
 		if (timecounter_attacked->getCurTime() > 0.11f) {
 			/*防止主角击退效果被打歪*/
+			this->getSprite()->setAnchorPoint(Vec2(0.5, 0));
+			this->getSprite()->setPosition(Vec2(this->getContentSize().width / 2,
+				0));
 			this->getSprite()->setRotation(0);
-			this->getSprite()->setPosition(Vec2(this->getContentSize().width * this->getAnchorPoint().x, this->getContentSize().height * this->getAnchorPoint().y));
 			/*防止主角击退效果被打歪*/
+			/*防止主角染色变红没恢复*/
+			/*CCTintTo* action = CCTintTo::create(0.01f, m_playerColor);
+			this->getSprite()->runAction(action);*/
+			this->getSprite()->setColor(m_playerColor);
+
 			attackedqueue.pop();
 			//设置计时为0，当被攻击信息队列增加消息size再次大于0时，不会马上被pop掉，而是重新调用了timecouter_attacked->start才判断是否pop掉
 			timecounter_attacked->setstartTimeZeroAndcloseSchedule();
@@ -454,9 +472,14 @@ void Player::update(float dt)
 	playerIsattacked = false;//标志主角不为被击状态
 
 	/*防止主角击退效果被打歪*/
+	this->getSprite()->setAnchorPoint(Vec2(0.5, 0));
+	this->getSprite()->setPosition(Vec2(this->getContentSize().width / 2,
+		0));
 	this->getSprite()->setRotation(0);
-	this->getSprite()->setPosition(Vec2(this->getContentSize().width * this->getAnchorPoint().x,this->getContentSize().height * this->getAnchorPoint().y));
 	/*防止主角击退效果被打歪*/
+	/*防止主角染色变红没恢复*/
+	this->getSprite()->setColor(m_playerColor);
+	/*防止主角染色变红没恢复*/
 
 	/////////////////////攻击优先于走或跑
 	if (vecskill.size() == 1) {
@@ -1600,7 +1623,9 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 		float curtime = timecounter_J->getCurTime();
 		//第一次按K时才有curtime = 0,此后每隔07f秒才能按放一次技能
 		//主角非被击状态才能放技能
-		if (curtime == 0 || curtime > 0.7f && (playerIsattacked == false)) {
+		if (curtime == 0 || curtime > 0.7f && (playerIsattacked == false) && m_mp >= k_consumemp) {
+			//扣mp
+			m_mp -= k_consumemp;
 			timecounter_J->start();//一直计时
 								   //size为0才有剑气
 			if (vecskill.size() == 0) {
@@ -1640,10 +1665,11 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 
 	if (keyCode == EventKeyboard::KeyCode::KEY_L)
 	{
-		if (playerIsattacked == false)
+		if (playerIsattacked == false && m_mp >= l_consumemp)
 		{
 			if (vecskill.size() == 0 && skillControl->skill_laser())
 			{
+				m_mp -= l_consumemp;
 				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
 					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright) {
 					vecskill.push_back(enum_laserskill);
@@ -1678,10 +1704,11 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 
 	if (keyCode == EventKeyboard::KeyCode::KEY_U)
 	{
-		if (playerIsattacked == false)
+		if (playerIsattacked == false && m_mp >= u_consumemp)
 		{
 			if (vecskill.size() == 0 && skillControl->skill_fire())
 			{
+				m_mp -= u_consumemp;
 				if (PlayerState == enum_doubleup || PlayerState == enum_doubledown
 					|| PlayerState == enum_doubleleft || PlayerState == enum_doubleright) {
 					vecskill.push_back(enum_fireskill);
@@ -2190,6 +2217,11 @@ int Player::getPlayerDir()
 	return PlayerDir;
 }
 
+void Player::setPlayerDir(int direction)
+{
+	PlayerDir = direction;
+}
+
 std::vector<baseskillstr>& Player::getvecskillstr()
 {
 	return vecskillstr;
@@ -2328,4 +2360,45 @@ void Player::baseskillcollidUpdata(float dt)
 		}
 	}
 }
-	
+
+void Player::setPlayer_hp(float hp)
+{
+	m_hp = hp;
+}
+
+void Player::setPlayer_mp(float mp)
+{
+	m_mp = mp;
+}
+
+void Player::Playerhp_mp_Update(float dt)
+{
+	auto bar = BarManager::getInstance()->getPlayerBars();
+	if (bar != NULL)
+	{
+		BarManager::getInstance()->setPercent(bar->m_hp, curLevel_Maxhp, m_hp);
+		BarManager::getInstance()->setPercent(bar->m_mp, curLevel_Maxmp, m_mp);
+	}
+}
+
+float Player::getCurMaxHp()
+{
+	return curLevel_Maxhp;
+}
+
+float Player::getCurMaxMp()
+{
+	return curLevel_Maxmp;
+}
+
+void Player::recoverHp_Mp(float dt)
+{
+	if (m_mp + curLevel_Maxmp * 1 / 100 >= curLevel_Maxmp)
+		m_mp = curLevel_Maxmp;
+	else
+		m_mp += curLevel_Maxmp * 1 / 100;
+	if (m_hp + curLevel_Maxhp * 0.5 / 100 >= curLevel_Maxhp)
+		m_hp = curLevel_Maxmp;
+	else
+		m_hp += curLevel_Maxhp * 0.5 / 100;
+}

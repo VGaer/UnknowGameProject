@@ -65,6 +65,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/hitedbybone.wav");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/playerhited.wav");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/monhitedbyPlayerBaseskill.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/getthings.wav");
 
 	return true;
 }

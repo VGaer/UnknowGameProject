@@ -24,7 +24,7 @@
  </tileset>
  <layer name="background" width="35" height="30">
   <properties>
-   <property name="cc_vertexz" value="-1000"/>
+   <property name="cc_vertexz" value="-31"/>
   </properties>
   <data encoding="base64" compression="zlib">
    eJytl+tOGzEQhZ1oWQloI7XcJJZQCgqE+6VAo2xvj9ZH4VH6KH0UbOEjTg5jrxPy48hexzvz7czYjofOuaGhRtrc+L7XV69Dr6MOe6nnEt9dNoOuhOWikKUp9H9ZqMDxKCz3CZ4SKcuI9NChwFEJSxV5eB7bnJcDftpoexpVRU2ob7HoPLCNXBnXKPoO6huaSMsCC+qgEv0g27k4NTTej+/ueH3y+lyoQ1Jqzgax3UcfynJAHGA5oW9dlpA/zm/weyMsxxRL8NyKrbuMSuZ98xpL7toESxPnjt3bOjgiRkup2rUU7J/Ss7K0Mr+ek6VU7OdLgoWZOTbLYhlLG3RNLFh/BxS3WnJ0S7l+b1xCzfZi/4z6Vlx+e/2h/KitZbBY48qC2CGfWu/vYakTTNjHkSOtl77MWybLqtea17p72ec0LqgX1Id+A3NYsVqUpXKvZ4VVL6hb1AufO7Wb3ZcX4VGWVL1orfD5yH2/Dp/8vvD0i/qW75/G72FvwPrgeFksiAnWNOqmRzmqSfPGKbDsGvFSFrXZxhxNYr8h37z/BJ2/6L/XP6+/5xkW5VCWocQMa66NfnFO8f49FZ7SM92qaeYYeG2Tf147tfEuM1hnBeZq3adyp//pBmQD9vW8xJqeullOi4V5mAVxTnEozyJ7B59blbP/Z6bikbo7cb5KtBKF+PBz0JahD5l4qD5mNCCbgbknvlfcbK3o+9Y9pDH6pfdEMH2PPGABx2bm+y17OYbU/BQTONBuCkfX/bWLLXe317F9ig9isjfH92PsGRwTXOA=

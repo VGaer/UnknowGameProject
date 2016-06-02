@@ -11,6 +11,7 @@ using namespace std;
 #define NPCS_DATA_PATH "JsonText/NpcDlgs.json"	// NPC数据文件路径
 #define QUESTS_DATA_PATH "JsonText/QuestList.json"	// 任务数据文件路径
 #define QDLGS_DATA_PATH "JsonText/QuestDlgs.json"	// 任务对话数据文件路径
+#define PLAYER_DATA_PATH "JsonText/PlayerData.json" // 玩家数据文件路径
 
 struct NpcsData {
 	int id;				// id
@@ -89,6 +90,17 @@ struct QuestDlgsData {
 	string answer;	//目标NPC回复（如果有）
 };
 
+struct PlayerData
+{
+	int sceneId;
+	int direction;
+	float posX;
+	float posY;
+	float level;
+	float hp;
+	float mp;
+};
+
 class GameData
 {
 public:
@@ -118,12 +130,22 @@ public:
 	void addDataToQuestDlgsData(QuestDlgsData* data);
 	// 获取一条任务对话数据
 	QuestDlgsData* getDataFromQuestDlgsData(const int id);
+
+	// 保存玩家数据
+	void writePlayerData();
+	// 获取玩家数据
+	PlayerData* getPlayerData();
+	// 是否有存档
+	bool isExistSaveDoc();
 private:
 	// 读取文件数据
 	void readMonsDataFile();
 	void readNpcsDataFile();
 	void readQuestsDataFile();
 	void readQuestDlgsDataFile();
+	void readPlayerDataFile();
+private:
+	PlayerData* playerData;
 };
 
 #endif

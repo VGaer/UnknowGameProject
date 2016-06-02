@@ -34,6 +34,58 @@ bool MonsterRemoteskill::init(std::string projectile, std::string projectileAnim
 	m_direction = direction;
 	m_player = Player::getInstance();
 	m_dt = 0;
+
+	switch (direction)
+	{
+	case Dir_up:{
+		this->setRotation(-90);
+		break;
+	}
+	case Dir_down:{
+		this->setRotation(90);
+		break;
+	}
+	case Dir_left:{
+		this->setRotation(180);
+		break;
+	}
+	case Dir_right:{
+	
+		break;
+	}
+	case Dir_upleft:{
+		this->setRotation(-90);
+		break;
+	}
+	case Dir_upright:{
+		this->setRotation(-90);
+		break;
+	}
+	case Dir_downleft:{
+		this->setRotation(90);
+		break;
+	}
+	case Dir_downright:{
+		this->setRotation(90);
+		break;
+	}
+	case Dir_leftup:{
+		this->setRotation(180);
+		break;
+	}
+	case Dir_rightup:{
+		this->setRotation(0);
+		break;
+	}
+	case Dir_leftdown:{
+		this->setRotation(180);
+		break;
+	}
+	case Dir_rightdown:{
+
+		break;
+	}
+	}
 	return true;
 }
 void MonsterRemoteskill::update(float dt)
@@ -54,6 +106,7 @@ void MonsterRemoteskill::update(float dt)
 			{
 				m_player->m_hp = m_player->m_hp - m_damage;
 			}
+
 			//把主角被攻击信息放进队列
 			switch (m_direction)
 			{

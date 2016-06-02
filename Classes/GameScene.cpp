@@ -4,7 +4,13 @@
 #include "GameData.h"
 #include "algorithm"
 #include "SceneIdManager.h"
+#include "BarManager.h"
+#include "SavePoint.h"
 #include <sstream>
+#include "G2U.h"
+#include "MonsterBarManager.h"
+
+int GameScene::sceneId = 2;
 
 string convertToString(double x)
 {
@@ -35,68 +41,99 @@ Scene* GameScene::createSceneWithId(int sceneId)
 	return scene;
 }
 
+Scene* GameScene::loadSceneWithSaveData()
+{
+	auto scene = Scene::create();
+	auto layer = new GameScene();
+	if (layer && layer->init())
+	{
+		layer->autorelease();
+		scene->addChild(layer);
+	}
+	return scene;
+}
+
+bool GameScene::init()
+{
+	auto saveData = GameData::getInstance()->getPlayerData();
+	loadPlistFile();
+	setMapInfo(saveData->sceneId);
+	addPlayer(saveData);
+	
+	auto savePoint = SavePoint::create();
+	savePoint->setPosition(Point(500, 350));
+	m_map->addChild(savePoint, 100);
+
+	scheduleUpdate();
+	this->schedule(schedule_selector(GameScene::MonHP_MPBar_Update), 0.2f);
+	return true;
+}
 
 bool GameScene::init(int sceneId)
 {
-	// 先不管id
 	setMapInfo(sceneId);
 	loadPlistFile();
-
-	// test
-	Player* player = Player::getInstance();
-	player->setTiledMap(m_map);
-	log("Zorder%d",player->getZOrder());
-	player->init();
-	player->getSprite()->setScale(player->getPlayer_magnification());
-	player->getSprite()->setAnchorPoint(Vec2(0.5,0));
-	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
-		0));
-	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
-	player->setAnchorPoint(Vec2(0.5, 0));
 	/*加载主角坐标*/
 	ValueMap playerPointMap = objGroup->getObject("PlayerPoint");
 	float playerX = playerPointMap["x"].asFloat();
 	float playerY = playerPointMap["y"].asFloat();
-	player->setPosition(Vec2(playerX,playerY));
-	Sprite* dian = Sprite::create("dian.jpg");
-	dian->setPosition(player->getContentSize().width, 0);
-	player->addChild(dian);
-	Sprite* dian2 = Sprite::create("dian.jpg");
-	player->addChild(dian2);
-	Sprite* dian3 = Sprite::create("dian.jpg");
-	player->addChild(dian3);
-	dian3->setPosition(Vec2(player->getContentSize().width * player->getAnchorPoint().x,
-		player->getContentSize().height * player->getAnchorPoint().y));
-	m_player = player;
+	addPlayer(Vec2(playerX, playerY));	
 
+	/*创建主角hpmp条*/
+	this->addChild(BarManager::getInstance());
+	auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
+	bar->setAnchorPoint(Vec2(0, 0));
+	bar->setPosition(0, 0);
+	this->addChild(bar, 100);
+	
+	auto savePoint = SavePoint::create();
+	savePoint->setPosition(Point(500, 350));
+	m_map->addChild(savePoint, 100);
+	
 	string monname[3] = { "treemonster", "gdragonmonster", "bonemonster" };
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 2; j++)
 		{
-			m_monster = Monster::create(monname[i]);
-			m_map->addChild(m_monster, (int)m_map->getChildren().size());
-			m_monster->getSprite()->setScale(1.5);
-			m_monster->getSprite()->setAnchorPoint(Vec2(0.5,0));
-			m_monster->setContentSize(m_monster->getContentSize() * 1.5);
-			m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width / 2, 0));
-			m_monster->setAnchorPoint(Vec2(0.5, 0));
-			m_monster->setMonsterParent(m_map);
-			m_monster->setvecPatrolpoint();
-			m_monster->bindPlayer(m_player);
-			m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
-			MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
-
 			ValueMap monpos = objGroup->getObject("Mon" + convertToString(i * 2 + j + 1));
 			float monposx = monpos["x"].asFloat();
 			float monposy = monpos["y"].asFloat();
-			m_monster->setPosition(Vec2(monposx,monposy));
+			addMonster(monname[i],Vec2(monposx,monposy));
+			m_monster->monsterIdForBar = i * 2 + j;
+			auto monbar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png",m_monster->monsterIdForBar);
+			//添加到怪物精灵血条管理器
+			auto monsterbarmanager = MonsterBarManager::getInstance();
+			monsterbarmanager->getmonsterBarVec().pushBack(monbar);
+			monbar->setAnchorPoint(Vec2(0,1));
+			monbar->setPosition(Vec2(0, Director::getInstance()->getVisibleSize().height));
+			this->addChild(monbar, this->getChildren().size());
+			if (monname[i] == "treemonster")
+			{
+				auto monLabelname = Label::create(gb2312_to_utf8("树怪"), "Arial", 25);
+				monLabelname->setColor(Color3B::ORANGE);
+				monbar->addChild(monLabelname);
+				monLabelname->setPosition(Vec2(43,48));
+			}
+			else if (monname[i] == "gdragonmonster")
+			{
+				auto monLabelname = Label::create(gb2312_to_utf8("青龙"), "Arial", 25);
+				monLabelname->setColor(Color3B::ORANGE);
+				monbar->addChild(monLabelname);
+				monLabelname->setPosition(Vec2(43, 48));
+			}
+			else if (monname[i] == "bonemonster")
+			{
+				auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
+				monLabelname->setColor(Color3B::ORANGE);
+				monbar->addChild(monLabelname);
+				monLabelname->setPosition(Vec2(43, 48));
+			}
 		}
 	}
 	
 
 	{
-		NPC* npc = NPC::createWithparent(m_map);
+		/*NPC* npc = NPC::createWithparent(m_map);
 		npc->bindSprite(Sprite::create("player11.png"));
 		npc->setAnchorPoint(Vec2(.5f, .5f));
 		npc->setTiledMap(m_map);
@@ -109,17 +146,20 @@ bool GameScene::init(int sceneId)
 		PopManager::getInstance()->setAnchorPoint(Vec2(0.5, 0));
 		PopManager::getInstance()->setPosition(Vec2(npc->getPosition().x, npc->getPosition().y - 50));
 		this->addChild(PopManager::getInstance(), 3);
+		NpcManager::getInstance()->getNpcsVec().pushBack(npc);*/
 	}
 
 	scheduleUpdate();
+	this->schedule(schedule_selector(GameScene::MonHP_MPBar_Update), 0.2f);
 	return true;
 }
 
 void GameScene::setMapInfo(int id)
 {
-	//m_map = TMXTiledMap::create("home.tmx");
+
 	if (SceneIdManager::getInstance()->map_sceneIdToname.find(id) != SceneIdManager::getInstance()->map_sceneIdToname.end())
 	{
+	
 		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToname[id]);
 		m_map->getLayer("barrier")->setVisible(false);
 		addChild(m_map, 0, 1);
@@ -130,12 +170,94 @@ void GameScene::setMapInfo(int id)
 	}
 }
 
+void GameScene::addPlayer(Point pos, int direction)
+{
+	Player* player = Player::getInstance();
+	player->setTiledMap(m_map);
+	player->init();
+	player->getSprite()->setScale(player->getPlayer_magnification());
+	player->getSprite()->setAnchorPoint(Vec2(0.5, 0));
+	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
+		0));
+	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
+	player->setAnchorPoint(Vec2(0.5, 0));	
+	player->setPosition(pos);
+	player->setPlayerDir(direction);
+
+
+	Sprite* dian = Sprite::create("dian.jpg");
+	dian->setPosition(player->getContentSize().width, 0);
+	player->addChild(dian);
+	Sprite* dian2 = Sprite::create("dian.jpg");
+	player->addChild(dian2);
+	Sprite* dian3 = Sprite::create("dian.jpg");
+	player->addChild(dian3);
+	dian3->setPosition(Vec2(player->getContentSize().width * player->getAnchorPoint().x,
+		player->getContentSize().height * player->getAnchorPoint().y));
+
+	m_player = player;
+}
+
+void GameScene::addPlayer(PlayerData* saveData)
+{
+	Player* player = Player::getInstance();
+	player->setTiledMap(m_map);
+	player->init();
+	/*初始化玩家mp hp*/
+	player->setPlayer_hp(saveData->hp);
+	player->setPlayer_mp(saveData->mp);
+
+	this->addChild(BarManager::getInstance());
+	auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
+	bar->setAnchorPoint(Vec2(0, 0));
+	bar->setPosition(0, 0);
+	this->addChild(bar, 100);
+	//初始化主角血条和HP条
+	auto playerbar = BarManager::getInstance()->getPlayerBars();
+	if (playerbar != NULL)
+	{
+		playerbar->m_hp->setPercentage(saveData->hp / player->getCurMaxHp());
+		playerbar->m_mp->setPercentage(saveData->mp / player->getCurMaxMp());
+	}
+	
+	player->getSprite()->setScale(player->getPlayer_magnification());
+	player->getSprite()->setAnchorPoint(Vec2(0.5, 0));
+	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
+		0));
+	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
+	player->setAnchorPoint(Vec2(0.5, 0));
+	player->setPosition(Point(saveData->posX, saveData->posY));
+	player->setPlayerDir(saveData->direction);
+	/*
+	其他属性
+	*/
+
+	Sprite* dian = Sprite::create("dian.jpg");
+	dian->setPosition(player->getContentSize().width, 0);
+	player->addChild(dian);
+	Sprite* dian2 = Sprite::create("dian.jpg");
+	player->addChild(dian2);
+	m_player = player;
+}
+
 void GameScene::addMonster(const std::string& name, Point pos)
 {
-	auto monster = Monster::create(name);
-	monster->setPosition(pos);
-	m_map->addChild(monster, (int)m_map->getChildren().size());
-	MonsterManager::getInstance()->getMonsterVec().pushBack(monster);	// 添加至管理器
+	//怪物创建
+	m_monster = Monster::create(name);
+	m_map->addChild(m_monster, (int)m_map->getChildren().size());
+	m_monster->setPosition(pos);
+	//添加到怪物管理器
+	MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
+	//怪物的各种初始化
+	m_monster->getSprite()->setScale(1.5);
+	m_monster->getSprite()->setAnchorPoint(Vec2(0.5, 0));
+	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+	m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width / 2, 0));
+	m_monster->setAnchorPoint(Vec2(0.5, 0));
+	m_monster->setMonsterParent(m_map);
+	m_monster->setvecPatrolpoint();
+	m_monster->bindPlayer(m_player);
+	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());	
 }
 
 void GameScene::onEnter()
@@ -172,16 +294,16 @@ void GameScene::update(float dt)
 		monster->setVertexZ(-((p.y + 64) / 64));
 	}
 	Vec.pushBack(m_player);
+	auto Vec2 = NpcManager::getInstance()->getNpcsVec();
+	for (int i = 0; i < Vec2.size(); i++)
+	{
+		Vec.pushBack(Vec2.at(i));
+	}
 	sort(Vec.begin(), Vec.end(), comp);
 	for (int i = 0; i < Vec.size(); i++)
 	{
 		Vec.at(i)->setZOrder(4 + i);
 	}
-
-	
-	/*p = m_monster->getPosition();
-	p = CC_POINT_POINTS_TO_PIXELS(p);
-	m_monster->setVertexZ(-((p.y + 64) / 64));*/
 	setViewpointCenter(m_player->getPosition());
 }
 
@@ -196,7 +318,7 @@ void GameScene::setViewpointCenter(Vec2 Position)
 	Vec2 pointB = Vec2(x, y);
 
 	Vec2 offset = pointA - pointB;
-	this->setPosition(offset);
+	this->m_map->setPosition(offset);
 }
 
 void GameScene::loadPlistFile()
@@ -234,6 +356,8 @@ void GameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.plist", "monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.png");
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.plist", "monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.png");
 
+	frameCache->addSpriteFramesWithFile("MonsterProj/gdragonmonster/gdragonmonproj.plist", "MonsterProj/gdragonmonster/gdragonmonproj.png");
+
 	/*石怪*/
 	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterdattack/bonemonsterdattack.plist", "monster/bonemonster/bonemonsterdattack/bonemonsterdattack.png");
 	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterdrun/bonemonsterdrun.plist", "monster/bonemonster/bonemonsterdrun/bonemonsterdrun.png");
@@ -246,4 +370,21 @@ void GameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsteruattack/bonemonsteruattack.plist", "monster/bonemonster/bonemonsteruattack/bonemonsteruattack.png");
 	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterurun/bonemonsterurun.plist", "monster/bonemonster/bonemonsterurun/bonemonsterurun.png");
 	frameCache->addSpriteFramesWithFile("monster/bonemonster/bonemonsterustatic/bonemonsterustatic.plist", "monster/bonemonster/bonemonsterustatic/bonemonsterustatic.png");
+
+	frameCache->addSpriteFramesWithFile("MonsterProj/bonemonster/bonemonproj.plist", "MonsterProj/bonemonster/bonemonproj.png");
+}
+
+void GameScene::MonHP_MPBar_Update(float dt)
+{
+	auto Vec = MonsterManager::getInstance()->getMonsterVec();
+	for (int i = 0; i < Vec.size(); i++)
+	{
+		auto monster = Vec.at(i);
+		int Id = monster->monsterIdForBar;
+		auto monbar = BarManager::getInstance()->getBars(Id);
+		if (monbar != NULL)
+		{
+			BarManager::getInstance()->setPercent(monbar, monster->monMaxHp, monster->monsdata.hp);
+		}
+	}
 }

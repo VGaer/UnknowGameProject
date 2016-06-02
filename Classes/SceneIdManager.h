@@ -3,7 +3,7 @@
 
 #include <map>
 
-#define Scene_DATA_PATH "JsonText/SceneId.json"	// 任务对话数据文件路径
+#define Scene_DATA_PATH "JsonText/SceneId.json"	
 
 struct SceneData
 {

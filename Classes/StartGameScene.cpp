@@ -104,7 +104,15 @@ void StartGameScene::menuItemStartCallback(Ref* pSender)
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
 		}
 		startmenuItem_counter->start();
-		auto sc = GameScene::createSceneWithId(2);
+
+		Scene* sc = NULL;
+		//ÊÇ·ñÓÐÍæ¼Ò´æµµ
+		if (GameData::getInstance()->isExistSaveDoc()){
+			sc = GameScene::loadSceneWithSaveData();
+		}
+		else{
+			sc = GameScene::createSceneWithId(2);
+		}
 		auto reScene = TransitionJumpZoom::create(0.0f, sc);
 		Director::getInstance()->replaceScene(sc);
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");

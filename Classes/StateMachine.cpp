@@ -504,56 +504,7 @@ void Attack::Excute(Monster* target)
 				Point pos = target->getPosition();
 				pos.y += target->getContentSize().height / 2;
 				Point size = target->getContentSize();
-				switch (diretion)
-				{
-				case Dir_up:
-					pos.y += size.y / 2;
-					projectile->setRotation(-90);
-					break;
-				case Dir_down:
-					pos.y -= size.y / 2;
-					projectile->setRotation(90);
-					break;
-				case Dir_left:
-					pos.x -= size.x / 2;
-					projectile->setRotation(180);
-					break;
-				case Dir_right:
-					pos.x += size.x / 2;
-					break;
-				case Dir_upleft:
-					pos.y += size.y / 2;
-					projectile->setRotation(-90);
-					break;
-				case Dir_upright:
-					pos.y += size.y / 2;
-					projectile->setRotation(-90);
-					break;
-				case Dir_downleft:
-					pos.y -= size.y / 2;
-					projectile->setRotation(90);
-					break;
-				case Dir_downright:
-					pos.y -= size.y / 2;
-					projectile->setRotation(90);
-					break;
-				case Dir_leftup:
-					pos.x -= size.x / 2;
-					projectile->setRotation(180);
-					break;
-				case Dir_rightup:
-					pos.x -= size.x / 2;
-					projectile->setRotation(180);
-					break;
-				case Dir_leftdown:
-					pos.x -= size.x / 2;
-					projectile->setRotation(180);
-					break;
-				case Dir_rightdown:
-					pos.x -= size.x / 2;
-					projectile->setRotation(180);
-					break;
-				}
+
 				projectile->setPosition(pos);
 
 				projectile->scheduleUpdate();//投掷物开启定时器

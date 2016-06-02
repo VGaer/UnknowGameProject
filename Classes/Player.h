@@ -11,6 +11,7 @@
 #include <queue>
 #include "MonsterManager.h"
 #include "Monster.h"
+#include "BarManager.h"
 
 USING_NS_CC;
 typedef enum
@@ -85,9 +86,17 @@ public:
 	std::vector<int> getVecSkill();
 	std::vector<baseskillstr>& getvecskillstr(); //返回引用
 	int getPlayerDir();
+	void setPlayerDir(int direction);
 	bool playerIsattacked;//主角是否被攻击
 	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
-	int m_hp;
+	float m_hp;//hp
+	float m_mp;//mp;
+	void setPlayer_hp(float hp);
+	void setPlayer_mp(float mp);
+	void Playerhp_mp_Update(float dt);
+	void recoverHp_Mp(float dt);
+	float getCurMaxHp();
+	float getCurMaxMp();
 private:
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
@@ -111,5 +120,12 @@ private:
 	SkillControl* skillControl;
 	Vector<Monster*> collidedVector;	// 碰撞清单
 	void baseskillcollidUpdata(float dt);
+	//技能对应消耗mp
+	int l_consumemp;
+	int k_consumemp;
+	int u_consumemp;
+	//当前等级hp,mp属性
+	float curLevel_Maxhp;
+	float curLevel_Maxmp;
 };
 #endif 

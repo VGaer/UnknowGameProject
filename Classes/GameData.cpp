@@ -1,6 +1,11 @@
 #include "GameData.h"
 #include "cocos2d.h"
 #include "json\document.h"
+#include "json\prettywriter.h"
+#include "json\stringbuffer.h"
+#include "fstream"
+#include "Player.h"
+#include "GameScene.h"
 
 USING_NS_CC;
 
@@ -18,12 +23,19 @@ GameData::GameData()
 	readNpcsDataFile();
 	readQuestsDataFile();
 	readQuestDlgsDataFile();
+	readPlayerDataFile();
 }
 
 GameData::~GameData()
 {
 
 }
+
+PlayerData* GameData::getPlayerData()
+{
+	return playerData;
+}
+
 
 void GameData::addDataToMonsData(MonsData* data)
 {
@@ -285,4 +297,60 @@ void GameData::readQuestDlgsDataFile()
 			addDataToQuestDlgsData(data);
 		}
 	} while (0);
+}
+
+void GameData::writePlayerData()
+{
+	rapidjson::Document document;
+	document.SetObject();
+	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+	auto player = Player::getInstance();
+
+	document.AddMember("sceneId", GameScene::sceneId, allocator);
+	document.AddMember("posX", player->getPositionX(), allocator);
+	document.AddMember("posY", player->getPositionY(), allocator);
+	document.AddMember("direction", player->getPlayerDir(), allocator);
+	document.AddMember("hp",player->m_hp,allocator);
+	document.AddMember("mp",player->m_mp,allocator);
+
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	document.Accept(writer);
+	auto out = buffer.GetString();
+	ofstream fp(PLAYER_DATA_PATH, ios_base::out);
+	fp << out;
+	fp.close();
+}
+
+void GameData::readPlayerDataFile()
+{
+	playerData = NULL;
+	std::string jsonPath = PLAYER_DATA_PATH;
+	rapidjson::Document _doc;
+	ssize_t size = 0;
+	unsigned char *pBytes = NULL;
+	do {
+		pBytes = FileUtils::getInstance()->getFileData(jsonPath, "r", &size);
+		CC_BREAK_IF(pBytes == NULL || strcmp((char*)pBytes, "") == 0);
+		std::string load_str((const char*)pBytes, size);
+		CC_SAFE_DELETE_ARRAY(pBytes);
+		_doc.Parse<0>(load_str.c_str());
+		CC_BREAK_IF(_doc.HasParseError());
+		if (!_doc.IsObject())
+			return;
+		const rapidjson::Value& value = _doc;
+		PlayerData* data = new PlayerData();
+		data->sceneId = value["sceneId"].GetInt();
+		data->posX = value["posX"].GetDouble();
+		data->posY = value["posY"].GetDouble();
+		data->direction = value["direction"].GetInt();
+		data->hp = value["hp"].GetDouble();
+		data->mp = value["mp"].GetDouble();
+		playerData = data;
+	} while (0);
+}
+
+bool GameData::isExistSaveDoc()
+{
+	return !playerData == NULL;
 }
