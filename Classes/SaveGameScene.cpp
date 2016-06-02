@@ -60,7 +60,6 @@ void SaveGameScene::addSaveBtnListener(Node* node)
 		succLabel->setColor(Color3B::ORANGE);
 		addChild(succLabel, 1);
 		succLabel->setPosition(Point(vSize.width / 2, vSize.height / 2));
-		addChild(succLabel);
 		auto popDelay = Sequence::create(DelayTime::create(1), CallFunc::create([](){
 			Director::getInstance()->popScene();
 		}), NULL);
