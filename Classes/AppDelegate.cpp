@@ -44,6 +44,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	FileUtils::getInstance()->addSearchPath("res");
 
 	// create a scene. it's an autorelease object
+	//auto scene = HelloWorld::createScene();
 	//auto scene = GameScene::createSceneWithId(2);
 	auto scene = StartGameScene::createScene();
 

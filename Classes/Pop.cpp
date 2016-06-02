@@ -1,5 +1,14 @@
 #include "Pop.h"
 
+//Pop * Pop::getInstance()
+//{
+//	static Pop* instance = NULL;
+//	if (instance == NULL)
+//		instance = new Pop();
+//	return instance;
+//}
+
+
 Pop * Pop::create(Vec2 sender)
 {
 	auto unit = new Pop();

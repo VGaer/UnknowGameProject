@@ -86,8 +86,8 @@ private:
 	FindPath* findPath;             // 自动寻路
 	StateMachine* stateMachine;		// 状态机
 	void update(float);				// 更新状态机
-	int m_CurMachineState;			// 状态机的状态
-	TMXTiledMap* m_parrent;
+	int m_CurMachineState;								// 状态机的状态
+	TMXTiledMap* m_parrent;		//
 	int m_magnification;//怪物精灵放大倍数
 	std::vector<Vec2> vecPatrolpoint; //巡逻点向量
 };

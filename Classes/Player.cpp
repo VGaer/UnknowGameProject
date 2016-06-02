@@ -1449,11 +1449,6 @@ void Player::update(float dt)
 
 void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 {
-	if (keyCode == EventKeyboard::KeyCode::KEY_M)
-	{
-		log("save");
-		GameData::getInstance()->save();
-	}
 	if (keyCode == EventKeyboard::KeyCode::KEY_W)
 	{
 		float curtime = timecounter_up->getCurTime();

@@ -22,11 +22,17 @@ GameData::GameData()
 	readNpcsDataFile();
 	readQuestsDataFile();
 	readQuestDlgsDataFile();
+	readPlayerDataFile();
 }
 
 GameData::~GameData()
 {
 
+}
+
+PlayerData* GameData::getPlayerData()
+{
+	return playerData;
 }
 
 void GameData::addDataToMonsData(MonsData* data)
@@ -289,41 +295,6 @@ void GameData::readQuestDlgsDataFile()
 	} while (0);
 }
 
-bool GameData::readSaveDataFile()
-{
-	std::string jsonPath = SAVE_DATA_PATH;
-	rapidjson::Document _doc;
-	ssize_t size = 0;
-	unsigned char *pBytes = NULL;
-	bool success = false;
-	do {
-		pBytes = FileUtils::getInstance()->getFileData(jsonPath, "r", &size);
-		CC_BREAK_IF(pBytes == NULL || strcmp((char*)pBytes, "") == 0);
-		std::string load_str((const char*)pBytes, size);
-		CC_SAFE_DELETE_ARRAY(pBytes);
-		_doc.Parse<0>(load_str.c_str());
-		CC_BREAK_IF(_doc.HasParseError());
-		// 判断是否为一个数组
-		if (!_doc.IsArray())
-			return false;
-		const rapidjson::Value& pArray = _doc;
-		SaveData* data = new SaveData();
-		const rapidjson::Value &value = pArray[0];  
-		data->pyPosX = value["pyPosX"].GetDouble();
-		data->pyPosY = value["pyPosY"].GetDouble();
-		data->direction = value["direction"].GetInt();
-		data->sceneId = value["sceneId"].GetInt();
-		m_saveData = data;
-		success = true;
-	} while (0);
-	return success;
-}
-
-SaveData* GameData::getSaveData()
-{
-	return m_saveData;
-}
-
 void GameData::writeQuestData()
 {
 	//write json
@@ -365,30 +336,52 @@ void GameData::writeQuestData()
 
 void GameData::writePlayerData()
 {
-	//write json
 	rapidjson::Document document;
-	document.SetArray();
+	document.SetObject();
 	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 	auto player = Player::getInstance();
 
-	rapidjson::Value object(rapidjson::kObjectType);
-	object.AddMember("pyPosX", player->getPositionX(), allocator);
-	object.AddMember("pyPosY", player->getPositionY(), allocator);
-	object.AddMember("direction", player->getPlayerDir(), allocator);
-	object.AddMember("sceneId", GameScene::getCurSceneId(), allocator);
-	document.PushBack(object, allocator);
-
+	document.AddMember("sceneId", GameScene::sceneId, allocator);
+	document.AddMember("posX", player->getPositionX(), allocator);
+	document.AddMember("posY", player->getPositionY(), allocator);
+	document.AddMember("direction", player->getPlayerDir(), allocator);
+		
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	document.Accept(writer);
 	auto out = buffer.GetString();
-	ofstream fp(SAVE_DATA_PATH, ios_base::out);
+	ofstream fp(PLAYER_DATA_PATH, ios_base::out);
 	fp << out;
 	fp.close();
 }
 
-void GameData::save()
+void GameData::readPlayerDataFile()
+{	
+	playerData = NULL;
+	std::string jsonPath = PLAYER_DATA_PATH;
+	rapidjson::Document _doc;
+	ssize_t size = 0;
+	unsigned char *pBytes = NULL;
+	do {
+		pBytes = FileUtils::getInstance()->getFileData(jsonPath, "r", &size);
+		CC_BREAK_IF(pBytes == NULL || strcmp((char*)pBytes, "") == 0);
+		std::string load_str((const char*)pBytes, size);
+		CC_SAFE_DELETE_ARRAY(pBytes);
+		_doc.Parse<0>(load_str.c_str());
+		CC_BREAK_IF(_doc.HasParseError());
+		if (!_doc.IsObject())
+			return;
+		const rapidjson::Value& value = _doc;
+		PlayerData* data = new PlayerData();
+		data->sceneId = value["sceneId"].GetInt();
+		data->posX = value["posX"].GetDouble();
+		data->posY = value["posY"].GetDouble();
+		data->direction = value["direction"].GetInt();
+		playerData = data;
+	} while (0);
+}
+
+bool GameData::isExistSaveDoc()
 {
-	writeQuestData();
-	writePlayerData();
+	return !playerData == NULL;
 }

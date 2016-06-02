@@ -1,7 +1,6 @@
 #include "StartGameScene.h"
 #include "SettingScene.h"
 #include "GameScene.h"
-#include "GameData.h"
 
 Scene* StartGameScene::createScene()
 {
@@ -19,6 +18,8 @@ bool StartGameScene::init()
 	}
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	GameData::getInstance(); // 读取文件
 	
 	Sprite* bg = Sprite::create("startgame/startgamebg.png");
 	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
@@ -101,11 +102,12 @@ void StartGameScene::menuItemStartCallback(Ref* pSender)
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
 	}*/
 	Scene* sc = NULL;
-	// 检测是否有存档数据
-	if (GameData::getInstance()->readSaveDataFile())
-		sc = GameScene::createSceneWithSaveData();
-	else
+	if (GameData::getInstance()->isExistSaveDoc()){
+		sc = GameScene::loadSceneWithSaveData();
+	}		
+	else{
 		sc = GameScene::createSceneWithId(2);
+	}		
 	auto reScene = TransitionJumpZoom::create(1.0f, sc);
 	Director::getInstance()->replaceScene(sc);
 	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");

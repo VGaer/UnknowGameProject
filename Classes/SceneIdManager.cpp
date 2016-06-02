@@ -1,7 +1,7 @@
 #include "SceneIdManager.h"
 #include "json\document.h"
-#include "Player.h"
 #include "cocos2d.h"
+
 USING_NS_CC;
 
 SceneIdManager* SceneIdManager::getInstance()

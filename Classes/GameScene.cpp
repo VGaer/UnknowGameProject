@@ -1,13 +1,14 @@
 #include "GameScene.h"
 #include "Monster.h"
 #include "NPC.h"
+#include "SavePoint.h"
 #include "Pop.h"
 #include "Graph.h"
 #include "GameData.h"
 #include "algorithm"
 #include "SceneIdManager.h"
 
-int GameScene::curSceneId = -1;
+int GameScene::sceneId = 2;
 
 bool comp(Entity* a, Entity*b)
 {
@@ -29,11 +30,11 @@ Scene* GameScene::createSceneWithId(int sceneId)
 	return scene;
 }
 
-Scene* GameScene::createSceneWithSaveData()
+Scene* GameScene::loadSceneWithSaveData()
 {
 	auto scene = Scene::create();
 	auto layer = new GameScene();
-	if (layer && layer->initWithSaveData())
+	if (layer && layer->init())
 	{
 		layer->autorelease();
 		scene->addChild(layer);
@@ -44,10 +45,30 @@ Scene* GameScene::createSceneWithSaveData()
 
 bool GameScene::init(int sceneId)
 {
-	// 先不管id
 	setMapInfo(sceneId);
 	loadPlistFile();
 	addPlayer(Point(100, 250));
+	this->addChild(BarManager::getInstance());
+	auto bar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png", 0);
+	bar->setAnchorPoint(Vec2(0, 0.5));
+	bar->setPosition(400, 400);
+	this->addChild(bar, 100);
+	BarManager::getInstance()->setPercent(BarManager::getInstance()->getBars(0), 1000, 900);
+
+	auto savePoint = SavePoint::create();
+	savePoint->setPosition(Point(500, 350));
+	m_map->addChild(savePoint, 100);
+
+	//BarManager::getInstance()->recover(BarType::Enemy, 0);
+	//auto bar = BarManager::getInstance()->create("UI/Bar_hp.png", "UI/Bar_mp.png");
+	//BarManager::getInstance()->setPercent(BarManager::getInstance()->getPlayerBars()->m_hp, 800, 500);
+	//BarManager::getInstance()->setPercent(BarManager::getInstance()->getPlayerBars()->m_mp, 1800, 1000);
+	//BarManager::getInstance()->recover(BarType::HP);
+	//BarManager::getInstance()->recover(BarType::MP);
+	/*bar->setAnchorPoint(Vec2(0, 0.5));
+	bar->setPosition(400, 400);
+	this->addChild(bar, 100);*/
+
 	//int i = 2;
 	//do{
 	//	i--;
@@ -112,15 +133,29 @@ bool GameScene::init(int sceneId)
 		PopManager::getInstance()->getPopsMap()["余永燊"] = pop;
 		NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
 	}
+
 	scheduleUpdate();
 	return true;
 }
 
-bool GameScene::initWithSaveData()
+bool GameScene::init()
 {
-	SaveData* saveData = GameData::getInstance()->getSaveData();
+	auto saveData = GameData::getInstance()->getPlayerData();
+	loadPlistFile();
 	setMapInfo(saveData->sceneId);
-	addPlayer(Point(saveData->pyPosX, saveData->pyPosY), saveData->direction);
+	addPlayer(saveData);
+
+	this->addChild(BarManager::getInstance());
+	auto bar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png", 0);
+	bar->setAnchorPoint(Vec2(0, 0.5));
+	bar->setPosition(400, 400);
+	this->addChild(bar, 100);
+	BarManager::getInstance()->setPercent(BarManager::getInstance()->getBars(0), 1000, 900);
+
+	auto savePoint = SavePoint::create();
+	savePoint->setPosition(Point(500, 350));
+	m_map->addChild(savePoint, 100);
+
 	scheduleUpdate();
 	return true;
 }
@@ -128,16 +163,15 @@ bool GameScene::initWithSaveData()
 void GameScene::setMapInfo(int id)
 {
 	//m_map = TMXTiledMap::create("home.tmx");
-	curSceneId = -1;
 	if (SceneIdManager::getInstance()->map_sceneIdToname.find(id) != SceneIdManager::getInstance()->map_sceneIdToname.end())
 	{
-		curSceneId = id;
 		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToname[id]);
 		m_map->getLayer("barrier")->setVisible(false);
 		addChild(m_map, 0, 1);
 		auto graph = Graph::getInstance();
 		graph->setTildMap(m_map);
 		graph->init(Point(16, 20));
+		sceneId = id;
 	}
 }
 
@@ -161,10 +195,29 @@ void GameScene::addPlayer(Point pos, int direction)
 	m_player = player;
 }
 
-void GameScene::addNpc(int npcId, Point pos)
+void GameScene::addPlayer(PlayerData* saveData)
 {
-	
+	Player* player = Player::getInstance();
+	player->setTiledMap(m_map);
+	player->init();
+	player->getSprite()->setScale(player->getPlayer_magnification());
+	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
+		player->getContentSize().height * player->getPlayer_magnification() / 2));
+	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
+	player->setAnchorPoint(Vec2(0.5, 0.5));
+	player->setPosition(Point(saveData->posX, saveData->posY));
+	player->setPlayerDir(saveData->direction);
+	/*
+		其他属性
+	*/
+	Sprite* dian = Sprite::create("dian.jpg");
+	dian->setPosition(player->getContentSize().width, 0);
+	player->addChild(dian);
+	Sprite* dian2 = Sprite::create("dian.jpg");
+	player->addChild(dian2);
+	m_player = player;
 }
+
 void GameScene::addMonster(const std::string& name, Point pos)
 {
 	auto monster = Monster::create(name);
@@ -268,9 +321,4 @@ void GameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.plist", "monster/gdragonmonster/gdragonmonsteruattack/gdragonmonsteruattack.png");
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.plist", "monster/gdragonmonster/gdragonmonsterurun/gdragonmonsterurun.png");
 	frameCache->addSpriteFramesWithFile("monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.plist", "monster/gdragonmonster/gdragonmonsterustatic/gdragonmonsterustatic.png");
-}
-
-int GameScene::getCurSceneId()
-{
-	return curSceneId;
 }

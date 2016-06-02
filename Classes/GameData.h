@@ -11,15 +11,15 @@ using namespace std;
 #define NPCS_DATA_PATH "JsonText/NpcDlgs.json"		// NPC数据文件路径
 #define QUESTS_DATA_PATH "JsonText/QuestList.json"	// 任务数据文件路径
 #define QDLGS_DATA_PATH "JsonText/QuestDlgs.json"	// 任务对话数据文件路径
-#define SAVE_DATA_PATH "JsonText/SaveData.json"		// 游戏存档文件路径
+#define PLAYER_DATA_PATH "JsonText/PlayerData.json" // 玩家数据文件路径
 
 struct NpcsData {
-	int id;					// id
-	int status;				// npc状态（0：无、1：任务过程中）
-	vector<int> quest_id;	// 任务id
-	string name;			// 名字
-	vector<string> dlgs;	// 对话s
-	string imagePath;		// 图片路径
+	int id;				// id
+	int status;			//npc状态（0：无、1：任务过程中）
+	vector<int> quest_id;		//任务id
+	string name;		// 名字
+	vector<string> dlgs;		// 对话s
+	string imagePath;	// 图片路径
 };
 
 struct MonSkill
@@ -73,6 +73,16 @@ struct MonsData
 	std::map<string, MonRemoteSkill> remoteskillmap; //远程技能容器
 };
 
+struct PlayerData
+{
+	int sceneId;
+	int direction;
+	float posX;
+	float posY;
+	float level;
+	float hp;
+	float mp;
+};
 
 struct QuestListData {
 	int id;			//任务id
@@ -92,14 +102,6 @@ struct QuestDlgsData {
 	string answer;	//目标NPC回复（如果有）
 };
 
-struct SaveData
-{
-	float pyPosX;		// 玩家X坐标
-	float pyPosY;		// 玩家Y坐标
-	int direction;      // 朝向
-	int sceneId;		// 地图id
-};
-
 class GameData
 {
 public:
@@ -112,9 +114,6 @@ public:
 	map<string, NpcsData*> m_mapNpcsData;
 	map<int, QuestListData*> m_mapQuestsData;
 	map<int, QuestDlgsData*> m_mapQuestDlgsData;
-	// 数据存档
-	void save();
-	bool readSaveDataFile();    // 读档
 public:
 	// 加入一条怪物数据
 	void addDataToMonsData(MonsData* data);
@@ -134,17 +133,21 @@ public:
 	map<int, QuestDlgsData*> getDataFromQuestDlgsData();
 	// 保存任务信息
 	void writeQuestData();
-	// 保存玩家信息
+	// 保存玩家数据
 	void writePlayerData();
-	SaveData* getSaveData();
+	// 获取玩家数据
+	PlayerData* getPlayerData();
+	// 是否有存档
+	bool isExistSaveDoc();
 private:
 	// 读取文件数据
 	void readMonsDataFile();
 	void readNpcsDataFile();
 	void readQuestsDataFile();
 	void readQuestDlgsDataFile();
+	void readPlayerDataFile();
 private:
-	SaveData* m_saveData;
+	PlayerData* playerData;
 };
 
 #endif

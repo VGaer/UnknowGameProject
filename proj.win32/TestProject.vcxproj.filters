@@ -28,6 +28,18 @@
     <Filter Include="FindPath">
       <UniqueIdentifier>{c5dc803d-fb53-43c9-9252-3e69a82893f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameScene">
+      <UniqueIdentifier>{46922577-07d4-443e-a8e7-a598ea5d5b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{49b5e033-2d89-44a2-994b-aa3895376360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity\NPC">
+      <UniqueIdentifier>{a3ebbd1f-1425-4996-9aeb-b069ec1a1dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity\SavePoint">
+      <UniqueIdentifier>{7c2a0749-1a17-4221-b238-34b0e7ac32e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\Entity.cpp">
@@ -77,6 +89,69 @@
     </ClCompile>
     <ClCompile Include="..\Classes\StateMachine.cpp">
       <Filter>Entity\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameScene.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MonsterManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SkillControl.cpp">
+      <Filter>Entity\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Projectile.cpp">
+      <Filter>Entity\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\DBMenu.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\NPC.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\QuestDispatcher.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\QuestList.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\PopLayer.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\PopManager.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TalkNode.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MonsterRemoteskill.cpp">
+      <Filter>Entity\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SceneIdManager.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SettingScene.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\StartGameScene.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Pop.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\NpcManager.cpp">
+      <Filter>Entity\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\BarManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SavePoint.cpp">
+      <Filter>Entity\SavePoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\SaveGameScene.cpp">
+      <Filter>Entity\SavePoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\G2U.cpp">
+      <Filter>Entity\NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +205,73 @@
     </ClInclude>
     <ClInclude Include="..\Classes\StateMachine.h">
       <Filter>Entity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MonsterManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SkillControl.h">
+      <Filter>Entity\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Projectile.h">
+      <Filter>Entity\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\DBMenu.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\G2U.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\NPC.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\QuestDispatcher.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\QuestList.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PopLayer.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PopManager.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TalkNode.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MonsterRemoteskill.h">
+      <Filter>Entity\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SceneIdManager.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SettingScene.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\StartGameScene.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SystemHeader.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="f:\cocos2dx\frameworks\frameworks\cocos2d-x-3.7.1\cocos\base\CCUserDefault.h" />
+    <ClInclude Include="..\Classes\Pop.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\NpcManager.h">
+      <Filter>Entity\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\BarManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SavePoint.h">
+      <Filter>Entity\SavePoint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\SaveGameScene.h">
+      <Filter>Entity\SavePoint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
