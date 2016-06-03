@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "GameScene.h"
 
 
 Player* Player::getInstance()
@@ -23,6 +24,7 @@ bool Player::init()
 	this->schedule(schedule_selector(Player::baseskillcollidUpdata));
 	this->schedule(schedule_selector(Player::Playerhp_mp_Update),0.2f);
 	this->schedule(schedule_selector(Player::recoverHp_Mp), 1.0f);
+	this->schedule(schedule_selector(Player::ChangSceneIdUpdate));
 
 	timecounter_up = TimeCounter::create();
 	this->addChild(timecounter_up);
@@ -101,6 +103,25 @@ bool Player::init()
 
 void Player::update(float dt)
 {
+	/*如果玩家超出了地图边界*/
+	if (this->getPositionX() - getContentSize().width / 2 <= 0)
+	{
+		this->setPositionX(getContentSize().width / 2);
+	}
+	if (this->getPositionX() + getContentSize().width / 2 >= m_map->getMapSize().width * m_map->getTileSize().width)
+	{
+		this->setPositionX(m_map->getMapSize().width * m_map->getTileSize().width - getContentSize().width / 2);
+	}
+	if (this->getPositionY() <= 0)
+	{
+		this->setPositionY(0);
+	}
+	if (this->getPositionY() + getContentSize().height >= m_map->getMapSize().height * m_map->getTileSize().height)
+	{
+		this->setPositionY(m_map->getMapSize().height * m_map->getTileSize().height - getContentSize().height);
+	}
+
+
 	/////////////////////剑气的移动
 	if (m_Using_swordwave_Arr.size() > 0) {
 		RemoteSkill* swordwave;
@@ -886,11 +907,20 @@ void Player::update(float dt)
 		{
 			/*两个方向一起的快走,,由于快走时在静止时才有的，所以快走永远是vec[0],*/
 			if (vec[0] == enum_doubleup && vec.back() == enum_left) {
-				//上左快跑
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
-				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
-				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+				// (上左、左上)
+				//获取地图块的编号，向左走左侧身边界所在位置的地图瓦片号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2 - 2, 0));
+				//向左走由于要超前判断一格，且地图从右到左滑过瓦片的边就会减１，所以需要vId.x +１；
+				vId.x = vId.x + 1;
+				Vec2 vIdleft;
+				vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+
+				//向上走以脚所在位置的地图瓦片
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,2));
+				//向上走由于要超前判断一个瓦片，且地图从下到上滑过瓦片的边就会减一，所以需要vId.y + 1;
+				vId.y = vId.y + 1;
+				Vec2 vIdup;
+				vIdup.x = vId.x; vIdup.y = vId.y - 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("urun", 0.15f, -1);
 				Animate* animate = Animate::create(animation);
@@ -911,16 +941,30 @@ void Player::update(float dt)
 						this->setPlayerPosition(this->getPosition() + Vec2(-4, 6));
 					}
 				}
-
+				//地图下边界的处理 vIdleft超范围了,并且vIdup不超但不是障碍物
+				else if (vIdleft.y > yMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(-4, 6));
+				}
+				
+				
 				PlayerDir = em_up;
 				return;
 			}
 			else if (vec[0] == enum_doubleup && vec.back() == enum_right) {
-				//上右快跑
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
-				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
-				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+				//(右上、上右)快跑
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 + 2, 0));
+				//从左向右划过瓦片边时会加1，由于要提前判断一格，所以vId.x - 1;
+				vId.x = vId.x - 1;
+				Vec2 vIdright;
+				vIdright.x = vId.x + 1; vIdright.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,2));
+				//从下向上划过瓦片时会减一，由于要提前判断一格，所以vId.y + 1;
+				vId.y = vId.y + 1;
+				Vec2 vIdup;
+				vIdup.x = vId.x; vIdup.y = vId.y - 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("urun", 0.15f, -1);
 				Animate* animate = Animate::create(animation);
@@ -940,16 +984,34 @@ void Player::update(float dt)
 						this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
 					}
 				}
+				//地图最下边界的处理,vIdright超范围了,并且vIdup没超范围但是不是障碍物
+				else if (vIdright.y > yMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
+				}
+				//处理地图右边界超范围问题，左边界的tiledCoordForPosition不是超过地图边界的，不需要处理
+				else if (vIdright.x > xMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(4, 6));
+				}
 
 				PlayerDir = em_up;
 				return;
 			}
 			else if (vec[0] == enum_doubledown && vec.back() == enum_left) {
-				//下左
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
-				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
-				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+				//(左下、下左）
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2 - 2, 0));
+				//由于从右向左划过瓦片会减一，由于提前判断一格，所以vId.x + 1;
+				vId.x = vId.x + 1;
+				Vec2 vIdleft;
+				vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,-2));
+				//由于从上往下划过瓦片会加1，由于提前判断一格，所以vId.y - 1;
+				vId.y = vId.y - 1;
+				Vec2 vIddown;
+				vIddown.x = vId.x; 	vIddown.y = vId.y + 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("drun", 0.18f, -1);
 				Animate* animate = Animate::create(animation);
@@ -974,11 +1036,19 @@ void Player::update(float dt)
 				return;
 			}
 			else if (vec[0] == enum_doubledown && vec.back() == enum_right) {
-				//下右
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
-				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
-				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+				//(右下、下右)
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 + 2, 0));
+				//从左到右划过地图时会加1，由于提前判断一格，所以vId.x - 1;
+				vId.x = vId.x - 1;
+				Vec2 vIdright;
+				vIdright.x = vId.x + 1; vIdright.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,-2));
+				//从上到下划过瓦片时会加1，由于提前判断一格，所以vId.y - 1;
+				vId.y = vId.y - 1;
+				Vec2 vIddown;
+				vIddown.x = vId.x; vIddown.y = vId.y + 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("drun", 0.18f, -1);
 				Animate* animate = Animate::create(animation);
@@ -998,16 +1068,30 @@ void Player::update(float dt)
 						this->setPlayerPosition(this->getPosition() + Vec2(4, -6));
 					}
 				}
+				//处理地图右边界超范围问题，左边界的tiledCoordForPosition不是超过地图边界的，不需要处理
+				else if (vIdright.x > xMax && IsNot_CollidableTile(vIddown))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(4, -6));
+				}
 
 				PlayerDir = em_down;
 				return;
 			}
 			else if (vec[0] == enum_doubleleft && vec.back() == enum_up) {
-				//左上快跑
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
-				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
-				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+				// (上左、左上)
+				//获取地图块的编号，向左走左侧身边界所在位置的地图瓦片号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2 - 2, 0));
+				//向左走由于要超前判断一格，且地图从右到左滑过瓦片的边就会减１，所以需要vId.x +１；
+				vId.x = vId.x + 1;
+				Vec2 vIdleft;
+				vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+
+				//向上走以脚所在位置的地图瓦片
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,2));
+				//向上走由于要超前判断一个瓦片，且地图从下到上滑过瓦片的边就会减一，所以需要vId.y + 1;
+				vId.y = vId.y + 1;
+				Vec2 vIdup;
+				vIdup.x = vId.x; vIdup.y = vId.y - 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
@@ -1027,16 +1111,29 @@ void Player::update(float dt)
 						this->setPlayerPosition(this->getPosition() + Vec2(-6, 4));
 					}
 				}
+				//处理地图最下边界，vIdleft超过范围,并且vIdup不超但是不是障碍物
+				else if (vIdleft.y > yMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(-6, 4));
+				}
 
 				PlayerDir = em_left;
 				return;
 			}
 			else if (vec[0] == enum_doubleleft && vec.back() == enum_down) {
-				//左下
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
-				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
-				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+				//(左下、下左）
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2 - 2, 0));
+				//由于从右向左划过瓦片会减一，由于提前判断一格，所以vId.x + 1;
+				vId.x = vId.x + 1;
+				Vec2 vIdleft;
+				vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,-2));
+				//由于从上往下划过瓦片会加1，由于提前判断一格，所以vId.y - 1;
+				vId.y = vId.y - 1;
+				Vec2 vIddown;
+				vIddown.x = vId.x; 	vIddown.y = vId.y + 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
@@ -1061,11 +1158,19 @@ void Player::update(float dt)
 				return;
 			}
 			else if (vec[0] == enum_doubleright && vec.back() == enum_up) {
-				//右上快跑
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
-				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
-				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+				//(右上、上右)快跑
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 + 2, 0));
+				//从左向右划过瓦片边时会加1，由于要提前判断一格，所以vId.x - 1;
+				vId.x = vId.x - 1;
+				Vec2 vIdright;
+				vIdright.x = vId.x + 1; vIdright.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,2));
+				//从下向上划过瓦片时会减一，由于要提前判断一格，所以vId.y + 1;
+				vId.y = vId.y + 1;
+				Vec2 vIdup;
+				vIdup.x = vId.x; vIdup.y = vId.y - 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
@@ -1085,16 +1190,34 @@ void Player::update(float dt)
 						this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
 					}
 				}
+				//地图最下边界,vIdright超出范围,并且vIdup不超范围但不是障碍物
+				else if (vIdright.y > yMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
+				}
+				//处理地图右边界超范围问题，左边界的tiledCoordForPosition不是超过地图边界的，不需要处理
+				else if (vIdright.x > xMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(6, 4));
+				}
 
 				PlayerDir = em_right;
 				return;
 			}
 			else if (vec[0] == enum_doubleright && vec.back() == enum_down) {
-				//右下
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
-				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
-				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+				//(右下、下右)
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 + 2, 0));
+				//从左到右划过地图时会加1，由于提前判断一格，所以vId.x - 1;
+				vId.x = vId.x - 1;
+				Vec2 vIdright;
+				vIdright.x = vId.x + 1; vIdright.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,-2));
+				//从上到下划过瓦片时会加1，由于提前判断一格，所以vId.y - 1;
+				vId.y = vId.y - 1;
+				Vec2 vIddown;
+				vIddown.x = vId.x; vIddown.y = vId.y + 1;
 
 				Animation* animation = AnimationUtil::createWithSingleFrameName("hrun", 0.2f, -1);
 				Animate* animate = Animate::create(animation);
@@ -1113,6 +1236,11 @@ void Player::update(float dt)
 						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIddown))) {
 						this->setPlayerPosition(this->getPosition() + Vec2(6, -4));
 					}
+				}
+				//处理地图右边界超范围问题，左边界的tiledCoordForPosition不是超过地图边界的，不需要处理
+				else if (vIdright.x > xMax && IsNot_CollidableTile(vIddown))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(6, -4));
 				}
 
 				PlayerDir = em_right;
@@ -1140,10 +1268,19 @@ void Player::update(float dt)
 				|| vec[vec.size() - 2] == enum_up && vec.back() == enum_left)
 			{
 				//(上左、左上)走
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
-				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
-				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+				//获取地图块的编号，向左走左侧身边界所在位置的地图瓦片号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-this->getContentSize().width/2 - 2, 0));
+				//向左走由于要超前判断一格，且地图从右到左滑过瓦片的边就会减１，所以需要vId.x +１；
+				vId.x = vId.x + 1;
+				Vec2 vIdleft; 
+				vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+
+				//向上走以脚所在位置的地图瓦片
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,2));
+				//向上走由于要超前判断一个瓦片，且地图从下到上滑过瓦片的边就会减一，所以需要vId.y + 1;
+				vId.y = vId.y + 1;
+				Vec2 vIdup; 
+				vIdup.x = vId.x; vIdup.y = vId.y - 1;
 
 				if (vec.back() == enum_up) {
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
@@ -1171,10 +1308,15 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)) {
-					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 /*||
-																								 (IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup))*/) {
+					if (barrier->getTileGIDAt(vIdleft) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdleft) && IsNot_CollidableTile(vIdup))) {
 						this->setPlayerPosition(this->getPosition() + Vec2(-4, 4));
 					}
+				}
+				//地图下边界的处理，vIdleft会不存在地图范围内,且vIdup在地图内但不存在障碍物
+				else if (vIdleft.y > yMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(-4, 4));
 				}
 
 				return;
@@ -1182,11 +1324,19 @@ void Player::update(float dt)
 			else if (vec.back() == enum_up && vec[vec.size() - 2] == enum_right
 				|| vec[vec.size() - 2] == enum_up && vec.back() == enum_right)
 			{
-				//(右上、上右)快跑
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, -m_map->getTileSize().height / 2));
-				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
-				Vec2 vIdup; vIdup.x = vId.x; vIdup.y = vId.y - 1;
+				//(右上、上右)
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 + 2, 0));
+				//从左向右划过瓦片边时会加1，由于要提前判断一格，所以vId.x - 1;
+				vId.x = vId.x - 1;
+				Vec2 vIdright; 
+				vIdright.x = vId.x + 1; vIdright.y = vId.y;
+				
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,2));
+				//从下向上划过瓦片时会减一，由于要提前判断一格，所以vId.y + 1;
+				vId.y = vId.y + 1;
+				Vec2 vIdup; 
+				vIdup.x = vId.x; vIdup.y = vId.y - 1;
 
 				if (vec.back() == enum_up) {
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
@@ -1214,10 +1364,20 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdright.x >= 0 && vIdright.x <= xMax && vIdup.x >= 0 && vIdup.x <= xMax) &&
 					(vIdright.y >= 0 && vIdright.y <= yMax && vIdup.y >= 0 && vIdup.y <= yMax)) {
-					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 /*||
-																								  (IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))*/) {
+					if (barrier->getTileGIDAt(vIdright) == 0 && barrier->getTileGIDAt(vIdup) == 0 ||
+						(IsNot_CollidableTile(vIdright) && IsNot_CollidableTile(vIdup))) {
 						this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
 					}
+				}
+				//处理地图下边界问题，vIdright不在范围内,且vIdup在范围内并且不是障碍物
+				else if (vIdright.y > yMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
+				}
+				//处理地图右边界超范围问题，左边界的tiledCoordForPosition不是超过地图边界的，不需要处理
+				else if (vIdright.x > xMax && IsNot_CollidableTile(vIdup))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(4, 4));
 				}
 
 				return;
@@ -1226,10 +1386,18 @@ void Player::update(float dt)
 				|| vec[vec.size() - 2] == enum_down && vec.back() == enum_left)
 			{
 				//(左下、下左）
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
-				Vec2 vIdleft; vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
-				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2 - 2,0));
+				//由于从右向左划过瓦片会减一，由于提前判断一格，所以vId.x + 1;
+				vId.x = vId.x + 1;
+				Vec2 vIdleft; 
+				vIdleft.x = vId.x - 1; vIdleft.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,-2));
+				//由于从上往下划过瓦片会加1，由于提前判断一格，所以vId.y - 1;
+				vId.y = vId.y - 1;
+				Vec2 vIddown; 
+				vIddown.x = vId.x; 	vIddown.y = vId.y + 1;
 
 				if (vec.back() == enum_down) {
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
@@ -1257,8 +1425,8 @@ void Player::update(float dt)
 				int yMax = m_map->getMapSize().height - 1;
 				if ((vIdleft.x >= 0 && vIdleft.x <= xMax && vIddown.x >= 0 && vIddown.x <= xMax) &&
 					(vIdleft.y >= 0 && vIdleft.y <= yMax && vIddown.y >= 0 && vIddown.y <= yMax)) {
-					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0 /*||
-																								   (IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdleft))*/) {
+					if (barrier->getTileGIDAt(vIddown) == 0 && barrier->getTileGIDAt(vIdleft) == 0 ||
+						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdleft))) {
 						this->setPlayerPosition(this->getPosition() + Vec2(-4, -4));
 					}
 				}
@@ -1269,10 +1437,18 @@ void Player::update(float dt)
 				|| vec[vec.size() - 2] == enum_down && vec.back() == enum_right))
 			{
 				//(右下、下右)
-				//获取地图块的编号时，主角中心坐标加上图块对应的宽高，因为tiledCoordForPosition从一个瓦片到另一个瓦片只需要碰到边瓦片的坐标就会变化。
-				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(-m_map->getTileSize().width / 2, m_map->getTileSize().height / 2));
-				Vec2 vIdright; vIdright.x = vId.x + 1; vIdright.y = vId.y;
-				Vec2 vIddown; vIddown.x = vId.x; vIddown.y = vId.y + 1;
+				//获取地图块的编号
+				Vec2 vId = this->tiledCoordForPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 + 2,0));
+				//从左到右划过地图时会加1，由于提前判断一格，所以vId.x - 1;
+				vId.x = vId.x - 1;
+				Vec2 vIdright; 
+				vIdright.x = vId.x + 1; vIdright.y = vId.y;
+
+				vId = this->tiledCoordForPosition(this->getPosition() + Vec2(0,-2));
+				//从上到下划过瓦片时会加1，由于提前判断一格，所以vId.y - 1;
+				vId.y = vId.y - 1;
+				Vec2 vIddown; 
+				vIddown.x = vId.x; vIddown.y = vId.y + 1;
 
 				if (vec.back() == enum_down) {
 					Animation* animation = AnimationUtil::createWithSingleFrameName("hwalk", 0.2f, -1);
@@ -1304,6 +1480,11 @@ void Player::update(float dt)
 						(IsNot_CollidableTile(vIddown) && IsNot_CollidableTile(vIdright))) {
 						this->setPlayerPosition(this->getPosition() + Vec2(4, -4));
 					}
+				}
+				//处理地图右边界超范围问题，左边界的tiledCoordForPosition不是超过地图边界的，不需要处理
+				else if (vIdright.x > xMax && IsNot_CollidableTile(vIddown))
+				{
+					this->setPlayerPosition(this->getPosition() + Vec2(4, -4));
 				}
 
 				return;
@@ -1966,10 +2147,46 @@ bool Player::setPlayerPosition(Vec2 position)
 				}
 			}
 		}
+
+		tileCoord = this->tiledCoordForPosition(positionVright);
+
+		if (tileCoord.x >= 0 && tileCoord.x < m_map->getMapSize().width //不超出瓦片地图坐标
+			&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height) {
+			int tileGid = m_map->getLayer("barrier")->getTileGIDAt(tileCoord);
+			if (tileGid > 0) {
+				Value prop = m_map->getPropertiesForGID(tileGid);
+				ValueMap proValueMap = prop.asValueMap();
+
+				if (proValueMap.find("Collidable") != proValueMap.end()) {
+					std::string collision = proValueMap.at("Collidable").asString();
+					if (collision == "true") {
+						return false;
+					}
+				}
+			}
+		}
 		break;
 	}
 	case em_down: {
-		Vec2 tileCoord = this->tiledCoordForPosition(positionVright);
+		Vec2 tileCoord = this->tiledCoordForPosition(positionVleft);
+
+		if (tileCoord.x >= 0 && tileCoord.x < m_map->getMapSize().width //不超出瓦片地图坐标
+			&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height) {
+			int tileGid = m_map->getLayer("barrier")->getTileGIDAt(tileCoord);
+			if (tileGid > 0) {
+				Value prop = m_map->getPropertiesForGID(tileGid);
+				ValueMap proValueMap = prop.asValueMap();
+
+				if (proValueMap.find("Collidable") != proValueMap.end()) {
+					std::string collision = proValueMap.at("Collidable").asString();
+					if (collision == "true") {
+						return false;
+					}
+				}
+			}
+		}
+
+		tileCoord = this->tiledCoordForPosition(positionVright);
 
 		if (tileCoord.x >= 0 && tileCoord.x < m_map->getMapSize().width //不超出瓦片地图坐标
 			&& tileCoord.y >= 0 && tileCoord.y < m_map->getMapSize().height) {
@@ -2004,6 +2221,7 @@ bool Player::setPlayerPosition(Vec2 position)
 			if (proValueMap.find("Collidable") != proValueMap.end()) {
 				std::string collision = proValueMap.at("Collidable").asString();
 				if (collision == "true") {
+					log("there");
 					return false;
 				}
 			}
@@ -2401,4 +2619,30 @@ void Player::recoverHp_Mp(float dt)
 		m_hp = curLevel_Maxmp;
 	else
 		m_hp += curLevel_Maxhp * 0.5 / 100;
+}
+
+void Player::ChangSceneIdUpdate(float dt)
+{
+	Vec2 tiledcoord = tiledCoordForPosition(this->getPosition());
+	int xMax = m_map->getMapSize().width - 1;
+	int yMax = m_map->getMapSize().height - 1;
+	if (tiledcoord.x >= 0 && tiledcoord.x <= xMax && tiledcoord.y >= 0 && tiledcoord.y <= yMax)
+	{
+		int tileGid = m_map->getLayer("barrier")->getTileGIDAt(tiledcoord);
+		if (tileGid > 0) {
+			Value prop = m_map->getPropertiesForGID(tileGid);
+			ValueMap proValueMap = prop.asValueMap();
+
+			if (proValueMap.find("changescene") != proValueMap.end()) {
+				std::string changescene = proValueMap.at("changescene").asString();
+				Value SceneId(changescene);
+				int Id = SceneId.asInt();
+				Scene* sc = NULL;
+				sc = GameScene::createSceneWithId(Id);	
+				auto reScene = TransitionJumpZoom::create(0.0f, sc);
+				Director::getInstance()->replaceScene(sc);
+			
+			}
+		}
+	}
 }

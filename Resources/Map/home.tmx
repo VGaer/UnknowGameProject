@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="12">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="20">
  <tileset firstgid="1" name="background01" tilewidth="64" tileheight="64" tilecount="64" columns="16">
   <image source="background01.png" width="1024" height="256"/>
  </tileset>
@@ -14,6 +14,11 @@
   <tile id="0">
    <properties>
     <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="changescene" value="3"/>
    </properties>
   </tile>
   <tile id="2">
@@ -48,7 +53,7 @@
  </layer>
  <layer name="barrier" width="35" height="30" opacity="0.23">
   <data encoding="base64" compression="zlib">
-   eJzdV1sKwDAI6/3vMHbVfQ2KKMbYabvAforTEB+1Y+yP+8N/GN/duMiP8eHxqIQVr5qHFhfRC6m1TN16+a7EzKErPy9knjrhcbHyn+13jQOrS1TDU7hoNjO/1fNQ2ls9zfiv0mV3LjJvu+kSvacj8Su5eHdOdu4y8007Q/qY5RLZm1Db1dD6AeGzak9G7jd5VgmvzzJ8IhoydcTsAqi/U5Ct0z+/GzvxAD6/cZI=
+   eJztll0KACEIhLv/HXa76j4thBiOo2sFO9BLiH34l63l6B5OtjrB0kEWr2+vvojLRR7Gh8VRqdl71Rzau0i8kFpD61Gzs/JdqZFhVX5eyTytlMUyy3+03zUGNi7eGJ7CotmMfNnzUNrPeprxXxWX3Vlk3naLi/ef9rxfyWL9OdG5y8w37Q7pY5bFszehttnS+gHhydqTkf9N3lXK6rMIjyeGTB0xuwDq7xRF6zSyf/+a6wEaQnaC
   </data>
  </layer>
  <objectgroup name="objects">

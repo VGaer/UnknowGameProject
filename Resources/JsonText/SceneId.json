@@ -4,8 +4,12 @@
 "Id":1
 },
 {
-"scenename":"Map/homemap/home.tmx",
+"scenename":"Map/home.tmx",
 "Id":2
+},
+{
+"scenename":"Map/avenue.tmx",
+"Id":3
 }
 
 ]

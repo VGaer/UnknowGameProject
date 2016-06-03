@@ -7,6 +7,7 @@
 #include "PopManager.h"
 #include "NpcManager.h"
 
+
 class GameScene : public Layer
 {
 public:
@@ -19,6 +20,7 @@ public:
 	virtual void onExit() override;
 	virtual void update(float dt);
 	void MonHP_MPBar_Update(float dt);
+	GameScene();
 public:
 	void setMapInfo(int id);
 	void setViewpointCenter(Vec2 Position);

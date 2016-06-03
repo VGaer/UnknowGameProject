@@ -97,6 +97,7 @@ public:
 	void recoverHp_Mp(float dt);
 	float getCurMaxHp();
 	float getCurMaxMp();
+	void ChangSceneIdUpdate(float dt);
 private:
 	TMXTiledMap* m_map;
 	std::vector<int> vec;

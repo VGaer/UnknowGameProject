@@ -29,6 +29,11 @@ bool comp(Entity* a, Entity*b)
 		return false;
 }
 
+GameScene::GameScene()
+{
+	m_player = NULL;
+}
+
 Scene* GameScene::createSceneWithId(int sceneId)
 {
 	auto scene = Scene::create();
@@ -80,11 +85,23 @@ bool GameScene::init(int sceneId)
 	addPlayer(Vec2(playerX, playerY));	
 
 	/*创建主角hpmp条*/
-	this->addChild(BarManager::getInstance());
-	auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
-	bar->setAnchorPoint(Vec2(0, 0));
-	bar->setPosition(0, 0);
-	this->addChild(bar, 100);
+	if (BarManager::getInstance()->getParent() != NULL)
+	{
+		BarManager::getInstance()->removeFromParent();
+		this->addChild(BarManager::getInstance());
+		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
+		bar->setAnchorPoint(Vec2(0, 0));
+		bar->setPosition(0, 0);
+
+		auto playerbar = BarManager::getInstance()->getPlayerBars();
+		if (playerbar != NULL)
+		{
+			playerbar->m_hp->setPercentage(m_player->m_hp);
+			playerbar->m_mp->setPercentage(m_player->m_mp);
+		}
+		this->addChild(bar, 100);
+	}
+	
 	
 	auto savePoint = SavePoint::create();
 	savePoint->setPosition(Point(500, 350));
@@ -173,6 +190,15 @@ void GameScene::setMapInfo(int id)
 void GameScene::addPlayer(Point pos, int direction)
 {
 	Player* player = Player::getInstance();
+	if (player->getParent() != NULL)
+	{
+		player->removeFromParent();
+		player->setPosition(pos);
+		player->setTiledMap(m_map);
+		m_player = player;
+		return;
+	}
+
 	player->setTiledMap(m_map);
 	player->init();
 	player->getSprite()->setScale(player->getPlayer_magnification());
