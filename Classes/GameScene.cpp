@@ -79,10 +79,23 @@ bool GameScene::init(int sceneId)
 {
 	setMapInfo(sceneId);
 	loadPlistFile();
+	float playerX;
+	float playerY;
 	/*加载主角坐标*/
-	ValueMap playerPointMap = objGroup->getObject("PlayerPoint");
-	float playerX = playerPointMap["x"].asFloat();
-	float playerY = playerPointMap["y"].asFloat();
+	//最初开始游戏时
+	if (Player::getInstance()->gamescenedir == "none")
+	{
+		ValueMap playerPointMap = objGroup->getObject("PlayerPoint");
+		playerX = playerPointMap["x"].asFloat();
+		playerY = playerPointMap["y"].asFloat();
+	}
+	else
+	{
+		ValueMap playerPointMap = objGroup->getObject("playerpoint" + Player::getInstance()->gamescenedir);
+		playerX = playerPointMap["x"].asFloat();
+		playerY = playerPointMap["y"].asFloat();
+	}
+	
 	addPlayer(Vec2(playerX, playerY));	
 
 	/*创建主角hpmp条*/
@@ -192,7 +205,6 @@ void GameScene::setMapInfo(int id)
 
 	if (SceneIdManager::getInstance()->map_sceneIdToSceneData.find(id) != SceneIdManager::getInstance()->map_sceneIdToSceneData.end())
 	{
-	
 		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToSceneData[id].name);
 		m_map->getLayer("barrier")->setVisible(false);
 		addChild(m_map, 0, 1);

@@ -18,12 +18,7 @@ void FindPath::run(Vec2 startId, Vec2 endId)
 		else{
 			monster->IstrackNoresult = false;
 		}
-		log("------------");
-		for (int i = 0, size = result.size(); i < size; i++)
-		{	
-			log("%f**%f",result.at(i).x,result.at(i).y);
-		}
-		log("------------");
+		
 		for (int i = 0, size = result.size(); i < size; i++)
 		{
 			auto vertex = graph->getGraphVertexByVertexId(result.at(i));

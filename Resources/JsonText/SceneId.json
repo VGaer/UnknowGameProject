@@ -12,6 +12,13 @@
 "Id":3,
 "Level":0,
 "Mission":[]
+},
+
+{
+"scenename":"Map/03map.tmx",
+"Id":4,
+"Level":0,
+"Mission":[]
 }
 
 ]

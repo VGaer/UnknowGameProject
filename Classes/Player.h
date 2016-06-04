@@ -103,6 +103,7 @@ public:
 	int m_playerlevel; //主角等级
 	float m_exp; //主角经验
 	void LevelUpdate(float dt);
+	std::string gamescenedir;
 private:
 	TMXTiledMap* m_map;
 	std::vector<int> vec;

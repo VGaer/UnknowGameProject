@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="20">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="21">
  <tileset firstgid="1" name="background01" tilewidth="64" tileheight="64" tilecount="64" columns="16">
   <image source="background01.png" width="1024" height="256"/>
  </tileset>
@@ -19,6 +19,7 @@
   <tile id="1">
    <properties>
     <property name="changescene" value="3"/>
+    <property name="nextscenedir" value="down"/>
    </properties>
   </tile>
   <tile id="2">
@@ -53,7 +54,7 @@
  </layer>
  <layer name="barrier" width="35" height="30" opacity="0.23">
   <data encoding="base64" compression="zlib">
-   eJzVl0EOwCAIBP3/H1q/2lMTY7aBBYSyiRclOBEQHSNG9zKiNQ+ysL7/oMs4LD4kjkx97ZfNgfbVnFdkriFfUrwztTJUxefVHqdKWVm89Y4YPCyMurAgm5Uv+j60skT57sgygY2UX576P30ubJ9m9s9kkXoOYmH6oeV+Q3OaOrayMO8mrW20UD1U8iCOfa6Cg13TyJLvGhvPW0Drr4uy/nMd/42VegCMEHIr
+   eJzVl1EKACEIRLv/HXa76n4tREyooykO9FNij9SsMWL0LiNa84LPDN+39JCD8SFxZOq0XzYH2ldzXpG5hnxJ8c7UylAVn197nCrFsnjrHTF4WCzqwoJsVr7o+5BlifLdkWUCGym/PPV/+1ysfdqyfyaL1HMQi6UfMvcbmtPUMctieTdpbaOF6qGSB3HscxUc1jWNmHzX2HjeAlp/XZT1n+v4b6zUB7m9cFE=
   </data>
  </layer>
  <objectgroup name="objects">
@@ -61,8 +62,9 @@
   <object id="3" name="Mon3" x="705.333" y="384" width="61.3333" height="62.6667"/>
   <object id="4" name="Mon4" x="384" y="1792" width="66" height="66"/>
   <object id="5" name="Mon1" x="448" y="60" width="68" height="64"/>
-  <object id="6" name="Mon2" x="1216" y="60" width="64" height="60"/>
+  <object id="6" name="Mon2" x="1088" y="388" width="64" height="60"/>
   <object id="7" name="Mon5" x="1216" y="1792" width="64" height="68"/>
   <object id="10" name="Mon6" x="1793.33" y="1729.33" width="61.3333" height="62.6667"/>
+  <object id="20" name="playerpointup" x="1218" y="63" width="64" height="63"/>
  </objectgroup>
 </map>

@@ -110,6 +110,8 @@ bool Player::init()
 
 	spritelevelup = NULL;
 
+	gamescenedir = "none";
+
 	return true;
 }
 
@@ -128,9 +130,9 @@ void Player::update(float dt)
 	{
 		this->setPositionY(0 + 2);
 	}
-	if (this->getPositionY() + getContentSize().height >= m_map->getMapSize().height * m_map->getTileSize().height)
+	if (this->getPositionY() + getContentSize().height / 2 >= m_map->getMapSize().height * m_map->getTileSize().height)
 	{
-		this->setPositionY(m_map->getMapSize().height * m_map->getTileSize().height - getContentSize().height);
+		this->setPositionY(m_map->getMapSize().height * m_map->getTileSize().height - getContentSize().height / 2);
 	}
 
 
@@ -2650,6 +2652,11 @@ void Player::ChangSceneIdUpdate(float dt)
 				if (ChangeScenePointManager::getInstance()->IsReachCondition(Id) == false)
 					return;
 				
+				if (proValueMap.find("nextscenedir") != proValueMap.end())
+				{
+					this->gamescenedir = proValueMap.at("nextscenedir").asString();
+				}
+
 				/*切换场景时，把本场景怪物从怪物管理器中Pop出来*/
 				auto& Vec = MonsterManager::getInstance()->getMonsterVec();
 				Vec.clear();
@@ -2670,6 +2677,11 @@ void Player::openAllUpdate()
 	this->schedule(schedule_selector(Player::Playerhp_mp_Update), 0.2f);
 	this->schedule(schedule_selector(Player::recoverHp_Mp), 1.0f);
 	this->schedule(schedule_selector(Player::ChangSceneIdUpdate));
+	this->schedule(schedule_selector(Player::LevelUpdate));
+	//放完L或者U的技能然后突然切换图了，L或U技能的定时器会被关掉，而getCurtime若在cd范围内，那么主角之后就一直不能放技能
+	//所以把time初始化为0
+	for (int i = 0; i < MAX_SKILL_NUM; i++)
+		skillControl->skillCounter[i]->setstartTimeZeroAndcloseSchedule();
 }
 
 void Player::LevelUpdate(float dt)
