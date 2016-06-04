@@ -98,6 +98,11 @@ public:
 	float getCurMaxHp();
 	float getCurMaxMp();
 	void ChangSceneIdUpdate(float dt);
+	void openAllUpdate();
+	void createSwordWave();
+	int m_playerlevel; //主角等级
+	float m_exp; //主角经验
+	void LevelUpdate(float dt);
 private:
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
@@ -113,7 +118,6 @@ private:
 	int PlayerDir;
 	Vector<RemoteSkill*> m_swordwave_Arr;
 	Vector<RemoteSkill*> m_Using_swordwave_Arr;
-	void createSwordWave();
 	int swordwaveNum;
 	TMXTiledMap* m_parrent;
 	int m_player_magnification;//玩家精灵放大倍数	
@@ -128,5 +132,7 @@ private:
 	//当前等级hp,mp属性
 	float curLevel_Maxhp;
 	float curLevel_Maxmp;
+	//主角升级时播放动画的精灵
+	Sprite* spritelevelup;
 };
 #endif 

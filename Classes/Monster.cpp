@@ -133,6 +133,7 @@ void Monster::cmd_moveTo(Point tarPos)
 	//巡逻状态
 	else
 	{
+		//log("%f,,%f",tarPos.x,tarPos.y);
 		Vec2 start = player->tiledCoordForPosition(this->getPosition());
 		Vec2 end = tarPos;//巡逻目标位置(巡逻的时候直接传了瓦片的坐标进来了)
 		if (end.x >= 0 && end.x < m_parrent->getMapSize().width && end.y >= 0 && end.y < m_parrent->getMapSize().height){
@@ -505,6 +506,9 @@ void Monster::update(float dt)
 		}
 		}
 		
+		/*主角加经验*/
+		player->m_exp += monsdata.exp;
+
 		/*remove掉怪物对应的血条*/
 		auto monbar = BarManager::getInstance()->getBars(monsterIdForBar);
 		if (monbar != NULL)
@@ -513,6 +517,16 @@ void Monster::update(float dt)
 			monbar->getParent()->getParent()->removeFromParent();
 		}
 
+		//从怪物管理器中Pop出来
+		auto& Vec = MonsterManager::getInstance()->getMonsterVec();
+		for (int i = 0; i < Vec.size(); i++)
+		{
+			if (Vec.at(i) == this)
+			{
+				Vec.eraseObject(this);
+				break;
+			}
+		}
 		this->removeFromParent();
 		return;
 	}

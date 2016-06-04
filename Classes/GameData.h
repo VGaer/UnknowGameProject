@@ -67,6 +67,7 @@ struct MonsData
 	float eyeRange;		//视野半径
 	float perceptionRange;//感知半径
 	float attackedrestoretime;//僵直时间
+	float exp;
 	string imagePath; //图片路径
 	std::map<string, MonSkill> skillmap; //技能容器
 	std::map<string, MonRemoteSkill> remoteskillmap; //远程技能容器
@@ -99,6 +100,7 @@ struct PlayerData
 	float level;
 	float hp;
 	float mp;
+	float exp;//当前经验
 };
 
 class GameData

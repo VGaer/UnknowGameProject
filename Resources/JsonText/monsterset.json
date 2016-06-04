@@ -7,6 +7,7 @@
 "eyeRange":640,
 "perceptionRange":500,
 "attackedrestoretime":0.1,
+"exp":30,
 "imagePath":"monster/treemonster/treemonster.png",
 "baseskill":
 [
@@ -80,6 +81,7 @@
 "eyeRange":640,
 "perceptionRange":500,
 "attackedrestoretime":0.1,
+"exp":25,
 "imagePath":"monster/gdragonmonster/gdragonmonster.png",
 "baseskill":
 [
@@ -138,6 +140,7 @@
 "eyeRange":640,
 "perceptionRange":500,
 "attackedrestoretime":0.1,
+"exp":23,
 "imagePath":"monster/bonemonster/bonemonster.png",
 "baseskill":
 [

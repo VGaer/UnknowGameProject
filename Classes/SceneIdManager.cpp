@@ -24,8 +24,8 @@ SceneIdManager::~SceneIdManager()
 
 void SceneIdManager::addDataToSceneData(SceneData scenedata)
 {
-	map_scenenameToId[scenedata.name] = scenedata.Id;
-	map_sceneIdToname[scenedata.Id] = scenedata.name;
+	map_scenenameToSceneData[scenedata.name] = scenedata;
+	map_sceneIdToSceneData[scenedata.Id] = scenedata;
 }
 
 void SceneIdManager::readSceneDataFile()
@@ -52,6 +52,12 @@ void SceneIdManager::readSceneDataFile()
 			const rapidjson::Value& value = pArray[i];//value为一个对象
 			scenedata.name = value["scenename"].GetString();
 			scenedata.Id = value["Id"].GetInt();
+			scenedata.Level = value["Level"].GetInt();
+			const rapidjson::Value& MissonArr = value["Mission"];
+			for (int i = 0; i < MissonArr.Size(); i++)
+			{
+				scenedata.Misson.push_back(MissonArr[i].GetInt());
+			}
 			addDataToSceneData(scenedata);
 		}
 	} while (0);

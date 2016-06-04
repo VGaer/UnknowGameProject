@@ -90,7 +90,9 @@ void Patrol::Excute(Monster* target)
 			if (patrolvec.size() > 0)
 			{
 			//	srand(time(0));
+			
 				target->index = rand() % patrolvec.size();
+				//log("%dindex",target->index);
 				target->cmd_moveTo(patrolvec[target->index]);
 				//ÉèÖÃÑ²ÂßµÄÑ°Â·ÑÓ³Ùduration
 				target->duration = target->monsdata.moveSpeed;

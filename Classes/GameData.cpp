@@ -128,6 +128,7 @@ void GameData::readMonsDataFile()
 			data->perceptionRange = value["perceptionRange"].GetDouble();
 			data->attackedrestoretime = value["attackedrestoretime"].GetDouble();
 			data->imagePath = value["imagePath"].GetString();
+			data->exp = value["exp"].GetDouble();
 			const rapidjson::Value& baseskillArray = value["baseskill"];
 			if (baseskillArray.Size() > 0)
 			{
@@ -310,8 +311,10 @@ void GameData::writePlayerData()
 	document.AddMember("posX", player->getPositionX(), allocator);
 	document.AddMember("posY", player->getPositionY(), allocator);
 	document.AddMember("direction", player->getPlayerDir(), allocator);
+	document.AddMember("level",player->m_playerlevel,allocator);
 	document.AddMember("hp",player->m_hp,allocator);
 	document.AddMember("mp",player->m_mp,allocator);
+	document.AddMember("exp",player->m_exp,allocator);
 
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -344,8 +347,10 @@ void GameData::readPlayerDataFile()
 		data->posX = value["posX"].GetDouble();
 		data->posY = value["posY"].GetDouble();
 		data->direction = value["direction"].GetInt();
+		data->level = value["level"].GetInt();
 		data->hp = value["hp"].GetDouble();
 		data->mp = value["mp"].GetDouble();
+		data->exp = value["exp"].GetDouble();
 		playerData = data;
 	} while (0);
 }

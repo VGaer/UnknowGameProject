@@ -36,6 +36,7 @@ GameScene::GameScene()
 
 Scene* GameScene::createSceneWithId(int sceneId)
 {
+	GameScene::sceneId = sceneId;
 	auto scene = Scene::create();
 	auto layer = new GameScene();
 	if (layer && layer->init(sceneId))
@@ -88,6 +89,21 @@ bool GameScene::init(int sceneId)
 	if (BarManager::getInstance()->getParent() != NULL)
 	{
 		BarManager::getInstance()->removeFromParent();
+		this->addChild(BarManager::getInstance());
+		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
+		bar->setAnchorPoint(Vec2(0, 0));
+		bar->setPosition(0, 0);
+
+		auto playerbar = BarManager::getInstance()->getPlayerBars();
+		if (playerbar != NULL)
+		{
+			playerbar->m_hp->setPercentage(m_player->m_hp);
+			playerbar->m_mp->setPercentage(m_player->m_mp);
+		}
+		this->addChild(bar, 100);
+	}
+	else
+	{
 		this->addChild(BarManager::getInstance());
 		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
 		bar->setAnchorPoint(Vec2(0, 0));
@@ -174,10 +190,10 @@ bool GameScene::init(int sceneId)
 void GameScene::setMapInfo(int id)
 {
 
-	if (SceneIdManager::getInstance()->map_sceneIdToname.find(id) != SceneIdManager::getInstance()->map_sceneIdToname.end())
+	if (SceneIdManager::getInstance()->map_sceneIdToSceneData.find(id) != SceneIdManager::getInstance()->map_sceneIdToSceneData.end())
 	{
 	
-		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToname[id]);
+		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToSceneData[id].name);
 		m_map->getLayer("barrier")->setVisible(false);
 		addChild(m_map, 0, 1);
 		auto graph = Graph::getInstance();
@@ -193,8 +209,15 @@ void GameScene::addPlayer(Point pos, int direction)
 	if (player->getParent() != NULL)
 	{
 		player->removeFromParent();
+
+		//切换场景时主角的初始化,不需要初始化方向了
+
+		//开启所有定时器 
+		player->openAllUpdate();
 		player->setPosition(pos);
 		player->setTiledMap(m_map);
+		//创建K键发射物
+		player->createSwordWave();
 		m_player = player;
 		return;
 	}
@@ -232,6 +255,10 @@ void GameScene::addPlayer(PlayerData* saveData)
 	/*初始化玩家mp hp*/
 	player->setPlayer_hp(saveData->hp);
 	player->setPlayer_mp(saveData->mp);
+	/*初始化玩家等级*/
+	player->m_playerlevel = saveData->level;
+	/*初始化玩家经验*/
+	player->m_exp = saveData->exp;
 
 	this->addChild(BarManager::getInstance());
 	auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
@@ -307,6 +334,7 @@ void GameScene::update(float dt)
 	m_player->setVertexZ(-((p.y + 64) / 64));
 
 	auto Vec1 = MonsterManager::getInstance()->getMonsterVec();
+//	log("MonSize%d", Vec1.size());
 	Vector<Entity*> Vec;
 	for (int i = 0; i < Vec1.size(); i++)
 	{
@@ -319,6 +347,7 @@ void GameScene::update(float dt)
 		p = CC_POINT_POINTS_TO_PIXELS(p);
 		monster->setVertexZ(-((p.y + 64) / 64));
 	}
+	
 	Vec.pushBack(m_player);
 	auto Vec2 = NpcManager::getInstance()->getNpcsVec();
 	for (int i = 0; i < Vec2.size(); i++)

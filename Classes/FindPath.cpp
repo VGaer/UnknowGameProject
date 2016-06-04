@@ -18,12 +18,19 @@ void FindPath::run(Vec2 startId, Vec2 endId)
 		else{
 			monster->IstrackNoresult = false;
 		}
+		log("------------");
+		for (int i = 0, size = result.size(); i < size; i++)
+		{	
+			log("%f**%f",result.at(i).x,result.at(i).y);
+		}
+		log("------------");
 		for (int i = 0, size = result.size(); i < size; i++)
 		{
 			auto vertex = graph->getGraphVertexByVertexId(result.at(i));
 			auto pos = Vec2(vertex->getVertex_posx(), vertex->getVertex_posy());
 			pos.y = graph->getMap()->getMapSize().height * graph->getMap()->getTileSize().height - pos.y;
 			Vec2 vec = pos - monster->getPosition();
+			//log("%f,,,%f",pos.x,pos.y);
 
 			//根据要到达的位置设置monster方向控制器方向
 			monster->getAnimBase()->setCurDirection(pos);

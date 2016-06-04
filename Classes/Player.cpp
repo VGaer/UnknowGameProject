@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "GameScene.h"
+#include "ChangeScenePointManager.h"
 
 
 Player* Player::getInstance()
@@ -25,6 +26,7 @@ bool Player::init()
 	this->schedule(schedule_selector(Player::Playerhp_mp_Update),0.2f);
 	this->schedule(schedule_selector(Player::recoverHp_Mp), 1.0f);
 	this->schedule(schedule_selector(Player::ChangSceneIdUpdate));
+	this->schedule(schedule_selector(Player::LevelUpdate));
 
 	timecounter_up = TimeCounter::create();
 	this->addChild(timecounter_up);
@@ -73,6 +75,9 @@ bool Player::init()
 	frameCache->addSpriteFramesWithFile("player_skill/fire.plist", "player_skill/fire.png");
 	frameCache->addSpriteFramesWithFile("player_skill/bomb.plist", "player_skill/bomb.png");
 
+	/*主角升级动画*/
+	frameCache->addSpriteFramesWithFile("playerLevelup/playerlevelup.plist", "playerLevelup/playerlevelup.png");
+
 	PlayerState = enum_initNone;//初始化为什么都没有状态，一运行游戏如果没操作就会转为enum_static,有操作转为对应操作的walk or run状态 
 	PlayerDir = em_down;//初始化时
 
@@ -97,6 +102,13 @@ bool Player::init()
 	k_consumemp = 4;
 	l_consumemp = 7;
 	u_consumemp = 6;
+
+	//初始化等级
+	m_playerlevel = 1;
+	//初始化exp  
+	m_exp = 0;
+
+	spritelevelup = NULL;
 
 	return true;
 }
@@ -2221,7 +2233,6 @@ bool Player::setPlayerPosition(Vec2 position)
 			if (proValueMap.find("Collidable") != proValueMap.end()) {
 				std::string collision = proValueMap.at("Collidable").asString();
 				if (collision == "true") {
-					log("there");
 					return false;
 				}
 			}
@@ -2637,12 +2648,59 @@ void Player::ChangSceneIdUpdate(float dt)
 				std::string changescene = proValueMap.at("changescene").asString();
 				Value SceneId(changescene);
 				int Id = SceneId.asInt();
+				/*判断是否达成切换地图的条件*/
+				if (ChangeScenePointManager::getInstance()->IsReachCondition(Id) == false)
+					return;
+				
+				/*切换场景时，把本场景怪物从怪物管理器中Pop出来*/
+				auto& Vec = MonsterManager::getInstance()->getMonsterVec();
+				Vec.clear();
+				/*一定要先Pop本场景,再创建新场景，这样才不会把新场景怪物也Pop了*/
 				Scene* sc = NULL;
 				sc = GameScene::createSceneWithId(Id);	
 				auto reScene = TransitionJumpZoom::create(0.0f, sc);
-				Director::getInstance()->replaceScene(sc);
-			
+				Director::getInstance()->replaceScene(sc);		
 			}
 		}
+	}
+}
+
+void Player::openAllUpdate()
+{
+	this->scheduleUpdate();
+	this->schedule(schedule_selector(Player::baseskillcollidUpdata));
+	this->schedule(schedule_selector(Player::Playerhp_mp_Update), 0.2f);
+	this->schedule(schedule_selector(Player::recoverHp_Mp), 1.0f);
+	this->schedule(schedule_selector(Player::ChangSceneIdUpdate));
+}
+
+void Player::LevelUpdate(float dt)
+{
+	if (m_exp >= 100 * (m_playerlevel * m_playerlevel))//升级经验为等级二次方函数
+	{
+		//升级
+		m_playerlevel += 1;
+		m_exp = m_exp - 100 * (m_playerlevel * m_playerlevel);
+
+		/*主角最大hp,mp根据主角等级来定*/
+		curLevel_Maxhp = 100 + (m_playerlevel - 1) * 20;
+		curLevel_Maxmp = 100 + (m_playerlevel - 1) * 35;
+
+		//升级完满hp,mp
+		m_mp = curLevel_Maxmp;
+		m_hp = curLevel_Maxhp;
+
+		//播放升级动画和声音
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/levelsup.wav");
+		if (spritelevelup == NULL)
+		{
+			spritelevelup = Sprite::create("playerLevelup/playerlevelup1.png");
+			spritelevelup->setPosition(getContentSize().width / 2, getContentSize().height / 2);
+			this->addChild(spritelevelup, 500);
+			CallFunc* call = CallFunc::create([&](){spritelevelup->removeFromParent(); spritelevelup = NULL; });
+			Animation* animation = AnimationUtil::createWithSingleFrameName("playerlevelup", 0.1f, 1);
+			Animate* animate = Animate::create(animation);
+			spritelevelup->runAction(Sequence::create(animate, call, NULL));
+		}		
 	}
 }
