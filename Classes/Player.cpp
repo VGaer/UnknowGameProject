@@ -126,7 +126,7 @@ void Player::update(float dt)
 	}
 	if (this->getPositionY() <= 0)
 	{
-		this->setPositionY(0);
+		this->setPositionY(0 + 2);
 	}
 	if (this->getPositionY() + getContentSize().height >= m_map->getMapSize().height * m_map->getTileSize().height)
 	{
@@ -532,8 +532,6 @@ void Player::update(float dt)
 						CallFunc* callfunc = CallFunc::create(CC_CALLBACK_0(Player::CallBack1, this));
 						this->getPlayerSprite()->runAction(Sequence::create(animate, callfunc, NULL));
 
-						//CocosDenshion::SimpleAudioEngine::getInstance()->stopEffect(k);
-						//k = CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/swordsound.wav");
 					}
 
 					PlayerState = enum_baseattack;
@@ -2678,9 +2676,9 @@ void Player::LevelUpdate(float dt)
 {
 	if (m_exp >= 100 * (m_playerlevel * m_playerlevel))//升级经验为等级二次方函数
 	{
+		m_exp = m_exp - 100 * (m_playerlevel * m_playerlevel);
 		//升级
 		m_playerlevel += 1;
-		m_exp = m_exp - 100 * (m_playerlevel * m_playerlevel);
 
 		/*主角最大hp,mp根据主角等级来定*/
 		curLevel_Maxhp = 100 + (m_playerlevel - 1) * 20;
