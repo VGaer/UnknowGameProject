@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="8">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="11">
  <tileset firstgid="1" name="background03" tilewidth="64" tileheight="64" tilecount="84" columns="7">
   <image source="background03.png" width="448" height="768"/>
  </tileset>
@@ -54,5 +54,7 @@
   <object id="5" name="Mon5" x="1222" y="1222" width="58" height="56"/>
   <object id="6" name="Mon6" x="1602" y="1542" width="62" height="56"/>
   <object id="7" name="playerpointdown" x="1154" y="1774" width="64" height="58"/>
+  <object id="8" name="NPC3" x="770" y="1089" width="56" height="58"/>
+  <object id="10" name="NPC2" x="1988" y="648" width="50" height="48"/>
  </objectgroup>
 </map>

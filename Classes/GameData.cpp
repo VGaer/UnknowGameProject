@@ -47,6 +47,14 @@ void GameData::addDataToNpcsData(NpcsData* data)
 {
 	string name = data->name;
 	m_mapNpcsData[name] = data;
+	if (m_mapIDtoNpc.find(data->mapID) != m_mapIDtoNpc.end()) {
+		m_mapIDtoNpc[data->mapID].push_back(data);
+	}
+	else {
+		vector<NpcsData*> vec;
+		vec.push_back(data);
+		m_mapIDtoNpc[data->mapID] = vec;
+	}
 }
 
 void GameData::addDataToQuestsData(QuestListData * data)
@@ -81,22 +89,31 @@ NpcsData* GameData::getDataFromNpcsData(const string& name)
 	return npcsData;
 }
 
+map<int, vector<NpcsData*>> GameData::getMapIDtoNpcData()
+{
+	return m_mapIDtoNpc;
+}
+
 QuestListData * GameData::getDataFromQuestsData(const int id)
 {
 	QuestListData* questlistData = NULL;
-	if (m_mapQuestsData.find(id) != m_mapQuestsData.end()) {
-		questlistData = m_mapQuestsData[id];
+	if (m_mapQuestSaveData.size() == 0)
+	{
+		if (m_mapQuestsData.find(id) != m_mapQuestsData.end()) {
+			questlistData = m_mapQuestsData[id];
+		}
+	}
+	else {
+		if (m_mapQuestSaveData.find(id) != m_mapQuestSaveData.end()) {
+			questlistData = m_mapQuestSaveData[id];
+		}
 	}
 	return questlistData;
 }
 
-QuestDlgsData * GameData::getDataFromQuestDlgsData(const int id)
+map<int, QuestDlgsData*> GameData::getDataFromQuestDlgsData()
 {
-	QuestDlgsData* questdlgsData = NULL;
-	if (m_mapQuestDlgsData.find(id) != m_mapQuestDlgsData.end()) {
-		questdlgsData = m_mapQuestDlgsData[id];
-	}
-	return questdlgsData;
+	return m_mapQuestDlgsData;
 }
 
 void GameData::readMonsDataFile()
@@ -121,6 +138,7 @@ void GameData::readMonsDataFile()
 			//读取对象属性
 			MonsData* data = new MonsData();
 			const rapidjson::Value& value = pArray[i]; //value为一个对象
+			data->id = value["id"].GetInt();
 			data->name = value["name"].GetString();
 			data->hp = value["hp"].GetDouble();
 			data->moveSpeed = value["moveSpeed"].GetDouble();
@@ -177,7 +195,7 @@ void GameData::readMonsDataFile()
 				skill.skilltype = remoteskill["skilltype"].GetString();
 				skill.projectileName = remoteskill["projectileName"].GetString();
 				skill.projectileAnimateName = remoteskill["projectileAnimateName"].GetString();
-				skill.skillwidth = remoteskill["skillwidth"].GetDouble(); 
+				skill.skillwidth = remoteskill["skillwidth"].GetDouble();
 				skill.skillheight = remoteskill["skillheight"].GetDouble();
 				skill.projmovespeed = remoteskill["projmovespeed"].GetDouble();
 				skill.eyeRangeForstartskill = remoteskill["eyeRangeForstartskill"].GetDouble();
@@ -223,6 +241,8 @@ void GameData::readNpcsDataFile()
 			const rapidjson::Value &value = pArray[i];  // value为一个对象
 			data->id = value["id"].GetInt();
 			data->name = value["name"].GetString();
+			data->status = value["status"].GetInt();
+			data->mapID = value["mapID"].GetInt();
 			const rapidjson::Value &intArray = value["quest_id"];
 			for (int i = 0; i < intArray.Size(); i++) {
 				data->quest_id.push_back(intArray[i].GetInt());
@@ -259,11 +279,22 @@ void GameData::readQuestsDataFile()
 			QuestListData* data = new QuestListData();
 			const rapidjson::Value &value = pArray[i];  // value为一个对象
 			data->id = value["id"].GetInt();
+			data->mapID = value["mapID"].GetInt();
 			data->title = value["title"].GetString();
 			data->instruct = value["instruct"].GetString();
 			data->type = value["type"].GetInt();
 			data->status = value["status"].GetInt();
-			data->mons_id = value["mons_id"].GetString();
+			const rapidjson::Value &mArray = value["mons_id"];
+			for (int i = 0; i < mArray.Size(); i++) {
+				data->mons_id.push_back(mArray[i].GetInt());
+			}
+
+			const rapidjson::Value &fArray = value["forgeID"];
+			for (int i = 0; i < fArray.Size(); i++) {
+				data->forgeID.push_back(fArray[i].GetInt());
+			}
+
+			data->targetNpc = value["targetNpc"].GetString();
 			addDataToQuestsData(data);
 		}
 	} while (0);
@@ -311,10 +342,10 @@ void GameData::writePlayerData()
 	document.AddMember("posX", player->getPositionX(), allocator);
 	document.AddMember("posY", player->getPositionY(), allocator);
 	document.AddMember("direction", player->getPlayerDir(), allocator);
-	document.AddMember("level",player->m_playerlevel,allocator);
-	document.AddMember("hp",player->m_hp,allocator);
-	document.AddMember("mp",player->m_mp,allocator);
-	document.AddMember("exp",player->m_exp,allocator);
+	document.AddMember("level", player->m_playerlevel, allocator);
+	document.AddMember("hp", player->m_hp, allocator);
+	document.AddMember("mp", player->m_mp, allocator);
+	document.AddMember("exp", player->m_exp, allocator);
 
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -359,3 +390,97 @@ bool GameData::isExistSaveDoc()
 {
 	return !playerData == NULL;
 }
+
+void GameData::writeQuestData()
+{
+	//write json
+	rapidjson::Document document;
+	document.SetArray();
+	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+	rapidjson::Value str;
+	for (auto& i : m_mapQuestsData)
+	{
+		auto second = i.second;
+		rapidjson::Value object(rapidjson::kObjectType);
+		object.AddMember("id", second->id, allocator);
+
+		str.SetString(second->title.c_str(), second->title.length(), allocator);
+		object.AddMember("title", str, allocator);
+
+		str.SetString(second->instruct.c_str(), second->instruct.length(), allocator);
+		object.AddMember("instruct", str, allocator);
+
+		object.AddMember("status", second->status, allocator);
+
+		str.SetString(second->targetNpc.c_str(), second->targetNpc.length(), allocator);
+		object.AddMember("targetNpc", str, allocator);
+
+		rapidjson::Value farray(rapidjson::kArrayType);
+		for (auto& j : second->forgeID) {
+			rapidjson::Value object(rapidjson::kObjectType);
+			object.SetInt(j);
+			farray.PushBack(object, allocator);
+		}
+		object.AddMember("forgeID", farray, allocator);
+
+		rapidjson::Value marray(rapidjson::kArrayType);
+		for (auto& j : second->mons_id) {
+			rapidjson::Value object(rapidjson::kObjectType);
+			object.SetInt(j);
+			marray.PushBack(object, allocator);
+		}
+		object.AddMember("mons_id", marray, allocator);
+
+		object.AddMember("mapID", str, allocator);
+
+		object.AddMember("type", second->type, allocator);
+		document.PushBack(object, allocator);
+	}
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	document.Accept(writer);
+	auto out = buffer.GetString();
+	ofstream fp(QUESTSAVE_DATA_PATH, ios_base::out);
+	fp << out;
+}
+
+void GameData::readQuestSaveDataFile()
+{
+	std::string jsonPath = QUESTSAVE_DATA_PATH;
+	rapidjson::Document _doc;
+	ssize_t size = 0;
+	unsigned char *pBytes = NULL;
+	do {
+		pBytes = FileUtils::getInstance()->getFileData(jsonPath, "r", &size);
+		CC_BREAK_IF(pBytes == NULL || strcmp((char*)pBytes, "") == 0);
+		std::string load_str((const char*)pBytes, size);
+		CC_SAFE_DELETE_ARRAY(pBytes);
+		_doc.Parse<0>(load_str.c_str());
+		CC_BREAK_IF(_doc.HasParseError());
+		// 判断是否为一个数组
+		if (!_doc.IsArray())
+			return;
+		const rapidjson::Value& pArray = _doc;
+		for (rapidjson::SizeType i = 0; i < pArray.Size(); i++)
+		{
+			QuestListData* data = new QuestListData();
+			const rapidjson::Value &value = pArray[i];  // value为一个对象
+			data->id = value["id"].GetInt();
+			data->title = value["title"].GetString();
+			data->instruct = value["instruct"].GetString();
+			data->type = value["type"].GetInt();
+			data->status = value["status"].GetInt();
+			const rapidjson::Value &mArray = value["mons_id"];
+			for (int i = 0; i < mArray.Size(); i++) {
+				data->mons_id.push_back(mArray[i].GetInt());
+			}
+			const rapidjson::Value &fArray = value["forgeID"];
+			for (int i = 0; i < fArray.Size(); i++) {
+				data->forgeID.push_back(fArray[i].GetInt());
+			}
+			data->targetNpc = value["targetNpc"].GetString();
+			m_mapQuestSaveData[data->id] = data;
+		}
+	} while (0);
+}
+

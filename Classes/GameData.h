@@ -6,7 +6,7 @@
 #include "vector"
 using namespace std;
 
-//#define MONS_DATA_PATH "JsonText/monattribute.json"	// 怪物数据文件路径
+#define QUESTSAVE_DATA_PATH "JsonText/QuestSave.json"	// 任务数据文件保存路径
 #define MONS_DATA_PATH "JsonText/monsterset.json"	// 怪物skill文件路径
 #define NPCS_DATA_PATH "JsonText/NpcDlgs.json"	// NPC数据文件路径
 #define QUESTS_DATA_PATH "JsonText/QuestList.json"	// 任务数据文件路径
@@ -15,6 +15,8 @@ using namespace std;
 
 struct NpcsData {
 	int id;				// id
+	int status;			//npc状态（0：无、1：任务过程中）
+	int mapID;
 	vector<int> quest_id;		//任务id
 	string name;		// 名字
 	vector<string> dlgs;		// 对话s
@@ -61,6 +63,7 @@ struct MonRemoteSkill
 
 struct MonsData
 {
+	int id;
 	string name;		//名字
 	float hp;			//生命值
 	float moveSpeed;	//行走一条边的时间
@@ -78,9 +81,12 @@ struct QuestListData {
 	int id;			//任务id
 	string title;	//任务标题
 	string instruct; //任务简介
-	int type;		//任务类型
-	int status;		//激活状态 （0：未接、1：激活、2：完成）
-	string mons_id;	//任务目标（如果有）
+	int type;		//任务类型(0:跑腿，1：杀怪)
+	int status;		//激活状态 （0：未接、1：激活、2：完成、3：可提交）
+	int mapID;
+	vector<int> mons_id;	//任务目标（如果有）
+	vector<int> forgeID;
+	string targetNpc; //任务目标（如果有）
 };
 
 struct QuestDlgsData {
@@ -115,6 +121,7 @@ public:
 	map<string, NpcsData*> m_mapNpcsData;
 	map<int, QuestListData*> m_mapQuestsData;
 	map<int, QuestDlgsData*> m_mapQuestDlgsData;
+	map<int, vector<NpcsData*>> m_mapIDtoNpc;
 public:
 	// 加入一条怪物数据
 	void addDataToMonsData(MonsData* data);
@@ -124,6 +131,7 @@ public:
 	void addDataToNpcsData(NpcsData* data);
 	// 获取一条NPC数据
 	NpcsData* getDataFromNpcsData(const string& name);
+	map<int, vector<NpcsData*>> getMapIDtoNpcData();
 	// 加入一条任务数据
 	void addDataToQuestsData(QuestListData* data);
 	// 获取一条任务数据
@@ -131,14 +139,16 @@ public:
 	// 加入一条任务对话数据
 	void addDataToQuestDlgsData(QuestDlgsData* data);
 	// 获取一条任务对话数据
-	QuestDlgsData* getDataFromQuestDlgsData(const int id);
-
+	map<int, QuestDlgsData*> getDataFromQuestDlgsData();
 	// 保存玩家数据
 	void writePlayerData();
 	// 获取玩家数据
 	PlayerData* getPlayerData();
 	// 是否有存档
 	bool isExistSaveDoc();
+	//保存任务数据
+	void writeQuestData();
+	void readQuestSaveDataFile();
 private:
 	// 读取文件数据
 	void readMonsDataFile();
@@ -148,6 +158,7 @@ private:
 	void readPlayerDataFile();
 private:
 	PlayerData* playerData;
+	map<int, QuestListData*> m_mapQuestSaveData;
 };
 
 #endif

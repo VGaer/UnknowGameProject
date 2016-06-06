@@ -1,6 +1,7 @@
 #include "StartGameScene.h"
 #include "SettingScene.h"
 #include "GameScene.h"
+#include "gdShow.h"
 
 Scene* StartGameScene::createScene()
 {
@@ -111,7 +112,9 @@ void StartGameScene::menuItemStartCallback(Ref* pSender)
 			sc = GameScene::loadSceneWithSaveData();
 		}
 		else{
-			sc = GameScene::createSceneWithId(2);
+			//sc = GameScene::createSceneWithId(2);
+			//Ã»ÓÐ´æµµ£¬ÇÐ»»µ½ÓÎÏ·±³¾°½éÉÜ
+			sc = gdShow::createscene();
 		}
 		auto reScene = TransitionJumpZoom::create(0.0f, sc);
 		Director::getInstance()->replaceScene(sc);

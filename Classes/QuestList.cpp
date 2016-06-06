@@ -112,6 +112,21 @@ bool QuestList::addButton(const char * normalImage, const char * selectedImage, 
 	return true;
 }
 
+void QuestList::setBtnPos(float durtime)
+{
+	Vector<Node*> vecArray = getMenuItems()->getChildren();
+	int i = 0;
+	for (auto& e : vecArray) {
+		Node* node = dynamic_cast<Node*>(e);
+		node->setAnchorPoint(Vec2(0.5, 1));
+		auto pos = Vec2(contentSize.width / 2, getScView()->getInnerContainerSize().height - i);
+		auto act = MoveTo::create(durtime, pos);
+		auto bounce = EaseBackInOut::create(act);
+		node->runAction(bounce);
+		i = i + node->getContentSize().height;
+	}
+}
+
 
 void QuestList::menuCallback(Ref* pSender) {
 	Node* node = dynamic_cast<Node*>(pSender);
@@ -124,14 +139,7 @@ void QuestList::menuCallback(Ref* pSender) {
 
 void QuestList::buttonCallback(Ref * pSender, Widget::TouchEventType type)
 {
-	if (type == Widget::TouchEventType::ENDED) {
-		questTag = NULL;
-		Sequence* a = Sequence::create(CallFunc::create([&]() {
-			static_cast<PopLayer*>(PopManager::getInstance()->getLayerByTag(1)->layer)->popBack();
-		}), DelayTime::create(0.3), CallFunc::create([&]() {
-			PopManager::getInstance()->setPopped(1, false); }), NULL);
-		runAction(a);
-	}
+	menuCallback(pSender);
 }
 
 void QuestList::onEnter() {
@@ -139,7 +147,7 @@ void QuestList::onEnter() {
 
 	getSpriteBackGround()->setAnchorPoint(Vec2(1, 0));
 	getSprite9BackGround()->setAnchorPoint(Vec2(1, 0));
-	Size contentSize;
+	
 	// 设定好参数，在运行时加载  
 	if (isZero()) {
 		contentSize = getSpriteBackGround()->getTexture()->getContentSize();
@@ -148,7 +156,7 @@ void QuestList::onEnter() {
 		getScView()->setContentSize(contentSize);
 		getScView()->setInnerContainerSize(Size(contentSize.width, contentSize.height*2));
 		getScView()->addChild(getMenuItems());
-		getSpriteBackGround()->addChild(getScView());
+		getSpriteBackGround()->addChild(getScView(), 0, "scollView");
 	}
 	else {
 		Scale9Sprite *background = getSprite9BackGround();
@@ -159,23 +167,13 @@ void QuestList::onEnter() {
 		getScView()->setContentSize(contentSize);
 		getScView()->setInnerContainerSize(Size(contentSize.width, contentSize.height * 2));
 		getScView()->addChild(getMenuItems());
-		getSprite9BackGround()->addChild(getScView());
+		getSprite9BackGround()->addChild(getScView(), 0, "scollView");
 	}
 
 
 	// 添加按钮，并设置其位置  
-
-	//float btnHeight = contentSize.height / (getMenuItems()->getChildrenCount() - 1);
-
-	Vector<Node*> vecArray = getMenuItems()->getChildren();
-	//Ref* pObj = NULL;
-	int i = 0;
-	for (auto& e : vecArray) {
-		Node* node = dynamic_cast<Node*>(e);
-		node->setAnchorPoint(Vec2(0.5, 1));
-		node->setPosition(contentSize.width/2, getScView()->getInnerContainerSize().height - i);
-		i = i + node->getContentSize().height;
-	}
+	setBtnPos();
+	
 
 	// 弹出效果  
 	Action* popLayer = Sequence::create(ScaleTo::create(0.0, 0.0),

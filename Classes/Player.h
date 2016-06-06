@@ -66,6 +66,7 @@ class Monster;
 class Player : public Entity
 {
 public:
+	Player();
 	std::queue<int> attackedqueue;
 	//CREATE_FUNC(Player);
 	static Player* getInstance();

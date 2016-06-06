@@ -2,6 +2,7 @@
 #include "Monster.h"
 #include "Graph.h"
 #include "GameData.h"
+#include "Pop.h"
 #include "algorithm"
 #include "SceneIdManager.h"
 #include "BarManager.h"
@@ -61,11 +62,12 @@ Scene* GameScene::loadSceneWithSaveData()
 
 bool GameScene::init()
 {
+	GameData::getInstance()->readQuestSaveDataFile();
 	auto saveData = GameData::getInstance()->getPlayerData();
 	loadPlistFile();
 	setMapInfo(saveData->sceneId);
 	addPlayer(saveData);
-	
+
 	auto savePoint = SavePoint::create();
 	savePoint->setPosition(Point(500, 350));
 	m_map->addChild(savePoint, 100);
@@ -95,8 +97,8 @@ bool GameScene::init(int sceneId)
 		playerX = playerPointMap["x"].asFloat();
 		playerY = playerPointMap["y"].asFloat();
 	}
-	
-	addPlayer(Vec2(playerX, playerY));	
+
+	addPlayer(Vec2(playerX, playerY));
 
 	/*创建主角hpmp条*/
 	if (BarManager::getInstance()->getParent() != NULL)
@@ -130,70 +132,63 @@ bool GameScene::init(int sceneId)
 		}
 		this->addChild(bar, 100);
 	}
-	
-	
+
+
 	auto savePoint = SavePoint::create();
 	savePoint->setPosition(Point(500, 350));
 	m_map->addChild(savePoint, 100);
-	
-	string monname[3] = { "treemonster", "gdragonmonster", "bonemonster" };
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 2; j++)
-		{
-			ValueMap monpos = objGroup->getObject("Mon" + convertToString(i * 2 + j + 1));
-			float monposx = monpos["x"].asFloat();
-			float monposy = monpos["y"].asFloat();
-			addMonster(monname[i],Vec2(monposx,monposy));
-			m_monster->monsterIdForBar = i * 2 + j;
-			auto monbar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png",m_monster->monsterIdForBar);
-			//添加到怪物精灵血条管理器
-			auto monsterbarmanager = MonsterBarManager::getInstance();
-			monsterbarmanager->getmonsterBarVec().pushBack(monbar);
-			monbar->setAnchorPoint(Vec2(0,1));
-			monbar->setPosition(Vec2(0, Director::getInstance()->getVisibleSize().height));
-			this->addChild(monbar, this->getChildren().size());
-			if (monname[i] == "treemonster")
-			{
-				auto monLabelname = Label::create(gb2312_to_utf8("树怪"), "Arial", 25);
-				monLabelname->setColor(Color3B::ORANGE);
-				monbar->addChild(monLabelname);
-				monLabelname->setPosition(Vec2(43,48));
-			}
-			else if (monname[i] == "gdragonmonster")
-			{
-				auto monLabelname = Label::create(gb2312_to_utf8("青龙"), "Arial", 25);
-				monLabelname->setColor(Color3B::ORANGE);
-				monbar->addChild(monLabelname);
-				monLabelname->setPosition(Vec2(43, 48));
-			}
-			else if (monname[i] == "bonemonster")
-			{
-				auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
-				monLabelname->setColor(Color3B::ORANGE);
-				monbar->addChild(monLabelname);
-				monLabelname->setPosition(Vec2(43, 48));
-			}
-		}
-	}
-	
 
-	{
-		/*NPC* npc = NPC::createWithparent(m_map);
-		npc->bindSprite(Sprite::create("player11.png"));
-		npc->setAnchorPoint(Vec2(.5f, .5f));
-		npc->setTiledMap(m_map);
-		npc->setPosition(Vec2(1000, 400));
-		npc->setPlayer(player);
-		npc->initDataWithName("廖浩雄");
-		auto p = npc->getPosition();
-		p = CC_POINT_POINTS_TO_PIXELS(p);
-		npc->setVertexZ(-((p.y + 64) / 64));
-		PopManager::getInstance()->setAnchorPoint(Vec2(0.5, 0));
-		PopManager::getInstance()->setPosition(Vec2(npc->getPosition().x, npc->getPosition().y - 50));
-		this->addChild(PopManager::getInstance(), 3);
-		NpcManager::getInstance()->getNpcsVec().pushBack(npc);*/
+	//string monname[3] = { "treemonster", "gdragonmonster", "bonemonster" };
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	for (int j = 0; j < 2; j++)
+	//	{
+	//		ValueMap monpos = objGroup->getObject("Mon" + convertToString(i * 2 + j + 1));
+	//		float monposx = monpos["x"].asFloat();
+	//		float monposy = monpos["y"].asFloat();
+	//		addMonster(monname[i], Vec2(monposx, monposy));
+	//		m_monster->monsterIdForBar = i * 2 + j;
+	//		auto monbar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png", m_monster->monsterIdForBar);
+	//		//添加到怪物精灵血条管理器
+	//		auto monsterbarmanager = MonsterBarManager::getInstance();
+	//		monsterbarmanager->getmonsterBarVec().pushBack(monbar);
+	//		monbar->setAnchorPoint(Vec2(0, 1));
+	//		monbar->setPosition(Vec2(0, Director::getInstance()->getVisibleSize().height));
+	//		this->addChild(monbar, this->getChildren().size());
+	//		if (monname[i] == "treemonster")
+	//		{
+	//			auto monLabelname = Label::create(gb2312_to_utf8("树怪"), "Arial", 25);
+	//			monLabelname->setColor(Color3B::ORANGE);
+	//			monbar->addChild(monLabelname);
+	//			monLabelname->setPosition(Vec2(43, 48));
+	//		}
+	//		else if (monname[i] == "gdragonmonster")
+	//		{
+	//			auto monLabelname = Label::create(gb2312_to_utf8("青龙"), "Arial", 25);
+	//			monLabelname->setColor(Color3B::ORANGE);
+	//			monbar->addChild(monLabelname);
+	//			monLabelname->setPosition(Vec2(43, 48));
+	//		}
+	//		else if (monname[i] == "bonemonster")
+	//		{
+	//			auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
+	//			monLabelname->setColor(Color3B::ORANGE);
+	//			monbar->addChild(monLabelname);
+	//			monLabelname->setPosition(Vec2(43, 48));
+	//		}
+	//	}
+	//}
+
+	auto npcMap = GameData::getInstance()->getMapIDtoNpcData();
+	for (auto& i : npcMap) {
+		if (i.first == sceneId) {
+			addNpc(i.second);
+		}
+		else	continue;
 	}
+
+	auto questDisp = QuestDispatcher::getInstance();
+	addChild(questDisp);
 
 	scheduleUpdate();
 	this->schedule(schedule_selector(GameScene::MonHP_MPBar_Update), 0.2f);
@@ -241,7 +236,7 @@ void GameScene::addPlayer(Point pos, int direction)
 	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
 		0));
 	player->setContentSize(player->getContentSize() * player->getPlayer_magnification());
-	player->setAnchorPoint(Vec2(0.5, 0));	
+	player->setAnchorPoint(Vec2(0.5, 0));
 	player->setPosition(pos);
 	player->setPlayerDir(direction);
 
@@ -284,7 +279,7 @@ void GameScene::addPlayer(PlayerData* saveData)
 		playerbar->m_hp->setPercentage(saveData->hp / player->getCurMaxHp());
 		playerbar->m_mp->setPercentage(saveData->mp / player->getCurMaxMp());
 	}
-	
+
 	player->getSprite()->setScale(player->getPlayer_magnification());
 	player->getSprite()->setAnchorPoint(Vec2(0.5, 0));
 	player->getSprite()->setPosition(Vec2(player->getContentSize().width * player->getPlayer_magnification() / 2,
@@ -305,6 +300,28 @@ void GameScene::addPlayer(PlayerData* saveData)
 	m_player = player;
 }
 
+void GameScene::addNpc(vector<NpcsData*> nData)
+{
+	for (auto &i : nData) {
+		ValueMap pos = objGroup->getObject("NPC" + convertToString(i->id));
+		float posx = pos["x"].asFloat();
+		float posy = pos["y"].asFloat();
+		m_npc = NPC::create(i->name);
+		m_npc->setAnchorPoint(Vec2(.5f, .5f));
+		m_npc->setTiledMap(m_map);
+		m_npc->setPosition(Vec2(posx, posy));
+		m_npc->setPlayer(m_player);
+		m_map->addChild(m_npc, (int)m_map->getChildren().size());
+		auto p = m_npc->getPosition();
+		p = CC_POINT_POINTS_TO_PIXELS(p);
+		m_npc->setVertexZ(-((p.y + 64) / 64));
+		auto pop = Pop::create(Vec2(m_npc->getPosition().x, m_npc->getPosition().y - 50));
+		m_map->addChild(pop, 3);
+		PopManager::getInstance()->getPopsMap()[i->name] = pop;
+		NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
+	}
+}
+
 void GameScene::addMonster(const std::string& name, Point pos)
 {
 	//怪物创建
@@ -322,7 +339,7 @@ void GameScene::addMonster(const std::string& name, Point pos)
 	m_monster->setMonsterParent(m_map);
 	m_monster->setvecPatrolpoint();
 	m_monster->bindPlayer(m_player);
-	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());	
+	m_monster->getAnimBase()->setCurDirection(m_player->getPosition());
 }
 
 void GameScene::onEnter()
@@ -346,12 +363,12 @@ void GameScene::update(float dt)
 	m_player->setVertexZ(-((p.y + 64) / 64));
 
 	auto Vec1 = MonsterManager::getInstance()->getMonsterVec();
-//	log("MonSize%d", Vec1.size());
+	//	log("MonSize%d", Vec1.size());
 	Vector<Entity*> Vec;
 	for (int i = 0; i < Vec1.size(); i++)
 	{
 		Vec.pushBack(Vec1.at(i));
-	}	
+	}
 	for (int i = 0; i < Vec.size(); i++)
 	{
 		auto monster = Vec.at(i);
@@ -359,7 +376,7 @@ void GameScene::update(float dt)
 		p = CC_POINT_POINTS_TO_PIXELS(p);
 		monster->setVertexZ(-((p.y + 64) / 64));
 	}
-	
+
 	Vec.pushBack(m_player);
 	auto Vec2 = NpcManager::getInstance()->getNpcsVec();
 	for (int i = 0; i < Vec2.size(); i++)

@@ -26,6 +26,7 @@ public:
 	void setViewpointCenter(Vec2 Position);
 	void addPlayer(Point pos, int direction = enum_down);
 	void addPlayer(PlayerData* data);
+	void addNpc(vector<NpcsData*> nData);
 	void addMonster(const std::string& name, Point pos);  // 还需要更改详细属性
 	void loadPlistFile(); // 应该放在游戏开始界面加载。只加载一次
 	static int sceneId;

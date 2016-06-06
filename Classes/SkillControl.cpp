@@ -30,7 +30,7 @@ bool SkillControl::skill_laser()
 	auto laser = Laser::create();
 	laser->setAnchorPoint(Vec2(0, 0.5));
 	// 数值设定
-	laser->attr_damage = 10;
+	laser->attr_damage = 100;
 	laser->attr_moveSpeed = 8;
 	laser->attr_duration = 3.5;
 	laser->attr_direction = m_player->getPlayerDir();

@@ -1,0 +1,21 @@
+# Ignore thumbnails created by windows
+Thumbs.db
+proj.win32
+
+#Custom
+/proj.win32/*
+/proj.win10/*
+/proj.win8.1-universal/*
+/proj.linux/*
+/proj.ios_mac/*
+/proj.android-studio/*
+/proj.android/*
+/cocos2d/*
+*.zip
+*.rar
+
+# Cmake files
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake

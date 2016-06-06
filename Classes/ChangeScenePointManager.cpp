@@ -50,10 +50,16 @@ bool ChangeScenePointManager::IsReachMission(int newSceneId)
 		{
 			bool OK = true;
 			//遍历任务，
-			for (int i = 0; i < missonvec.size(); i++)
+			for (auto &i : missonvec)
 			{
+				auto questData = GameData::getInstance()->getDataFromQuestsData(i);
 				//判断任务是否全部完成
 				//if (任务完成) continue;
+				if (questData->status == QuestStatus::finish)	continue;
+				else {
+					OK = false;
+					break;
+				}
 				//else {OK = falss;break;}
 			}
 			return OK;

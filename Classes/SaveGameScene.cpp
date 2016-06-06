@@ -52,6 +52,7 @@ void SaveGameScene::addSaveBtnListener(Node* node)
 		auto game = GameData::getInstance();
 		//game->writeQuestData();
 		game->writePlayerData();
+		game->writeQuestData();
 		saveBtn->removeFromParent();
 		quitBtn->removeFromParent();
 		// ³É¹¦±£´æ

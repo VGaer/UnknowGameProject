@@ -3,6 +3,11 @@
 #include "ChangeScenePointManager.h"
 
 
+Player::Player()
+{
+	gamescenedir = "none";
+}
+
 Player* Player::getInstance()
 {
 	static Player* instance = NULL;
@@ -2627,7 +2632,7 @@ void Player::recoverHp_Mp(float dt)
 	else
 		m_mp += curLevel_Maxmp * 1 / 100;
 	if (m_hp + curLevel_Maxhp * 0.5 / 100 >= curLevel_Maxhp)
-		m_hp = curLevel_Maxmp;
+		m_hp = curLevel_Maxhp;
 	else
 		m_hp += curLevel_Maxhp * 0.5 / 100;
 }
@@ -2651,7 +2656,10 @@ void Player::ChangSceneIdUpdate(float dt)
 				/*判断是否达成切换地图的条件*/
 				if (ChangeScenePointManager::getInstance()->IsReachCondition(Id) == false)
 					return;
-				
+
+				if (QuestDispatcher::getInstance()->getParent() != NULL)
+					QuestDispatcher::getInstance()->removeFromParentAndCleanup(false);
+
 				if (proValueMap.find("nextscenedir") != proValueMap.end())
 				{
 					this->gamescenedir = proValueMap.at("nextscenedir").asString();
@@ -2660,6 +2668,9 @@ void Player::ChangSceneIdUpdate(float dt)
 				/*切换场景时，把本场景怪物从怪物管理器中Pop出来*/
 				auto& Vec = MonsterManager::getInstance()->getMonsterVec();
 				Vec.clear();
+				/*切换场景时，把本场景NPC从NPC管理器中Pop出来*/
+				auto& Vec2 = NpcManager::getInstance()->getNpcsVec();
+				Vec2.clear();
 				/*一定要先Pop本场景,再创建新场景，这样才不会把新场景怪物也Pop了*/
 				Scene* sc = NULL;
 				sc = GameScene::createSceneWithId(Id);	
