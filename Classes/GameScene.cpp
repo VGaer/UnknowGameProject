@@ -327,7 +327,7 @@ void GameScene::addNpc(vector<NpcsData*> nData)
 		auto pop = Pop::create(Vec2(m_npc->getPosition().x, m_npc->getPosition().y - 50));
 		m_map->addChild(pop, 3);
 		PopManager::getInstance()->getPopsMap()[i->name] = pop;
-		//NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
+		NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
 	}
 }
 

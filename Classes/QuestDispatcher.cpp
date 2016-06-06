@@ -103,15 +103,26 @@ void QuestDispatcher::QuestStatusControl(NPC * pSender, QuestControl ctr, const 
 
 NPC * QuestDispatcher::getNpc(string& name)
 {
-	return mNpc.at(name);
+	if (mNpc.find(name) != mNpc.end())
+		return mNpc.at(name);
+	else
+		return NULL;
 }
 
 void QuestDispatcher::addNpc(string& name, NPC * pSender)
 {
 	if (mNpc.find(name) == mNpc.end())
 	{
-		mNpc.insert(name, pSender);
+		mNpc[name] = pSender;
 	}
+}
+
+NpcsData* QuestDispatcher::recoverNpc(string& name)
+{
+	if (mNpc.find(name) != mNpc.end())
+		return mNpc[name]->data;
+	else
+		return NULL;
 }
 
 vector<QuestListData*> QuestDispatcher::getQuest(NPC* pSender)

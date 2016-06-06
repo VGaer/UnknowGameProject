@@ -38,6 +38,7 @@ public:
 private:
 	int activeQuest;
 	int page;
+	bool bActive;
 	string sourceName;
 	//NpcsData* data;
 	map<int, QuestListData*> quests;

@@ -49,12 +49,13 @@ public:
 	void QuestStatusControl(NPC* pSender, QuestControl ctr, const int id);
 	NPC* getNpc(string& name);
 	void addNpc(string& name, NPC* pSender);
+	NpcsData* recoverNpc(string & name);
 	vector<QuestListData*> getQuest(NPC* pSender);
 	// 获取已接任务容器
 	vector<QuestListData*>& getQuestListVec();
 	map<int, QuestDlgsData*> getQuestDlgs();
 private:
-	Map<string, NPC*> mNpc;
+	map<string, NPC*> mNpc;
 	//任务列表容器
 	map<int, QuestListData*> mData;
 	//任务对话容器

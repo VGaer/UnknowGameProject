@@ -19,11 +19,16 @@ NPC* NPC::create(const std::string& name)
 bool NPC::init(const std::string& name)
 {
 	auto data = GameData::getInstance()->getDataFromNpcsData(name);
-	QuestDispatcher::getInstance()->addNpc(data->name, this);
+	auto s = QuestDispatcher::getInstance()->getNpc(data->name);
+	if (s == NULL) {
+		QuestDispatcher::getInstance()->addNpc(data->name, this);
+		this->data = data;
+	}
+	else
+		this->data = QuestDispatcher::getInstance()->recoverNpc(data->name);
 	//初始化NPC数据，
-	this->data = data;
 	initDataWithName(name);
-
+	bActive = false;
 	bindSprite(Sprite::create("player11.png"));
 	page = 0;
 	auto listener = EventListenerTouchOneByOne::create();
@@ -37,12 +42,18 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 {
 	if (!_event->getCurrentTarget()->getBoundingBox().containsPoint(m_map->convertToNodeSpace(_touch->getLocation())))
 		return false;
-	for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-		if (a->targetNpc == data->name) {
-			data->status = NpcStatus::actived;
-			activeQuest = a->id;
+	if (!bActive)
+	{
+		for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
+			if (a->targetNpc == data->name) {
+				data->status = NpcStatus::actived;
+				activeQuest = a->id;
+				retain();
+				bActive = true;
+			}
 		}
 	}
+	log("refcount:%d", getReferenceCount());
 	return true;
 }
 
@@ -176,6 +187,7 @@ void NPC::buttonCallback(Node * pNode)
 				for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
 					if (a->type == QuestTypes::search && a->status == QuestStatus::commit) {
 						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->data->status = NpcStatus::normal;
+						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->release();
 					}
 					if (a->type == QuestTypes::defeat && a->status == QuestStatus::commit) {
 						QuestDispatcher::getInstance()->unschedule("defeat");
