@@ -484,3 +484,8 @@ void GameData::readQuestSaveDataFile()
 	} while (0);
 }
 
+map<int, QuestListData*> GameData::getQuestSaveData()
+{
+	return m_mapQuestSaveData;
+}
+

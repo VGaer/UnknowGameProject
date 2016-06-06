@@ -11,7 +11,11 @@ QuestDispatcher * QuestDispatcher::getInstance()
 QuestDispatcher::QuestDispatcher()
 {
 	initQuestDlgsData();
-	auto temp = GameData::getInstance()->m_mapQuestsData;
+	map<int, QuestListData*> temp;
+	if (!GameData::getInstance()->isExistSaveDoc())
+		temp = GameData::getInstance()->m_mapQuestsData;
+	else
+		temp = GameData::getInstance()->getQuestSaveData();
 	for (auto& i : temp) {
 		if (i.second->status == QuestStatus::active)
 			activeQuestList.push_back(i.second);

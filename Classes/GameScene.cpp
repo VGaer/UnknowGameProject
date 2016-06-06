@@ -72,6 +72,16 @@ bool GameScene::init()
 	savePoint->setPosition(Point(500, 350));
 	m_map->addChild(savePoint, 100);
 
+	auto npcMap = GameData::getInstance()->getMapIDtoNpcData();
+	for (auto& i : npcMap) {
+		if (i.first == sceneId) {
+			addNpc(i.second);
+		}
+		else	continue;
+	}
+	auto questDisp = QuestDispatcher::getInstance();
+	addChild(questDisp);
+
 	scheduleUpdate();
 	this->schedule(schedule_selector(GameScene::MonHP_MPBar_Update), 0.2f);
 	return true;
@@ -215,12 +225,11 @@ void GameScene::addPlayer(Point pos, int direction)
 	Player* player = Player::getInstance();
 	if (player->getParent() != NULL)
 	{
-		player->removeFromParent();
+		player->removeFromParentAndCleanup(false);
 
 		//切换场景时主角的初始化,不需要初始化方向了
 
 		//开启所有定时器 
-		player->openAllUpdate();
 		player->setPosition(pos);
 		player->setTiledMap(m_map);
 		//创建K键发射物
@@ -318,7 +327,7 @@ void GameScene::addNpc(vector<NpcsData*> nData)
 		auto pop = Pop::create(Vec2(m_npc->getPosition().x, m_npc->getPosition().y - 50));
 		m_map->addChild(pop, 3);
 		PopManager::getInstance()->getPopsMap()[i->name] = pop;
-		NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
+		//NpcManager::getInstance()->getNpcsVec().pushBack(m_npc);
 	}
 }
 
@@ -389,6 +398,19 @@ void GameScene::update(float dt)
 		Vec.at(i)->setZOrder(4 + i);
 	}
 	setViewpointCenter(m_player->getPosition());
+
+	//auto VecNpc = NpcManager::getInstance()->getNpcsVec();
+	//for (int i = 0; i < VecNpc.size(); i++)
+	//{
+	//	log("%d", VecNpc.size());
+	//	log("name%s", VecNpc.at(i)->data->name);
+	//	if (VecNpc.at(i)->data->name == gb2312_to_utf8("神秘人"));
+	//	{
+	//		log("--------------------------");
+
+	//		log("refer%d", VecNpc.at(i)->getReferenceCount());
+	//	}
+	//}
 }
 
 void GameScene::setViewpointCenter(Vec2 Position)

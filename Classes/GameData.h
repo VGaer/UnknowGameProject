@@ -149,6 +149,7 @@ public:
 	//保存任务数据
 	void writeQuestData();
 	void readQuestSaveDataFile();
+	map<int, QuestListData*> getQuestSaveData();
 private:
 	// 读取文件数据
 	void readMonsDataFile();
