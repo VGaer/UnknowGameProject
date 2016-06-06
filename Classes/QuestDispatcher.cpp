@@ -99,12 +99,15 @@ void QuestDispatcher::QuestStatusControl(NPC * pSender, QuestControl ctr, const 
 
 NPC * QuestDispatcher::getNpc(string& name)
 {
-	return mNpc[name];
+	return mNpc.at(name);
 }
 
 void QuestDispatcher::addNpc(string& name, NPC * pSender)
 {
-	mNpc[name] = pSender;
+	if (mNpc.find(name) == mNpc.end())
+	{
+		mNpc.insert(name, pSender);
+	}
 }
 
 vector<QuestListData*> QuestDispatcher::getQuest(NPC* pSender)
@@ -137,4 +140,9 @@ void QuestDispatcher::questsUpdate(float dt, QuestListData* pSender)
 		}
 	}
 	log("aMAPID:%d", pSender->mapID);
+}
+
+void QuestDispatcher::openUpdate(QuestListData * pSender, string name)
+{
+	schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, QuestDispatcher::getInstance(), pSender), name);
 }

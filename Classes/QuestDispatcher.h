@@ -44,6 +44,7 @@ public:
 	int getQuestType(NPC* pSender, const int id);
 	QuestListData* getQuest(NPC* pSender, const int id);
 	void questsUpdate(float dt, QuestListData* pSender);
+	void openUpdate(QuestListData* pSender, string name);
 	//任务所属NPC, 任务操作， 任务id
 	void QuestStatusControl(NPC* pSender, QuestControl ctr, const int id);
 	NPC* getNpc(string& name);
@@ -53,7 +54,7 @@ public:
 	vector<QuestListData*>& getQuestListVec();
 	map<int, QuestDlgsData*> getQuestDlgs();
 private:
-	map<const string, NPC*> mNpc;
+	Map<string, NPC*> mNpc;
 	//任务列表容器
 	map<int, QuestListData*> mData;
 	//任务对话容器

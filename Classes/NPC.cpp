@@ -100,6 +100,7 @@ void NPC::questLayer()
 
 	bool forgeFlag = true;
 	for (auto i : quests) {
+		forgeFlag = true;
 		auto key = i.first;
 		for (auto k : i.second->forgeID) {
 			if (QuestDispatcher::getInstance()->getQuestStatus(this, k) != QuestStatus::finish) {
@@ -152,6 +153,7 @@ void NPC::buttonCallback(Node * pNode)
 				}
 			}
 			runAction(a);
+			PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false);
 		}
 		if (items)
 		{
@@ -165,18 +167,17 @@ void NPC::buttonCallback(Node * pNode)
 				else if (QuestDispatcher::getInstance()->getQuestType(this, items->getQuestTag()) == QuestTypes::defeat) {
 					auto tag = QuestDispatcher::getInstance()->getQuest(this, items->getQuestTag());
 					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
-					schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, QuestDispatcher::getInstance(), tag), "defeat");
+					QuestDispatcher::getInstance()->openUpdate(tag, "defeat");
 					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
 				}
 			}
 			//完成任务
 			else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(this, items->getQuestTag()) == QuestStatus::commit) {
 				for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-					if (a->type = QuestTypes::search && a->status == QuestStatus::commit) {
+					if (a->type == QuestTypes::search && a->status == QuestStatus::commit) {
 						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->data->status = NpcStatus::normal;
 					}
-					else if (a->type = QuestTypes::defeat && a->status == QuestStatus::commit) {
-						//QuestDispatcher::getInstance()->getNpc(a->targetNpc)->data->status = NpcStatus::normal;
+					if (a->type == QuestTypes::defeat && a->status == QuestStatus::commit) {
 						QuestDispatcher::getInstance()->unschedule("defeat");
 					}
 				}
