@@ -46,6 +46,8 @@ bool QuestList::init() {
 QuestList * QuestList::create(const char * backgroundImage)
 {
 	QuestList* vl = QuestList::create();
+	if (vl == NULL)	
+		return NULL;
 	vl->setSpriteBackGround(Sprite::create(backgroundImage));
 	vl->setSprite9BackGround(Scale9Sprite::create(backgroundImage));
 	return vl;

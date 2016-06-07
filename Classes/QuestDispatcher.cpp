@@ -22,7 +22,6 @@ QuestDispatcher::QuestDispatcher()
 	}
 	for (auto& a : this->getQuestListVec()) {
 		if (a->type == QuestTypes::defeat && a->status == QuestStatus::active) {
-			auto questDat = GameData::getInstance()->getDataFromQuestsData(a->id);
 			schedule(schedule_selector(QuestDispatcher::questsUpdate));
 		}
 	}
@@ -157,6 +156,7 @@ void QuestDispatcher::mNpcClear()
 void QuestDispatcher::questsUpdate(float dt)
 {
 	bool isFind = false;
+	QuestListData* temp = NULL;
 	for (auto& i : activeQuestList)
 	{
 		if (i->type == QuestTypes::defeat)
@@ -165,10 +165,21 @@ void QuestDispatcher::questsUpdate(float dt)
 			if (i->mapID == GameScene::sceneId) {
 				if (MonsterManager::getInstance()->getMonsterVec().size() == 0) {
 					i->status = QuestStatus::commit;
+					if (i->id == 4) {	//如果是事先激活的4号任务
+						i->status = QuestStatus::finish;
+						temp = i;
+					}
 				}
 			}
 		}
 	}
+	if(temp)
+		for (auto j = activeQuestList.begin(); j != activeQuestList.end(); ++j) {
+			if (*j == temp) {
+				activeQuestList.erase(j);
+				break;
+			}
+		}
 	if (!isFind)
 		unschedule(schedule_selector(QuestDispatcher::questsUpdate));
 }
