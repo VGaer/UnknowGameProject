@@ -20,7 +20,7 @@ Talk* Talk::create(vector<string>strVec, int id, int idType)
 bool Talk::init(vector<string>strVec, int id, int idType)
 {
 	curPage = 0;
-	curTextLen = 3;
+	curTextLen = 0;
 	isShowFinish = false;
 	this->id = id;
 	this->idType = idType;
@@ -72,7 +72,7 @@ void Talk::addTouchEventListener()
 		// 显示所有文字
 		else
 		{
-			curTextLen = 3;
+			curTextLen = 0;
 			unschedule(schedule_selector(Talk::showFont));			
 			text->setString(gb2312_to_utf8(strVec.at(curPage)));
 			isShowFinish = true;
@@ -91,14 +91,14 @@ void Talk::setSceneLockState(bool s)
 }
 
 void Talk::showFont(float dt)
-{
+{	
+	curTextLen = curTextLen + 3;
 	string str = strVec.at(curPage).substr(0, curTextLen);
 	text->setString(gb2312_to_utf8(str));
-	curTextLen = curTextLen + 3;
 	if (curTextLen > strVec.at(curPage).length()) {
 		unschedule(schedule_selector(Talk::showFont));
 		isShowFinish = true;
-		curTextLen = 3;
+		curTextLen = 0;
 	}
 }
 
@@ -111,7 +111,7 @@ void Talk::setPos()
 	if (pyPos.x <= vSize.width / 4) talkPos.x = pyPos.x + 160;
 	else talkPos.x = pyPos.x - 160;
 	if (pyPos.y <= vSize.height / 4) talkPos.y = pyPos.y + 100;
-	else talkPos.y = pyPos.y + 45;
+	else talkPos.y = pyPos.y + 15;
 	setPosition(talkPos);
 }
 
