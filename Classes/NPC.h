@@ -5,6 +5,7 @@
 #include "PopLayer.h"
 #include "GameData.h"
 #include "QuestList.h"
+#include "TimeCounter.h"
 USING_NS_CC;
 
 class QuestList;
@@ -46,4 +47,5 @@ private:
 	Player* m_player;
 	TMXTiledMap* m_map;
 	TMXTiledMap* m_parrent;
+	TimeCounter* m_timeCounter;
 };

@@ -43,6 +43,8 @@ bool NPC::init(const std::string& name)
 	listener->onTouchBegan = CC_CALLBACK_2(NPC::onTouchBegan, this);
 	listener->onTouchEnded = CC_CALLBACK_2(NPC::onTouchEnded, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	m_timeCounter = TimeCounter::create();
+	addChild(m_timeCounter);
 	return true;
 }
 
@@ -153,6 +155,9 @@ void NPC::buttonCallback(Node * pNode)
 	switch (btnTag)
 	{
 	case 0:
+		if (!(m_timeCounter->getCurTime() == 0 || m_timeCounter->getCurTime() > 0.31))
+			return;
+		m_timeCounter->start();
 		log("page:%d", page);
 		runAction(a);
 		if (items)

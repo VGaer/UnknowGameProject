@@ -1792,19 +1792,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)//run状态下一帧使用basepoke技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:
@@ -1839,19 +1843,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)//run状态下一帧使用swordwave技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:
@@ -1878,19 +1886,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)//run状态下一帧使用雷电技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:
@@ -1917,19 +1929,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:

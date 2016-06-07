@@ -83,6 +83,7 @@ bool Fire::init()
 void Fire::update(float dt)
 {
 	this->dt += dt;
+	setVertexZ(-(getPositionY() + 64) / 64.f);
 	// 如果物体没有爆炸，继续移动
 	if (isBombing)
 	{
