@@ -43,8 +43,8 @@ public:
 	int getQuestStatus(NPC* pSender, const int id);
 	int getQuestType(NPC* pSender, const int id);
 	QuestListData* getQuest(NPC* pSender, const int id);
-	void questsUpdate(float dt, QuestListData* pSender);
-	void openUpdate(QuestListData* pSender, string name);
+	void questsUpdate(float dt);
+	void openUpdate();
 	//任务所属NPC, 任务操作， 任务id
 	void QuestStatusControl(NPC* pSender, QuestControl ctr, const int id);
 	NPC* getNpc(string& name);

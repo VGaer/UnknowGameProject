@@ -20,13 +20,13 @@ public:
 	CREATE_FUNC(QuestList);
 public:
 
-	virtual void setTitle(const string& title, Color3B color = Color3B::YELLOW, int fontsize = 20, string font = "arial.ttf");
+	virtual void setTitle(const string& title, Color3B color = Color3B::YELLOW, int fontsize = 20, string font = "Arial");
 	// padding和paddingTop文字内容两边的空白区 
-	virtual void setContentText(const string& text, int fontsize = 20, int padding = 50, int paddintTop = 100, string font = "arial.ttf", Color3B color = Color3B::YELLOW);
+	virtual void setContentText(const string& text, int fontsize = 20, int padding = 50, int paddintTop = 100, string font = "Arial", Color3B color = Color3B::YELLOW);
 	virtual void setCallbackFunc(Ref* target, SEL_CallFuncN callfun);
 	void setQuestTag(int sender);
 	int getQuestTag() { return questTag; }
-	bool addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag = 0, string font = "arial.ttf");
+	bool addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag = 0, string font = "Arial");
 	virtual bool addButton(const char* normalImage, const char* selectedImage, Vec2 pos, int tag = 0);
 	void setBtnPos(float durtime = 0);
 	virtual void onEnter();

@@ -375,6 +375,7 @@ void GameData::writePlayerData()
 	document.AddMember("mp", player->m_mp, allocator);
 	document.AddMember("exp", player->m_exp, allocator);
 
+
 	// 保存玩家任务对话状态
 	rapidjson::Value taskDlgsStatus(rapidjson::kArrayType);
 	for (auto task : m_mapPlayerTaskDlgs)
@@ -521,7 +522,7 @@ void GameData::readPlayerDlgsDataFile()
 				const rapidjson::Value& cannotEnterDlgs = value["CannotEnterDlgs"];
 				for (int j = 0, size = cannotEnterDlgs.Size(); j < size; j++)
 					data->cannotEnterDlgs.push_back(cannotEnterDlgs[j].GetString());
-			}				
+			}
 			// 进入场景时对话
 			if (value.HasMember("EnterSceneDlgs"))
 			{
@@ -530,7 +531,7 @@ void GameData::readPlayerDlgsDataFile()
 					data->enterSceneDlgs.push_back(etSceneDlgs[j].GetString());
 				data->isSaid = false;
 				addDataToEnterSceneDlgsData(data);
-			}	
+			}
 			data->isSaid = false;
 		}
 	} while (0);

@@ -7,8 +7,8 @@ class Monster;
 class MonsterManager
 {
 public:
-	static MonsterManager* getInstance();
 	MonsterManager();
+	static MonsterManager* getInstance();
 public:
 	// »ñÈ¡¹ÖÎïÈİÆ÷
 	Vector<Monster*>& getMonsterVec();

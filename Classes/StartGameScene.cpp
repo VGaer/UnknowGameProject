@@ -112,6 +112,7 @@ void StartGameScene::menuItemStartCallback(Ref* pSender)
 			sc = GameScene::loadSceneWithSaveData();
 		}
 		else{
+			//sc = GameScene::createSceneWithId(2);
 			//√ª”–¥Êµµ£¨«–ªªµΩ”Œœ∑±≥æ∞ΩÈ…‹
 			sc = gdShow::createscene();
 		}

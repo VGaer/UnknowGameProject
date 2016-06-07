@@ -20,11 +20,9 @@ void SkillControl::useSkill(int id)
 bool SkillControl::skill_laser()
 {
 	float time = skillCounter[skillType_laser]->getCurTime();
-	log("time %f",time);
 	// ÅĞ¶ÏÊÇ·ñÔÚcd·¶Î§ÄÚ
 	if (time > 0 && time < Laser::attr_inter)
 		return false;
-	log("----------");
 
 	skillCounter[skillType_laser]->start();
 	auto laser = Laser::create();

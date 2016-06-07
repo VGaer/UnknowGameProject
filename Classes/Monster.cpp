@@ -515,6 +515,8 @@ void Monster::update(float dt)
 		{
 			//第一个parent是血槽条，第二次parent是血槽条左边那个圆槽
 			monbar->getParent()->getParent()->removeFromParent();
+			//remove血条结构体
+			BarManager::getInstance()->releaseEnemyBar(monsterIdForBar);
 		}
 
 		//从怪物管理器中Pop出来

@@ -94,6 +94,7 @@ bool GameScene::init(int sceneId)
 	loadPlistFile();
 	float playerX;
 	float playerY;
+	auto size = Director::getInstance()->getVisibleSize();
 	/*加载主角坐标*/
 	//最初开始游戏时
 	if (Player::getInstance()->gamescenedir == "none")
@@ -116,32 +117,49 @@ bool GameScene::init(int sceneId)
 	{
 		BarManager::getInstance()->removeFromParent();
 		this->addChild(BarManager::getInstance());
-		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
-		bar->setAnchorPoint(Vec2(0, 0));
-		bar->setPosition(0, 0);
+		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png", m_player->m_hp, m_player->m_mp);		
+		bar->setAnchorPoint(Vec2(0, 1));
+		bar->setPosition(0, size.height);
+		auto exp = BarManager::getInstance()->create("UI/exp.png", 100 * m_player->m_playerlevel);
+		exp->setAnchorPoint(Vec2(0.5, 0));
+		exp->setPosition(size.width / 2, 0);
 
 		auto playerbar = BarManager::getInstance()->getPlayerBars();
 		if (playerbar != NULL)
 		{
-			playerbar->m_hp->setPercentage(m_player->m_hp);
-			playerbar->m_mp->setPercentage(m_player->m_mp);
+			playerbar->m_hp->setPercentage(m_player->m_hp / m_player->getCurMaxHp());
+			BarManager::getInstance()->setBarLabel(playerbar->l_hp, m_player->m_hp, m_player->getCurMaxHp());
+			playerbar->m_mp->setPercentage(m_player->m_mp / m_player->getCurMaxMp());
+			BarManager::getInstance()->setBarLabel(playerbar->l_mp, m_player->m_mp, m_player->getCurMaxMp());
+			playerbar->m_exp->setPercentage(m_player->m_exp / (100 * m_player->m_playerlevel));
+			BarManager::getInstance()->setBarLabel(playerbar->l_exp, m_player->m_exp, 100 * m_player->m_playerlevel);
 		}
 		this->addChild(bar, 100);
+		this->addChild(exp, 100);
 	}
 	else
 	{
 		this->addChild(BarManager::getInstance());
-		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
-		bar->setAnchorPoint(Vec2(0, 0));
-		bar->setPosition(0, 0);
+		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png", m_player->m_hp, m_player->m_mp);
+		bar->setAnchorPoint(Vec2(0, 1));
+		bar->setPosition(0, size.height);
+		auto exp = BarManager::getInstance()->create("UI/exp.png", 100 * m_player->m_playerlevel);
+		exp->setAnchorPoint(Vec2(0.5, 0));
+		exp->setPosition(size.width / 2, 0);
+
 
 		auto playerbar = BarManager::getInstance()->getPlayerBars();
 		if (playerbar != NULL)
 		{
-			playerbar->m_hp->setPercentage(m_player->m_hp);
-			playerbar->m_mp->setPercentage(m_player->m_mp);
+			playerbar->m_hp->setPercentage(m_player->m_hp / m_player->getCurMaxHp());
+			BarManager::getInstance()->setBarLabel(playerbar->l_hp, m_player->m_hp, m_player->getCurMaxHp());
+			playerbar->m_mp->setPercentage(m_player->m_mp / m_player->getCurMaxMp());
+			BarManager::getInstance()->setBarLabel(playerbar->l_mp, m_player->m_mp, m_player->getCurMaxMp());
+			playerbar->m_exp->setPercentage(m_player->m_exp / (100 * m_player->m_playerlevel));
+			BarManager::getInstance()->setBarLabel(playerbar->l_exp, m_player->m_exp, 100 * m_player->m_playerlevel);
 		}
 		this->addChild(bar, 100);
+		this->addChild(exp, 100);
 	}
 
 
@@ -159,12 +177,12 @@ bool GameScene::init(int sceneId)
 			float monposy = monpos["y"].asFloat();
 			addMonster(monname[i], Vec2(monposx, monposy));
 			m_monster->monsterIdForBar = i * 2 + j;
-			auto monbar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png", m_monster->monsterIdForBar);
+			auto monbar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png", m_monster->monsterIdForBar, m_monster->monMaxHp);
 			//添加到怪物精灵血条管理器
 			auto monsterbarmanager = MonsterBarManager::getInstance();
 			monsterbarmanager->getmonsterBarVec().pushBack(monbar);
-			monbar->setAnchorPoint(Vec2(0, 1));
-			monbar->setPosition(Vec2(0, Director::getInstance()->getVisibleSize().height));
+			monbar->setAnchorPoint(Vec2(0.5, 1));
+			monbar->setPosition(Vec2(size.width / 2 - 10, size.height));
 			this->addChild(monbar, this->getChildren().size());
 			if (monname[i] == "treemonster")
 			{
@@ -203,7 +221,6 @@ bool GameScene::init(int sceneId)
 
 	scheduleUpdate();
 	this->schedule(schedule_selector(GameScene::MonHP_MPBar_Update), 0.2f);
-
 	firstEnterTalk();
 	return true;
 }
@@ -268,6 +285,7 @@ void GameScene::addPlayer(Point pos, int direction)
 
 void GameScene::addPlayer(PlayerData* saveData)
 {
+	auto size = Director::getInstance()->getVisibleSize();
 	Player* player = Player::getInstance();
 	player->setTiledMap(m_map);
 	player->init();
@@ -280,16 +298,27 @@ void GameScene::addPlayer(PlayerData* saveData)
 	player->m_exp = saveData->exp;
 
 	this->addChild(BarManager::getInstance());
-	auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png");
-	bar->setAnchorPoint(Vec2(0, 0));
-	bar->setPosition(0, 0);
-	this->addChild(bar, 100);
-	//初始化主角血条和HP条
 	auto playerbar = BarManager::getInstance()->getPlayerBars();
+	//创建HP,MPbar
+	auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png", player->m_hp, player->m_mp);
+	bar->setAnchorPoint(Vec2(0, 1));
+	bar->setPosition(0, size.height);
+	this->addChild(bar, 100);
+	//创建经验条
+	auto exp = BarManager::getInstance()->create("UI/exp.png", 100 * saveData->level);
+	exp->setAnchorPoint(Vec2(0.5, 0));
+	exp->setPosition(size.width / 2, 0);
+	this->addChild(exp, 100);
+	//初始化主角经验条
+	//初始化主角血条和HP条
 	if (playerbar != NULL)
 	{
 		playerbar->m_hp->setPercentage(saveData->hp / player->getCurMaxHp());
+		BarManager::getInstance()->setBarLabel(playerbar->l_hp, saveData->hp, player->getCurMaxHp());
 		playerbar->m_mp->setPercentage(saveData->mp / player->getCurMaxMp());
+		BarManager::getInstance()->setBarLabel(playerbar->l_mp, saveData->mp, player->getCurMaxMp());
+		playerbar->m_exp->setPercentage(saveData->exp / (100 * saveData->level));
+		BarManager::getInstance()->setBarLabel(playerbar->l_exp, saveData->exp, 100 * saveData->level);
 	}
 
 	player->getSprite()->setScale(player->getPlayer_magnification());
@@ -491,9 +520,11 @@ void GameScene::MonHP_MPBar_Update(float dt)
 		auto monster = Vec.at(i);
 		int Id = monster->monsterIdForBar;
 		auto monbar = BarManager::getInstance()->getBars(Id);
+		auto monbarLabel = BarManager::getInstance()->getBarsLabel(Id);
 		if (monbar != NULL)
 		{
 			BarManager::getInstance()->setPercent(monbar, monster->monMaxHp, monster->monsdata.hp);
+			BarManager::getInstance()->setBarLabel(monbarLabel, monster->monsdata.hp, monster->monMaxHp);
 		}
 	}
 }

@@ -16,6 +16,15 @@ enum BarType {
 struct PlayerBar {
 	ProgressTimer* m_hp;
 	ProgressTimer* m_mp;
+	ProgressTimer* m_exp;
+	Label* l_hp;
+	Label* l_mp;
+	Label* l_exp;
+};
+
+struct EnemyBar {
+	ProgressTimer* m_hp;
+	Label* l_hp;
 };
 
 class BarManager : public Node {
@@ -23,27 +32,22 @@ public:
 	static BarManager* getInstance();
 	BarManager();
 	//创建敌方hp
-	Sprite* create(const string& hp, int tag);
+	Sprite* create(const string& hp, int tag, float maxhp);
 	//创建玩家HP,MP
-	Sprite* create(const string& hp, const string& mp);
+	Sprite* create(const string& hp, const string& mp, float maxhp, float maxmp);
+	//创建玩家exp
+	Sprite* create(const string & exp, float lexp);
 	//获取敌方HP
 	ProgressTimer* getBars(int tag);
+	Label* getBarsLabel(int tag);
 	//获取玩家HP,MP
 	PlayerBar* getPlayerBars();
-	//改变bar的百分值,offset为正是减少，负为增加	
-	//total改成调用此函数目标HP或者MP的最大值(如Player::getInstance()->getMaxHP())
+
+	//传入指定条，最大值，当前值
 	void setPercent(ProgressTimer* pSender, float total, float nowNum);
-
-	/*void SchedulePlayerHp_Mp();*/
-
-	//测试用
-	//void recover(BarType sender, int tag);
-
-	////每秒回复，设置间隔为0.2或以上
-	//void recoverHP(float dt);
-	//void recoverMP(float dt);
-	//void recoverEnemy(float dt, int i);
+	void setBarLabel(Label* pSender, float cur, float max);
+	void releaseEnemyBar(int tag);
 private:
 	PlayerBar* playerBar;
-	map<int, ProgressTimer*> mbars;
+	map<int, EnemyBar*> mbars;
 };

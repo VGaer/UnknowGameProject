@@ -69,7 +69,7 @@
     "isSameMap": true,
     "mons_id": [],
     "mapID": -1,
-    "forgeID":[4],
+    "forgeID":[],
     "reward": [
       "NULL"
     ]
@@ -84,6 +84,21 @@
     "isSameMap": false,
     "mons_id": [1,2,3],
     "mapID": 3,
+    "forgeID":[],
+    "reward": [
+      "NULL"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Ã”Õ—4",
+    "instruct": "test°£",
+    "type": 1,
+    "status": 0,
+    "targetNpc": "NULL",
+    "isSameMap": false,
+    "mons_id": [1,2,3],
+    "mapID": 4,
     "forgeID":[],
     "reward": [
       "NULL"

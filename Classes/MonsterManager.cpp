@@ -12,6 +12,7 @@ MonsterManager::MonsterManager()
 {
 	canMonsEnableAction = true;
 }
+
 Vector<Monster*>& MonsterManager::getMonsterVec()
 {
 	return m_monsterVector;
@@ -20,13 +21,13 @@ Vector<Monster*>& MonsterManager::getMonsterVec()
 void MonsterManager::setMonsEnableAction(bool argv)
 {
 	if (argv == true)
-	{ 
+	{
 		if (canMonsEnableAction == false)
 		{
 			for (auto mons : m_monsterVector)
 				mons->getStateMachine()->ChangeState(new Idle());
 			canMonsEnableAction = true;
-		}		
+		}
 	}
 	else
 	{
@@ -35,10 +36,9 @@ void MonsterManager::setMonsEnableAction(bool argv)
 			for (auto mons : m_monsterVector)
 			{
 				mons->cmd_stop();
-				mons->getStateMachine()->SetCurrState(NULL);				
-			}				
+				mons->getStateMachine()->SetCurrState(NULL);
+			}
 			canMonsEnableAction = false;
 		}
-		
 	}
 }

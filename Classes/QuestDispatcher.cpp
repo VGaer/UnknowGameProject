@@ -24,8 +24,16 @@ QuestDispatcher::QuestDispatcher()
 	}
 	for (auto& a : this->getQuestListVec()) {
 		if (a->type == QuestTypes::defeat && a->status == QuestStatus::active) {
-			auto questDat = GameData::getInstance()->getDataFromQuestsData(a->id);
-			schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, this, questDat), "defeat");
+			//获取玩家任务对话
+			auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(a->id);
+			if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
+			{
+				if (playerDlgs->acceptTaskDlgs.empty() || playerDlgs->acceptTaskDlgs.at(0) == "NULL")
+					return;
+				auto talk = Talk::create(playerDlgs->acceptTaskDlgs, playerDlgs->taskId, Talk_AcTask);
+				Player::getInstance()->getTiledMap()->addChild(talk, 100);
+			}
+			schedule(schedule_selector(QuestDispatcher::questsUpdate));
 		}
 	}
 }
@@ -156,29 +164,54 @@ void QuestDispatcher::mNpcClear()
 		mNpc[temp->getData()->name] = temp;
 }
 
-void QuestDispatcher::questsUpdate(float dt, QuestListData* pSender)
+void QuestDispatcher::questsUpdate(float dt)
 {
-	log("fMAPID:%d", pSender->mapID);
-	if (pSender->mapID == GameScene::sceneId) {
-		if (MonsterManager::getInstance()->getMonsterVec().size() == 0) {
-			pSender->status = QuestStatus::commit;
-			log("status:%d", pSender->status);
-			// 如果存在对话
-			auto taskDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(pSender->id);
-			if (taskDlgs && !taskDlgs->isSaying && !taskDlgs->isSaidCmTsDlgs)
-			{
-				if (taskDlgs->commitTaskDlgs.empty() || taskDlgs->commitTaskDlgs.at(0) == "NULL")
-					return;
-				taskDlgs->isSaying = true;
-				auto talk = Talk::create(taskDlgs->commitTaskDlgs, taskDlgs->taskId, Talk_CmTask);
-				Player::getInstance()->getTiledMap()->addChild(talk, 666);
+	bool isFind = false;
+	QuestListData* temp = NULL;
+	for (auto& i : activeQuestList)
+	{
+		if (i->type == QuestTypes::defeat)
+		{
+			isFind = true;
+			if (i->mapID == GameScene::sceneId) {
+				if (MonsterManager::getInstance()->getMonsterVec().size() == 0) {
+					i->status = QuestStatus::commit;
+					// 如果存在对话
+					auto taskDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(i->id);
+					if (taskDlgs && !taskDlgs->isSaying && !taskDlgs->isSaidCmTsDlgs)
+					{
+						if (taskDlgs->commitTaskDlgs.empty() || taskDlgs->commitTaskDlgs.at(0) == "NULL")
+							return;
+						taskDlgs->isSaying = true;
+						auto talk = Talk::create(taskDlgs->commitTaskDlgs, taskDlgs->taskId, Talk_CmTask);
+						Player::getInstance()->getTiledMap()->addChild(talk, 666);
+					}
+					if (i->id == 4)
+					{
+						i->status = QuestStatus::finish;
+						temp = i;
+					}
+				}
 			}
 		}
 	}
-	log("aMAPID:%d", pSender->mapID);
+	if (temp)
+	{
+		for (auto j = activeQuestList.begin(); j != activeQuestList.end(); ++j)
+		{
+			if (*j == temp)
+			{
+				activeQuestList.erase(j);
+				break;
+			}
+		}
+	}
+	if (!isFind)
+		unschedule(schedule_selector(QuestDispatcher::questsUpdate));
 }
 
-void QuestDispatcher::openUpdate(QuestListData * pSender, string name)
+void QuestDispatcher::openUpdate()
 {
-	schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, QuestDispatcher::getInstance(), pSender), name);
+	/*schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, QuestDispatcher::getInstance(), pSender), name);*/
+	schedule(schedule_selector(QuestDispatcher::questsUpdate));
 }
