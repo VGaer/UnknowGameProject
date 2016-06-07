@@ -44,6 +44,7 @@ private:
 	Vector<Monster*> collidedVector;	// 碰撞清单
 	// 定时器
 	float dt;
+	void collideUpdate(float dt);
 	void update(float dt);
 	friend class SkillControl;
 };
