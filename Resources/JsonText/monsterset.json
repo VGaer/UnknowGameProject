@@ -49,7 +49,7 @@
 [
 {
 "skilltype":"remoteskill",
-"projectileName":"MonsterProj/treemonster/treemonproj1.png",
+"projectileName":"treemonproj1.png",
 "projectileAnimateName":"treemonproj",
 "skillwidth":64,
 "skillheight":64,
@@ -108,7 +108,7 @@
 [
 {
 "skilltype":"remoteskill",
-"projectileName":"MonsterProj/gdragonmonster/gdragonmonproj1.png",
+"projectileName":"gdragonmonproj1.png",
 "projectileAnimateName":"gdragonmonproj",
 "skillwidth":64,
 "skillheight":64,
@@ -167,7 +167,7 @@
 [
 {
 "skilltype":"remoteskill",
-"projectileName":"MonsterProj/bonemonster/bonemonproj1.png",
+"projectileName":"bonemonproj1.png",
 "projectileAnimateName":"bonemonproj",
 "skillwidth":64,
 "skillheight":64,

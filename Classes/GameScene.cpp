@@ -148,46 +148,46 @@ bool GameScene::init(int sceneId)
 	savePoint->setPosition(Point(500, 350));
 	m_map->addChild(savePoint, 100);
 
-	//string monname[3] = { "treemonster", "gdragonmonster", "bonemonster" };
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	for (int j = 0; j < 2; j++)
-	//	{
-	//		ValueMap monpos = objGroup->getObject("Mon" + convertToString(i * 2 + j + 1));
-	//		float monposx = monpos["x"].asFloat();
-	//		float monposy = monpos["y"].asFloat();
-	//		addMonster(monname[i], Vec2(monposx, monposy));
-	//		m_monster->monsterIdForBar = i * 2 + j;
-	//		auto monbar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png", m_monster->monsterIdForBar);
-	//		//添加到怪物精灵血条管理器
-	//		auto monsterbarmanager = MonsterBarManager::getInstance();
-	//		monsterbarmanager->getmonsterBarVec().pushBack(monbar);
-	//		monbar->setAnchorPoint(Vec2(0, 1));
-	//		monbar->setPosition(Vec2(0, Director::getInstance()->getVisibleSize().height));
-	//		this->addChild(monbar, this->getChildren().size());
-	//		if (monname[i] == "treemonster")
-	//		{
-	//			auto monLabelname = Label::create(gb2312_to_utf8("树怪"), "Arial", 25);
-	//			monLabelname->setColor(Color3B::ORANGE);
-	//			monbar->addChild(monLabelname);
-	//			monLabelname->setPosition(Vec2(43, 48));
-	//		}
-	//		else if (monname[i] == "gdragonmonster")
-	//		{
-	//			auto monLabelname = Label::create(gb2312_to_utf8("青龙"), "Arial", 25);
-	//			monLabelname->setColor(Color3B::ORANGE);
-	//			monbar->addChild(monLabelname);
-	//			monLabelname->setPosition(Vec2(43, 48));
-	//		}
-	//		else if (monname[i] == "bonemonster")
-	//		{
-	//			auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
-	//			monLabelname->setColor(Color3B::ORANGE);
-	//			monbar->addChild(monLabelname);
-	//			monLabelname->setPosition(Vec2(43, 48));
-	//		}
-	//	}
-	//}
+	string monname[3] = { "treemonster", "gdragonmonster", "bonemonster" };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			ValueMap monpos = objGroup->getObject("Mon" + convertToString(i * 2 + j + 1));
+			float monposx = monpos["x"].asFloat();
+			float monposy = monpos["y"].asFloat();
+			addMonster(monname[i], Vec2(monposx, monposy));
+			m_monster->monsterIdForBar = i * 2 + j;
+			auto monbar = BarManager::getInstance()->create("UI/Enemy_hp_bar2.png", m_monster->monsterIdForBar);
+			//添加到怪物精灵血条管理器
+			auto monsterbarmanager = MonsterBarManager::getInstance();
+			monsterbarmanager->getmonsterBarVec().pushBack(monbar);
+			monbar->setAnchorPoint(Vec2(0, 1));
+			monbar->setPosition(Vec2(0, Director::getInstance()->getVisibleSize().height));
+			this->addChild(monbar, this->getChildren().size());
+			if (monname[i] == "treemonster")
+			{
+				auto monLabelname = Label::create(gb2312_to_utf8("树怪"), "Arial", 25);
+				monLabelname->setColor(Color3B::ORANGE);
+				monbar->addChild(monLabelname);
+				monLabelname->setPosition(Vec2(43, 48));
+			}
+			else if (monname[i] == "gdragonmonster")
+			{
+				auto monLabelname = Label::create(gb2312_to_utf8("青龙"), "Arial", 25);
+				monLabelname->setColor(Color3B::ORANGE);
+				monbar->addChild(monLabelname);
+				monLabelname->setPosition(Vec2(43, 48));
+			}
+			else if (monname[i] == "bonemonster")
+			{
+				auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
+				monLabelname->setColor(Color3B::ORANGE);
+				monbar->addChild(monLabelname);
+				monLabelname->setPosition(Vec2(43, 48));
+			}
+		}
+	}
 
 	auto npcMap = GameData::getInstance()->getMapIDtoNpcData();
 	for (auto& i : npcMap) {

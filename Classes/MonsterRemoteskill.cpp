@@ -21,7 +21,7 @@ MonsterRemoteskill* MonsterRemoteskill::createWithName_width_height_damage_durat
 bool MonsterRemoteskill::init(std::string projectile, std::string projectileAnimate, float width, float height, float damage, float duration, float speed, int direction)
 {
 	name = projectileAnimate;
-	Sprite* sprite = Sprite::create(projectile);
+	Sprite* sprite = Sprite::createWithSpriteFrameName(projectile);
 	Animation* animation = AnimationUtil::createWithSingleFrameName(projectileAnimate.c_str(),0.1f,-1);
 	sprite->runAction(Animate::create(animation));
 	sprite->setScale(width / sprite->getContentSize().width, height / sprite->getContentSize().height);

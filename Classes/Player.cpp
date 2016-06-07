@@ -2394,11 +2394,11 @@ void Player::createSwordWave()
 	for (int i = 0; i < swordwaveNum; i++)
 	{
 		swordwave = RemoteSkill::create();
-		swordwave->bindSprite(Sprite::create("remoteskills/playerskill1.png"));
+		swordwave->bindSprite(Sprite::createWithSpriteFrameName("playerskill1.png"));
 		//设置剑气swordwave的Node节点的锚点为0.5 0.5;
 		swordwave->setAnchorPoint(Vec2(0.5, 0.5));
 		this->getParent()->addChild(swordwave, (int)this->getParent()->getChildren().size());
-		Animation* animation = AnimationUtil::createWithSingleFrameName("playerskill", 0.1f, -1);
+		Animation* animation = AnimationUtil::createWithSingleFrameName("playerskill1", 0.1f, -1);
 		Animate* animate = Animate::create(animation);
 		swordwave->getSprite()->runAction(animate);
 		m_swordwave_Arr.pushBack(swordwave);
@@ -2717,7 +2717,7 @@ void Player::LevelUpdate(float dt)
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/levelsup.wav");
 		if (spritelevelup == NULL)
 		{
-			spritelevelup = Sprite::create("playerLevelup/playerlevelup1.png");
+			spritelevelup = Sprite::createWithSpriteFrameName("playerlevelup1.png");
 			spritelevelup->setPosition(getContentSize().width / 2, getContentSize().height / 2);
 			this->addChild(spritelevelup, 500);
 			CallFunc* call = CallFunc::create([&](){spritelevelup->removeFromParent(); spritelevelup = NULL; });
