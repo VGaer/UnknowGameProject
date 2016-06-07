@@ -17,6 +17,7 @@ private:
 	float m_dt; // ¼ÆÊ±
 	void update(float dt);
 	Player* m_player;
+	string name;
 };
 
 #endif

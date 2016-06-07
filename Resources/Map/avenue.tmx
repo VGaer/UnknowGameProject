@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="19">
+ <tileset firstgid="1" name="backgroundave" tilewidth="64" tileheight="64" tilecount="49" columns="7">
+  <image source="backgroundave.png" width="448" height="448"/>
+ </tileset>
+ <tileset firstgid="50" name="tree" tilewidth="256" tileheight="320" tilecount="1" columns="1">
+  <image source="tree.png" width="256" height="320"/>
+ </tileset>
+ <tileset firstgid="51" name="meta_tiles" tilewidth="64" tileheight="64" tilecount="4" columns="4">
+  <image source="meta_tiles.png" width="280" height="70"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="changescene" value="2"/>
+    <property name="nextscenedir" value="up"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="patrolpoint" value="true"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="changescene" value="4"/>
+    <property name="nextscenedir" value="down"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="-31"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJytl0tzm0AQhMeIykuW43DjcUHkAOQA/EP/9KByf7UdBeSKosMUiN2d7Znp6V2dIuJ0hx1lTxtWrpbd6fdik3ycV+tkZ9m42qz38gMcB+EotaZabVit1hO/rfZsrnC0Gq/0nGWLvl389Kvl2msLQy58peYST6NYRvPXyH9t8096DvZsZHxrZZ1wFBs4Clkvmy2+1nxWtgfzBuXnrO+tzakVw0HfZ62jNnv5OGpeJdy18lCoZpn8LxZnLwzUkDWL3qljZ/gGYSl3sJCTUesmiwFf5IecgWMyDONGDetI/JmEhdi2uHqQH+IFW631zpVJT7Cz76InfeK9BB6w5DtYqE9u9e8sRvxf8xa8SyR+O0dH7X2dr0G2xRdqV9ia7soWyzM8Jm9eW/qXGi+GDc4wv4htzqApR9uDGMjxJJ+M0Z+TjbmOgQM9Im9dpJ4v42+Ngb/kZzL85Ni1zmOebf/avi2WU3SvtZr2ip883OJOb3tUwkmPuZYxjpbQP618gclrCvfR370zgPyUkbjj+a61Xx5Jz9AX+EROqRVnCX3geklf5Tt4cqul95Xr3BB/8pSeYcw16qwn2s1ZN5i/LLbPBOcQGkJ9Bn3zPMHx0fI1aT26Qi/AJX5zrsDlW9w52Fw0GFxVJB3gftDvjDvv4Vlvc5zLW+c3Zxh5R2dcv7pIXOQcqmx/+MK457KxuZx9e2cVeUFL6EvWZ5G0DA1kn8nWMOcYSfPoPedgFvvnw0Fj6BlaMZsvzivXF+Z29r5Euk9wx0MzXIvBs6fHxFtbbOgsPAUX40fLn2s49SR31HuIdL/aOxvySJxobE+46PcD7wl8exzoEDpOPNy39u569DXnt/c2PsCDFvu9id5Fi+HZYu/44F65xRPX4Mz2Zl/q4Hecyx4/I/V0a/s28sU90887arJ3D4cn4KVGYCLn6AJ+f0XiOXNcl+Eq64q4/Z/kKZLmFJZf+IbWoVmdfb/U89M/WBHpvLng+bzal9W+rvbt/fcbnD28r3n7yIpIPL/3/x2Yvq/2utoPy9k9/0Of/wPLSfE4lpc1znv8PN+5zu3lQVgeYY/E8hvGUm3c
+  </data>
+ </layer>
+ <layer name="tree" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt00ENAAAIAzE04V8cKshIaBXscauCjE4P4AQd8IneuUiXsM/P+GYArMgA+w==
+  </data>
+ </layer>
+ <layer name="barrier" width="35" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAMmGHBwxmYDrQD6ATo5U9jKB4FIxsQkw5GSt4bSDDSw3i03BsFIxmMpsuhAYZzOT2Y0t9gcssoIB7QI38M5zwIAyZImBIAACobBVE=
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="6" name="playerpointup" x="1064" y="84" width="64" height="66"/>
+  <object id="7" name="Mon1" x="127.273" y="190.909" width="60.6061" height="66.6667"/>
+  <object id="8" name="Mon2" x="1857.58" y="315.152" width="60.6061" height="66.6667"/>
+  <object id="9" name="Mon3" x="318.182" y="639.394" width="63.6364" height="63.6364"/>
+  <object id="10" name="Mon4" x="1978.79" y="642.424" width="66.6667" height="66.6667"/>
+  <object id="11" name="Mon5" x="512.121" y="1148.48" width="60.6061" height="63.6364"/>
+  <object id="12" name="Mon6" x="1851.52" y="1084.85" width="66.6667" height="63.6364"/>
+  <object id="14" name="playerpointdown" x="1154" y="1774" width="64" height="64"/>
+  <object id="18" name="NPC1" x="646" y="584" width="54" height="56"/>
+ </objectgroup>
+</map>

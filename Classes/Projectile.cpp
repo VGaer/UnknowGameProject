@@ -137,6 +137,7 @@ void Fire::update(float dt)
 
 void Fire::bomb()
 {
+	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/fireboom.wav");
 	isBombing = true;
 	getSprite()->stopAllActions();
 	auto bomb = AnimationUtil::createWithSingleFrameName("bomb", 0.1, 1);

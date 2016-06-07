@@ -1,19 +1,31 @@
 #include "NPC.h"
 #include "G2U.h"
 #include "PopManager.h"
-
+#include "GameScene.h"
+#include "Talk.h"
 
 NPC* NPC::create(const std::string& name)
 {
-	auto unit = new NPC();
-	if (unit && unit->init(name)) {
-		unit->autorelease();
+	string nametemp = name;
+	auto npc = QuestDispatcher::getInstance()->getInstance()->getNpc(nametemp);
+	if (npc == NULL) {
+		auto unit = new NPC();
+		if (unit && unit->init(name)) {
+			unit->autorelease();
+		}
+		else {
+			CC_SAFE_DELETE(unit);
+			unit = NULL;
+		}
+		return unit;
 	}
 	else {
-		CC_SAFE_DELETE(unit);
-		unit = NULL;
+		if (!npc) {
+			CC_SAFE_DELETE(npc);
+			npc = NULL;
+		}
+		return npc;
 	}
-	return unit;
 }
 
 bool NPC::init(const std::string& name)
@@ -23,11 +35,9 @@ bool NPC::init(const std::string& name)
 	//初始化NPC数据，
 	this->data = data;
 	initDataWithName(name);
-
+	bActive = false;
+	isRetain = false;
 	bindSprite(Sprite::create("player11.png"));
-
-	isPop = false;
-	isPop2 = false;
 	page = 0;
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(NPC::onTouchBegan, this);
@@ -40,13 +50,22 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 {
 	if (!_event->getCurrentTarget()->getBoundingBox().containsPoint(m_map->convertToNodeSpace(_touch->getLocation())))
 		return false;
-	for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-		if (a->targetNpc == data->name) {
-			data->status = NpcStatus::actived;
-			//sourceName = 
-			activeQuest = a->id;
+	if (!bActive)
+	{
+		for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
+			if (a->targetNpc == data->name) {
+				data->status = NpcStatus::actived;
+				activeQuest = a->id;
+				if (!a->isSameMap)
+				{
+					retain();
+					isRetain = true;
+				}
+				bActive = true;
+			}
 		}
 	}
+	log("refcount:%d", getReferenceCount());
 	return true;
 }
 
@@ -102,9 +121,18 @@ void NPC::questLayer()
 	// 添加按钮，设置图片，文字，tag, 颜色(颜色默认是白色（Color3B）), 字体信息 
 	ql->addButton("UI/UI_QuestPanel_close.png", "UI_QuestPanel_close.png", Vec2(4, bg->getContentSize().height / 2), 20);
 
+	bool forgeFlag = true;
 	for (auto i : quests) {
+		forgeFlag = true;
 		auto key = i.first;
-		if (i.second->status == QuestStatus::finish)	continue;
+		for (auto k : i.second->forgeID) {
+			if (QuestDispatcher::getInstance()->getQuestStatus(this, k) != QuestStatus::finish) {
+				forgeFlag = false;
+				break;
+			}
+			forgeFlag = true;
+		}
+		if (i.second->status == QuestStatus::finish || forgeFlag == false)	continue;
 		ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests[key]->title), gb2312_to_utf8(quests[key]->instruct), key, "arial.ttf");
 	}
 	// 添加到Menu层  
@@ -143,30 +171,63 @@ void NPC::buttonCallback(Node * pNode)
 		if (data->status) {
 			//改变任务状态
 			for (auto& i : QuestDispatcher::getInstance()->getQuestListVec()) {
-				if (i->targetNpc == data->name) {
+				if (i->type == QuestTypes::search && i->targetNpc == data->name) {
 					i->status = QuestStatus::commit;
 				}
 			}
 			runAction(a);
+			PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false);
 		}
 		if (items)
 		{
 			//选择任务并接受
 			if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(this, items->getQuestTag()) == QuestStatus::start) {
-				QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
-				item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+				if (QuestDispatcher::getInstance()->getQuestType(this, items->getQuestTag()) == QuestTypes::search)
+				{
+					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
+					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+				}
+				else if (QuestDispatcher::getInstance()->getQuestType(this, items->getQuestTag()) == QuestTypes::defeat) {
+					auto tag = QuestDispatcher::getInstance()->getQuest(this, items->getQuestTag());
+					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
+					QuestDispatcher::getInstance()->openUpdate(tag, "defeat");
+					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+				}
+				//获取玩家任务对话
+				auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
+				if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
+				{
+					if (playerDlgs->acceptTaskDlgs.empty() || playerDlgs->acceptTaskDlgs.at(0) == "NULL")
+						return;
+					auto talk = Talk::create(playerDlgs->acceptTaskDlgs, playerDlgs->taskId, Talk_AcTask);
+					m_map->addChild(talk, 100);
+				}
 			}
 			//完成任务
 			else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(this, items->getQuestTag()) == QuestStatus::commit) {
 				for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-					if (a->status == QuestStatus::commit) {
+					if (a->type == QuestTypes::search && a->status == QuestStatus::commit) {
 						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->data->status = NpcStatus::normal;
+						if(isRetain)
+							QuestDispatcher::getInstance()->getNpc(a->targetNpc)->release();
+					}
+					if (a->type == QuestTypes::defeat && a->status == QuestStatus::commit) {
+						QuestDispatcher::getInstance()->unschedule("defeat");
 					}
 				}
 				//移除已完成任务
 				items->getMenuItems()->getChildByTag(items->getQuestTag())->removeFromParent();
 				items->setBtnPos(0.3);
 				QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::complete, items->getQuestTag());
+				//获取玩家任务对话
+				auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
+				if (playerDlgs && !playerDlgs->isSaidFiTsDlgs)
+				{
+					if (playerDlgs->finishTaskDlgs.empty() || playerDlgs->finishTaskDlgs.at(0) == "NULL")
+						return;
+					auto talk = Talk::create(playerDlgs->finishTaskDlgs, playerDlgs->taskId, Talk_FiTask);
+					m_map->addChild(talk, 100);
+				}
 			}
 		}
 		break;
@@ -174,6 +235,7 @@ void NPC::buttonCallback(Node * pNode)
 		//弹出任务列表，并设置弹出标志
 		if (PopManager::getInstance()->getPopsMap()[data->name]->getPopped(1))	break;
 		questLayer();
+		PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, true);
 		break;
 	default:
 		break;
@@ -231,7 +293,6 @@ void NPC::initDataWithName(const string & sender)
 	for (auto i : temp) {
 		quests[i->id] = i;
 	}
-	//questDlgs = QuestDispatcher::getInstance()->getQuest(this)->qDlgsdata;
 }
 
 void NPC::setTiledMap(TMXTiledMap* map)

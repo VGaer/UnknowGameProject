@@ -90,7 +90,9 @@ void Patrol::Excute(Monster* target)
 			if (patrolvec.size() > 0)
 			{
 			//	srand(time(0));
+			
 				target->index = rand() % patrolvec.size();
+				//log("%dindex",target->index);
 				target->cmd_moveTo(patrolvec[target->index]);
 				//设置巡逻的寻路延迟duration
 				target->duration = target->monsdata.moveSpeed;
@@ -227,6 +229,9 @@ void Attack::Excute(Monster* target)
 			if (target->m_baseskill_attackNumsInter_timecounter->getCurTime() == 0.0f ||
 				target->m_baseskill_attackNumsInter_timecounter->getCurTime() > target->monsdata.skillmap["baseskill"].attackNumsInter)
 			{
+				//扣除主角的血
+				target->getPlayer()->m_hp -= target->monsdata.skillmap["baseskill"].damage;
+
 				//把主角被攻击信息放进队列
 				switch (target->getAnimBase()->getCurDirection())
 				{
@@ -387,6 +392,9 @@ void Attack::Excute(Monster* target)
 			if (target->m_bigskill_attackNumsInter_timecounter->getCurTime() == 0 ||
 				target->m_bigskill_attackNumsInter_timecounter->getCurTime() > target->monsdata.skillmap["bigskill"].attackNumsInter)
 			{
+				//扣除主角的血
+				target->getPlayer()->m_hp -= target->monsdata.skillmap["bigskill"].damage;
+
 				//把主角被攻击信息放进队列
 				switch (target->getAnimBase()->getCurDirection())
 				{
@@ -496,57 +504,9 @@ void Attack::Excute(Monster* target)
 				auto projectile = MonsterRemoteskill::createWithName_width_height_damage_duration_speed_diretion(projectileName, projectileAniamteName, width, height, damage, duration, speed, diretion);
 				target->getParent()->addChild(projectile, target->getParent()->getChildren().size()); //投掷物添加到地图层上
 				Point pos = target->getPosition();
+				pos.y += target->getContentSize().height / 2;
 				Point size = target->getContentSize();
-				switch (diretion)
-				{
-				case Dir_up:
-					pos.y += size.y * target->getAnchorPoint().y;
-					projectile->setRotation(-90);
-					break;
-				case Dir_down:
-					pos.y -= size.y * target->getAnchorPoint().y;
-					projectile->setRotation(90);
-					break;
-				case Dir_left:
-					pos.x -= size.x * target->getAnchorPoint().x;
-					projectile->setRotation(180);
-					break;
-				case Dir_right:
-					pos.x += size.x * target->getAnchorPoint().x;
-					break;
-				case Dir_upleft:
-					pos.y += size.y * target->getAnchorPoint().y;
-					projectile->setRotation(-90);
-					break;
-				case Dir_upright:
-					pos.y += size.y * target->getAnchorPoint().y;
-					projectile->setRotation(-90);
-					break;
-				case Dir_downleft:
-					pos.y -= size.y * target->getAnchorPoint().y;
-					projectile->setRotation(90);
-					break;
-				case Dir_downright:
-					pos.y -= size.y * target->getAnchorPoint().y;
-					projectile->setRotation(90);
-					break;
-				case Dir_leftup:
-					pos.x -= size.x * target->getAnchorPoint().x;
-					projectile->setRotation(180);
-					break;
-				case Dir_rightup:
-					pos.x -= size.x * target->getAnchorPoint().x;
-					projectile->setRotation(180);
-					break;
-				case Dir_leftdown:
-					pos.x -= size.x * target->getAnchorPoint().x;
-					projectile->setRotation(180);
-					break;
-				case Dir_rightdown:
-					pos.x -= size.x * target->getAnchorPoint().x;
-					projectile->setRotation(180);
-					break;
-				}
+
 				projectile->setPosition(pos);
 
 				projectile->scheduleUpdate();//投掷物开启定时器

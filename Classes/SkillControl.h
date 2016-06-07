@@ -27,11 +27,11 @@ public:
 	// 技能列表
 	bool skill_laser();
 	bool skill_fire();
+	TimeCounter* skillCounter[MAX_SKILL_NUM];
 private:
 	// 玩家
 	Player* m_player;
-	// 技能计时器
-	TimeCounter* skillCounter[MAX_SKILL_NUM];
+	// 技能计时器	
 };
 
 #endif

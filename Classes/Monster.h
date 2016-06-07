@@ -10,6 +10,8 @@
 #include "cocos2d.h"
 #include <vector>
 #include "GameData.h"
+#include "MonDiedThings.h"
+#include "BarManager.h"
 
 class FindPath;
 class StateMachine;
@@ -35,11 +37,13 @@ public:
 public:
 	// 属性部分
 	MonsData monsdata;
+	float monMaxHp;
 	// 对外接口
 	AnimBase* getAnimBase();
 	StateMachine* getStateMachine();
 	Player* getPlayer();
 	void bindPlayer(Player* player);//绑定主角
+	int monsterIdForBar;//怪物ID
 public:
 	// 命令部分
 	void cmd_moveTo(Point tarPos);	// 进行移动

@@ -9,6 +9,12 @@ Graph* Graph::getInstance()
 }
 void Graph::init(Vec2 center)
 {
+	for (auto it = vertices.begin(); it != vertices.end(); it++)
+	{
+		removeVertex((*it).second->getId());
+	}
+	vertices.clear();
+
 	TMXLayer* barrier = m_map->getLayer("barrier");
 	std::vector<Vertex*> points;
 	this->addVertex(center, positionForTiledCoord(center));
@@ -196,7 +202,6 @@ void Graph::removeVertex(Vec2 vertexId)
 				endVertex->removeOutEdgeByVertexId(vertexId);
 			}
 		}
-		vertices.erase(vertexId);
 		//删除此点前，先释放此点的边
 		vertex->removeVertexAllEdges();
 		//删除此点
@@ -288,7 +293,7 @@ bool Graph::relax(Vec2 startId, Vec2 endId, float weight)
 	float G = v1->get_cost() + weight;
 	float H = getDistance(endId,targetId);
 	float F = G + H;
-	if (H < v2->get_heuristic())
+	if (F < v2->get_heuristic())
 	{
 		v2->setcost(G);
 		v2->setheuristic(F);

@@ -8,10 +8,13 @@ class MonsterManager
 {
 public:
 	static MonsterManager* getInstance();
+	MonsterManager();
 public:
 	// »ñÈ¡¹ÖÎïÈİÆ÷
 	Vector<Monster*>& getMonsterVec();
+	void setMonsEnableAction(bool);
 private:
+	bool canMonsEnableAction;
 	Vector<Monster*> m_monsterVector;
 };
 

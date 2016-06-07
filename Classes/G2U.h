@@ -1,6 +1,6 @@
 #pragma once
 /***
-	gb2312和UTF-8互转
+gb2312和UTF-8互转
 ***/
 #include <string>
 #include <vector>

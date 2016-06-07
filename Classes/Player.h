@@ -11,6 +11,7 @@
 #include <queue>
 #include "MonsterManager.h"
 #include "Monster.h"
+#include "BarManager.h"
 
 USING_NS_CC;
 typedef enum
@@ -65,6 +66,7 @@ class Monster;
 class Player : public Entity
 {
 public:
+	Player();
 	std::queue<int> attackedqueue;
 	//CREATE_FUNC(Player);
 	static Player* getInstance();
@@ -74,6 +76,7 @@ public:
 	void keyPressed(EventKeyboard::KeyCode keyCode, Event* event);
 	void keyReleased(EventKeyboard::KeyCode keyCode, Event* event);
 	void setTiledMap(TMXTiledMap* map);
+	TMXTiledMap* getTiledMap();
 	Vec2 tiledCoordForPosition(Vec2 pos);
 	bool setPlayerPosition(Vec2 position);
 	bool IsSussesfulForsetRemoteSkillPos(Vec2 position);
@@ -88,8 +91,26 @@ public:
 	void setPlayerDir(int direction);
 	bool playerIsattacked;//主角是否被攻击
 	bool IsNot_CollidableTile(Vec2 tieldCoord); //判断barrier层上的瓦片块是否是拥有Collidable属性
-	int m_hp;
+	float m_hp;//hp
+	float m_mp;//mp;
+	void setPlayer_hp(float hp);
+	void setPlayer_mp(float mp);
+	void Playerhp_mp_Update(float dt);
+	void recoverHp_Mp(float dt);
+	float getCurMaxHp();
+	float getCurMaxMp();
+	void ChangSceneIdUpdate(float dt);
+	void openAllUpdate();
+	void createSwordWave();
+	int m_playerlevel; //主角等级
+	float m_exp; //主角经验
+	void LevelUpdate(float dt);
+	std::string gamescenedir;
+	void setEnableAction(bool);
+	void playStaticAnim();
 private:
+	bool isAcceptInput;
+	bool isInChangeScenePoint;
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
 	std::vector<int> vecskill;
@@ -104,7 +125,6 @@ private:
 	int PlayerDir;
 	Vector<RemoteSkill*> m_swordwave_Arr;
 	Vector<RemoteSkill*> m_Using_swordwave_Arr;
-	void createSwordWave();
 	int swordwaveNum;
 	TMXTiledMap* m_parrent;
 	int m_player_magnification;//玩家精灵放大倍数	
@@ -112,5 +132,14 @@ private:
 	SkillControl* skillControl;
 	Vector<Monster*> collidedVector;	// 碰撞清单
 	void baseskillcollidUpdata(float dt);
+	//技能对应消耗mp
+	int l_consumemp;
+	int k_consumemp;
+	int u_consumemp;
+	//当前等级hp,mp属性
+	float curLevel_Maxhp;
+	float curLevel_Maxmp;
+	//主角升级时播放动画的精灵
+	Sprite* spritelevelup;
 };
 #endif 

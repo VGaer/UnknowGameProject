@@ -20,7 +20,8 @@ MonsterRemoteskill* MonsterRemoteskill::createWithName_width_height_damage_durat
 
 bool MonsterRemoteskill::init(std::string projectile, std::string projectileAnimate, float width, float height, float damage, float duration, float speed, int direction)
 {
-	Sprite* sprite = Sprite::create(projectile);
+	name = projectileAnimate;
+	Sprite* sprite = Sprite::createWithSpriteFrameName(projectile);
 	Animation* animation = AnimationUtil::createWithSingleFrameName(projectileAnimate.c_str(),0.1f,-1);
 	sprite->runAction(Animate::create(animation));
 	sprite->setScale(width / sprite->getContentSize().width, height / sprite->getContentSize().height);
@@ -33,6 +34,58 @@ bool MonsterRemoteskill::init(std::string projectile, std::string projectileAnim
 	m_direction = direction;
 	m_player = Player::getInstance();
 	m_dt = 0;
+
+	switch (direction)
+	{
+	case Dir_up:{
+		this->setRotation(-90);
+		break;
+	}
+	case Dir_down:{
+		this->setRotation(90);
+		break;
+	}
+	case Dir_left:{
+		this->setRotation(180);
+		break;
+	}
+	case Dir_right:{
+	
+		break;
+	}
+	case Dir_upleft:{
+		this->setRotation(-90);
+		break;
+	}
+	case Dir_upright:{
+		this->setRotation(-90);
+		break;
+	}
+	case Dir_downleft:{
+		this->setRotation(90);
+		break;
+	}
+	case Dir_downright:{
+		this->setRotation(90);
+		break;
+	}
+	case Dir_leftup:{
+		this->setRotation(180);
+		break;
+	}
+	case Dir_rightup:{
+		this->setRotation(0);
+		break;
+	}
+	case Dir_leftdown:{
+		this->setRotation(180);
+		break;
+	}
+	case Dir_rightdown:{
+
+		break;
+	}
+	}
 	return true;
 }
 void MonsterRemoteskill::update(float dt)
@@ -42,11 +95,18 @@ void MonsterRemoteskill::update(float dt)
 	{
 		if (m_player->getBoundingBox().intersectsRect(getBoundingBox()))
 		{
+			//如果是树怪的石头技能
+			if (name == "treemonproj")
+			{
+				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/hitedbybone.wav");
+			}
+
 			//扣主角hp
 			if (m_player->m_hp > 0)
 			{
 				m_player->m_hp = m_player->m_hp - m_damage;
 			}
+
 			//把主角被攻击信息放进队列
 			switch (m_direction)
 			{

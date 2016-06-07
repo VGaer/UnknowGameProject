@@ -3,9 +3,10 @@
 
 #include "Player.h"
 #include "MonsterManager.h"
-#include "NpcManager.h"
+#include "NPC.h"
 #include "PopManager.h"
-#include "BarManager.h"
+#include "NpcManager.h"
+
 
 class GameScene : public Layer
 {
@@ -13,17 +14,21 @@ public:
 	// 场景初始化
 	static Scene* createSceneWithId(int id);
 	static Scene* loadSceneWithSaveData();
-	bool init(int id);
-	bool init();
+	virtual bool init(int id);
+	virtual bool init();
 	virtual void onEnter() override;
 	virtual void onExit() override;
 	virtual void update(float dt);
+	void MonHP_MPBar_Update(float dt);
+	GameScene();
 public:
 	void setMapInfo(int id);
 	void setViewpointCenter(Vec2 Position);
 	void addPlayer(Point pos, int direction = enum_down);
 	void addPlayer(PlayerData* data);
+	void addNpc(vector<NpcsData*> nData);
 	void addMonster(const std::string& name, Point pos);  // 还需要更改详细属性
+	void firstEnterTalk();
 	void loadPlistFile(); // 应该放在游戏开始界面加载。只加载一次
 	static int sceneId;
 private:
@@ -31,6 +36,7 @@ private:
 	Player* m_player;
 	TMXTiledMap* m_map;
 	Monster* m_monster;
+	TMXObjectGroup* objGroup;
 	NPC* m_npc;
 };
 

@@ -58,8 +58,16 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
 	//³õÊ¼»¯ÒôÐ§
-	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/swordsound.wav");
-
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/Jswordsound.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/fireboom.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/lasersound.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/Kskill.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/hitedbybone.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/playerhited.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/monhitedbyPlayerBaseskill.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/getthings.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/levelsup.wav");
+	
 	return true;
 }
 

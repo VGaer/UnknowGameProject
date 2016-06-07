@@ -48,7 +48,7 @@
  </layer>
  <layer name="barrier" width="35" height="30" opacity="0.23">
   <data encoding="base64" compression="zlib">
-   eJzdV1sKwDAI6/3vMHbVfQ2KKMbYabvAforTEB+1Y+yP+8N/GN/duMiP8eHxqIQVr5qHFhfRC6m1TN16+a7EzKErPy9knjrhcbHyn+13jQOrS1TDU7hoNjO/1fNQ2ls9zfiv0mV3LjJvu+kSvacj8Su5eHdOdu4y8007Q/qY5RLZm1Db1dD6AeGzak9G7jd5Vgm0zxhENYzWEbMLoP5OQbZO//xu7MQDi5twWA==
+   eJzdV1sKwDAI6/3vMHbVfQ2KKMbYabvAforTEB+1Y+yP+8N/GN/duMiP8eHxqIQVr5qHFhfRC6m1TN16+a7EzKErPy9knjrhcbHyn+13jQOrS1TDU7hoNjO/1fNQ2ls9zfiv0mV3LjJvu+kSvacj8Su5eHdOdu4y8007Q/qY5RLZm1Db1dD6AeGzak9G7jd5VgmvzzJ8IhoydcTsAqi/U5Ct0z+/GzvxAD6/cZI=
   </data>
  </layer>
  <objectgroup name="objects">

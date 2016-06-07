@@ -8,6 +8,11 @@ BarManager * BarManager::getInstance()
 	return instance;
 }
 
+BarManager::BarManager()
+{
+	playerBar = NULL;
+}
+
 Sprite* BarManager::create(const string& hp, int tag)
 {
 	auto head = Sprite::create("UI/Enemy.png");
@@ -42,8 +47,8 @@ Sprite* BarManager::create(const string& hp, const string& mp)
 	playerBar->m_hp->setPercentage(100);
 	playerBar->m_hp->setBarChangeRate(Vec2(1, 0));
 	playerBar->m_hp->setAnchorPoint(Vec2(0, 0.5));
-	playerBar->m_hp->setPosition(9,size.height - 15);
-	playerBar->m_hp->setScaleX(90.0/80.0);
+	playerBar->m_hp->setPosition(9, size.height - 15);
+	playerBar->m_hp->setScaleX(90.0 / 80.0);
 
 	playerBar->m_mp = ProgressTimer::create(Sprite::create(mp));
 	playerBar->m_mp->setType(ProgressTimer::Type::BAR);
@@ -64,7 +69,10 @@ Sprite* BarManager::create(const string& hp, const string& mp)
 
 ProgressTimer* BarManager::getBars(int tag)
 {
-	return mbars[tag];
+	if (mbars.find(tag) != mbars.end())
+		return mbars[tag];
+	else
+		return NULL;
 }
 
 PlayerBar * BarManager::getPlayerBars()
@@ -72,22 +80,21 @@ PlayerBar * BarManager::getPlayerBars()
 	return playerBar;
 }
 
-void BarManager::setPercent(ProgressTimer * pSender, float total, float offset)
+void BarManager::setPercent(ProgressTimer * pSender, float total, float nowNum)
 {
-	if (offset > pSender->getPercentage()) {
-		auto action = Sequence::create(CallFunc::create([=]() {
-			pSender->setPercentage(0);
-		}), ProgressFromTo::create(0.2f, pSender->getPercentage(), 0), NULL);
+	if (nowNum <= 0) {
+		auto action = Sequence::create(ProgressFromTo::create(0.2f, pSender->getPercentage(), 0), 
+			CallFunc::create([=]() {
+		}),NULL);
 		pSender->runAction(action);
 	}
 	else {
-		auto action = Sequence::create(CallFunc::create([=]() {
-			pSender->setPercentage((pSender->getPercentage() - offset) / total * 100);
-			log("recoverHP:%f", playerBar->m_hp->getPercentage());
-		}), ProgressFromTo::create(0.2f, pSender->getPercentage(), (pSender->getPercentage() - offset) / total * 100), NULL);
+		auto action = Sequence::create(ProgressFromTo::create(0.2f, pSender->getPercentage(), nowNum / total * 100),
+			CallFunc::create([=]() {
+	
+		}),  NULL);
 		pSender->runAction(action);
 	}
-
 }
 
 //void BarManager::recover(BarType sender, int tag)
@@ -103,47 +110,44 @@ void BarManager::setPercent(ProgressTimer * pSender, float total, float offset)
 //	}
 //}
 
-void BarManager::recoverHP(float dt)
-{
-	if (playerBar->m_hp->getPercentage() == 100) { 
-		unschedule(schedule_selector(BarManager::recoverHP));
-		return; 
-	}
-	auto action = Sequence::create(CallFunc::create([&]() {
-		playerBar->m_hp->setPercentage(playerBar->m_hp->getPercentage() + 0.1);
-		/*
-			改变玩家HP（你自己写）
-		*/
-	}), ProgressFromTo::create(0.2f, playerBar->m_hp->getPercentage(), playerBar->m_hp->getPercentage() + 0.1), NULL);
-	playerBar->m_hp->runAction(action);
-}
+//void BarManager::recoverHP(float dt)
+//{
+//	if (playerBar != NULL)
+//	{
+//		if (playerBar->m_hp->getPercentage() == 100) {
+//		//	unschedule(schedule_selector(BarManager::recoverHP));
+//			return;
+//		}
+//		playerBar->m_hp->setPercentage(playerBar->m_hp->getPercentage() + 0.1);
+//	}
+//}
 
-void BarManager::recoverEnemy(float dt, int i)
-{
-	if (getBars(i)->getPercentage() == 100) {
-		unschedule("enemy");
-		return;
-	}
-	auto action = Sequence::create(CallFunc::create([=]() {
-		getBars(i)->setPercentage(getBars(i)->getPercentage() + 0.1);
-		/*
-			改变敌方HP（你自己写）
-		*/
-	}), ProgressFromTo::create(0.2f, getBars(i)->getPercentage(), getBars(i)->getPercentage() + 0.1), NULL);
-	getBars(i)->runAction(action);
-}
+//void BarManager::recoverEnemy(float dt, int i)
+//{
+//	if (getBars(i)->getPercentage() == 100) {
+//		unschedule("enemy");
+//		return;
+//	}
+//	auto action = Sequence::create(CallFunc::create([=]() {
+//		getBars(i)->setPercentage(getBars(i)->getPercentage() + 0.1);
+//		/*
+//		改变敌方HP（你自己写）
+//		*/
+//	}), ProgressFromTo::create(0.2f, getBars(i)->getPercentage(), getBars(i)->getPercentage() + 0.1), NULL);
+//	getBars(i)->runAction(action);
+//}
 
-void BarManager::recoverMP(float dt)
-{
-	if (playerBar->m_hp->getPercentage() == 100) {
-		unschedule(schedule_selector(BarManager::recoverMP));
-		return;
-	}
-	auto action = Sequence::create(CallFunc::create([&]() {
-		playerBar->m_mp->setPercentage(playerBar->m_mp->getPercentage() + 0.2);
-		/*
-			改变玩家MP（你自己写）
-		*/
-	}), ProgressFromTo::create(0.2f, playerBar->m_mp->getPercentage(), playerBar->m_mp->getPercentage() + 0.2), NULL);
-	playerBar->m_mp->runAction(action);
-}
+//void BarManager::recoverMP(float dt)
+//{
+//	if (playerBar->m_hp->getPercentage() == 100) {
+//		//unschedule(schedule_selector(BarManager::recoverMP));
+//		return;
+//	}
+//	playerBar->m_mp->setPercentage(playerBar->m_mp->getPercentage() + 0.2);	
+//}
+
+//void BarManager::SchedulePlayerHp_Mp()
+//{
+//	schedule(schedule_selector(BarManager::recoverHP));
+//	schedule(schedule_selector(BarManager::recoverMP));
+//}

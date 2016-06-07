@@ -7,6 +7,12 @@ USING_NS_CC;
 
 class NPC;
 
+enum QuestTypes
+{
+	search = 0,
+	defeat
+};
+
 enum QuestStatus
 {
 	start = 0,
@@ -25,7 +31,7 @@ enum QuestControl {
 //	map<int, QuestListData*> questData;
 //};
 
-class QuestDispatcher
+class QuestDispatcher : public Node
 {
 public:
 	static QuestDispatcher* getInstance();
@@ -35,6 +41,10 @@ public:
 	void initQuestDlgsData();
 	void initQuest(NPC* pSender);
 	int getQuestStatus(NPC* pSender, const int id);
+	int getQuestType(NPC* pSender, const int id);
+	QuestListData* getQuest(NPC* pSender, const int id);
+	void questsUpdate(float dt, QuestListData* pSender);
+	void openUpdate(QuestListData* pSender, string name);
 	//任务所属NPC, 任务操作， 任务id
 	void QuestStatusControl(NPC* pSender, QuestControl ctr, const int id);
 	NPC* getNpc(string& name);
@@ -43,8 +53,9 @@ public:
 	// 获取已接任务容器
 	vector<QuestListData*>& getQuestListVec();
 	map<int, QuestDlgsData*> getQuestDlgs();
+	void mNpcClear();
 private:
-	map<const string, NPC*> mNpc;
+	map<string, NPC*> mNpc;
 	//任务列表容器
 	map<int, QuestListData*> mData;
 	//任务对话容器

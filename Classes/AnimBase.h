@@ -26,6 +26,7 @@ class AnimBase
 {
 public:
 	AnimBase(Entity* target);
+	~AnimBase();
 	int getDirectionByTargetPos(Point tarPos);		// 获取移动方向
 	void playStanAnim();				// 播放静止动画
 	void playMoveAnim();				// 播放移动动画

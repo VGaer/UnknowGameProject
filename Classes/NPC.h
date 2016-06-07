@@ -21,7 +21,7 @@ public:
 	bool init(const std::string& name);
 	//static NPC* createWithparent(TMXTiledMap* parent);
 	//virtual bool init();
-	//virtual void update(float dt);
+	//void update(float dt);
 	virtual bool onTouchBegan(Touch* _touch, Event* _event);
 	virtual void onTouchEnded(Touch* _touch, Event* _event);
 	void popLayer();
@@ -33,12 +33,12 @@ public:
 	void setTiledMap(TMXTiledMap* map);
 	Vec2 tiledCoordForPosition(Vec2 pos);
 	const NpcsData* getData() { return data; }
-	//vector<QuestListData*> quests;
+	bool getIsRetain() { return isRetain; }
 private:
-	bool isPop;
-	bool isPop2;
 	int activeQuest;
 	int page;
+	bool isRetain;
+	bool bActive;
 	string sourceName;
 	NpcsData* data;
 	map<int, QuestListData*> quests;

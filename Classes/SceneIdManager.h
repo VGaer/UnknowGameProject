@@ -2,13 +2,16 @@
 #define __SceneIdManager_H__
 
 #include <map>
+#include <vector>
 
-#define Scene_DATA_PATH "JsonText/SceneId.json"	// 任务对话数据文件路径
+#define Scene_DATA_PATH "JsonText/SceneId.json"	
 
 struct SceneData
 {
 	std::string name;
 	int Id;
+	int Level;//主角要求的等级
+	std::vector<int> Misson;//要求的任务清单
 };
 
 class SceneIdManager
@@ -18,8 +21,8 @@ public:
 	SceneIdManager();
 	~SceneIdManager();
 public:
-	std::map<std::string, int> map_scenenameToId;
-	std::map<int, std::string>  map_sceneIdToname;
+	std::map<std::string, SceneData> map_scenenameToSceneData;
+	std::map<int, SceneData>  map_sceneIdToSceneData;
 public:
 	// 加入一条场景数据
 	void addDataToSceneData(SceneData scenedata);

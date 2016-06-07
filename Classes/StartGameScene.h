@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
+#include "TimeCounter.h"
 
 USING_NS_CC;
 
@@ -22,6 +23,7 @@ public:
 	void menuItemStartCallback(Ref* pSender);
 	void menuItemSettingCallback(Ref* pSender);
 	CREATE_FUNC(StartGameScene);
+	TimeCounter* startmenuItem_counter;
 };
 
 #endif

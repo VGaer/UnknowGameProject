@@ -1,6 +1,7 @@
 #include "StartGameScene.h"
 #include "SettingScene.h"
 #include "GameScene.h"
+#include "gdShow.h"
 
 Scene* StartGameScene::createScene()
 {
@@ -18,8 +19,6 @@ bool StartGameScene::init()
 	}
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	GameData::getInstance(); // 读取文件
 	
 	Sprite* bg = Sprite::create("startgame/startgamebg.png");
 	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
@@ -51,6 +50,9 @@ bool StartGameScene::init()
 	Menu* mu = Menu::create(startMenuItem, settingMenuItem, helpMenuItem, NULL);
 	mu->setPosition(Vec2(0,0));
 	this->addChild(mu);
+
+	startmenuItem_counter = TimeCounter::create();
+	this->addChild(startmenuItem_counter);
 
 	return true;
 }
@@ -91,33 +93,41 @@ void StartGameScene::cleanup()
 
 void StartGameScene::menuItemHelpCallback(Ref* pSender)
 {
-	/*if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+	if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
-	}*/
+	}
 }
 
 void StartGameScene::menuItemStartCallback(Ref* pSender)
 {
-	/*if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+	if (startmenuItem_counter->getCurTime() == 0.0f || startmenuItem_counter->getCurTime() > 10.0f){
+		/*if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
+		}*/
+		startmenuItem_counter->start();
+
+		Scene* sc = NULL;
+		//是否有玩家存档
+		if (GameData::getInstance()->isExistSaveDoc()){
+			sc = GameScene::loadSceneWithSaveData();
+		}
+		else{
+			//没有存档，切换到游戏背景介绍
+			sc = gdShow::createscene();
+		}
+		auto reScene = TransitionJumpZoom::create(0.0f, sc);
+		Director::getInstance()->replaceScene(sc);
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
-	}*/
-	Scene* sc = NULL;
-	if (GameData::getInstance()->isExistSaveDoc()){
-		sc = GameScene::loadSceneWithSaveData();
-	}		
-	else{
-		sc = GameScene::createSceneWithId(2);
-	}		
-	auto reScene = TransitionJumpZoom::create(1.0f, sc);
-	Director::getInstance()->replaceScene(sc);
-	CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
+		auto m = (MenuItemSprite*)pSender;
+		m->setEnabled(false);
+	}
 }
 
 void StartGameScene::menuItemSettingCallback(Ref* pSender)
 {
-	/*if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+	if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
-	}*/
+	}
 	auto sc = SettingScene::createScene();
 	auto reScene = TransitionJumpZoom::create(1.0f, sc);
 	Director::getInstance()->pushScene(reScene);

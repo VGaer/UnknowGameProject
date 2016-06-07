@@ -1,11 +1,37 @@
 #include "AnimBase.h"
+#include "cocos2d.h"
 
 AnimBase::AnimBase(Entity* target)
 {
 	m_sprite = target->getSprite();
 	m_monster = (Monster*)target;
+	for (int i = 0; i < 3; i++)
+	{
+		m_stanAnimArray[i] = NULL;
+		m_moveAnimArray[i] = NULL;
+		m_attaAnimArray[i] = NULL;
+		m_attaBigAnimArray[i] = NULL;
+		m_attaRemoteAnimArray[i] = NULL;
+	}
 	/*初始化好动画数组*/
 	setAction();
+}
+
+AnimBase::~AnimBase()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_stanAnimArray[i] != NULL)
+			CC_SAFE_RELEASE_NULL(m_stanAnimArray[i]);
+		if (m_moveAnimArray[i] != NULL)
+			CC_SAFE_RELEASE_NULL(m_moveAnimArray[i]);
+		if (m_attaAnimArray[i] != NULL)
+			CC_SAFE_RELEASE_NULL(m_attaAnimArray[i]);
+		if (m_attaBigAnimArray[i] != NULL)
+			CC_SAFE_RELEASE_NULL(m_attaBigAnimArray[i]);
+		if (m_attaRemoteAnimArray[i] != NULL)
+			CC_SAFE_RELEASE_NULL(m_attaRemoteAnimArray[i]);
+	}
 }
 
 int AnimBase::getDirectionByTargetPos(Point tarPos)

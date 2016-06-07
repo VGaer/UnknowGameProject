@@ -1,5 +1,6 @@
 ﻿#include "Monster.h"
 #include "GameData.h"
+#include "MonsterBarManager.h"
 #define Pi 3.141592653
 
 
@@ -28,6 +29,8 @@ bool Monster::init(const std::string& name)
 	
 	//初始化怪物数据，
 	this->monsdata = *data;
+
+	monMaxHp = monsdata.hp;
 
 	bindSprite(Sprite::create(data->imagePath));
 	//记录怪物颜色
@@ -62,7 +65,7 @@ bool Monster::init(const std::string& name)
 	this->addChild(m_baseskill_attackNumsInter_timecounter);
 
 	//每个Node都设置为0.5 0.5的锚点
-	this->setAnchorPoint(Vec2(0.5, 0.5));
+	this->setAnchorPoint(Vec2(0.5, 0));
 
 	//怪物的初态都弄为悠闲吧
 	stateMachine->SetCurrState(new Idle());
@@ -91,6 +94,8 @@ bool Monster::init(const std::string& name)
 
 	isAttackedByProjectile = false;
 	isAttackedByPlayerBaseskill = false;
+
+	player = NULL;
 
 	return true;
 }
@@ -128,6 +133,7 @@ void Monster::cmd_moveTo(Point tarPos)
 	//巡逻状态
 	else
 	{
+		//log("%f,,%f",tarPos.x,tarPos.y);
 		Vec2 start = player->tiledCoordForPosition(this->getPosition());
 		Vec2 end = tarPos;//巡逻目标位置(巡逻的时候直接传了瓦片的坐标进来了)
 		if (end.x >= 0 && end.x < m_parrent->getMapSize().width && end.y >= 0 && end.y < m_parrent->getMapSize().height){
@@ -256,7 +262,6 @@ bool Monster::checkInAttaRange()
 		if (distance <= baseAttackRange){
 			return true;
 		}
-			
 	}
 	return false;
 }
@@ -321,7 +326,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
 				{
 					return true;
 				}
@@ -336,7 +341,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
 				{
 					return true;
 				}
@@ -411,7 +416,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
 				{
 					return true;
 				}
@@ -426,7 +431,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && this->getPositionX() - playerpos.x <= Range)
 				{
 					return true;
 				}
@@ -441,7 +446,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
 				{
 					return true;
 				}
@@ -456,7 +461,7 @@ bool Monster::checkInRemoteSkillRange()
 				float Range = monsdata.remoteskillmap["remoteskill"].eyeRangeForstartskill;
 				Vec2 playerpos = player->getPosition();
 				//投掷的技能的宽度可以打到主角且主角在触发攻击的范围内
-				if (abs(playerpos.y - this->getPositionY()) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
+				if (abs((playerpos.y + player->getContentSize().height / 2) - (this->getPositionY() + getContentSize().height / 2)) <= width / 2 && playerpos.x - this->getPositionX() <= Range)
 				{
 					return true;
 				}
@@ -478,6 +483,53 @@ bool Monster::checkInRemoteSkillRange()
 
 void Monster::update(float dt)
 {
+	if (this->monsdata.hp <= 0)
+	{
+		//随机掉落mp,hp
+		switch (rand() % 6)
+		{
+		case 0:{
+			auto mp = t_MP::create();
+			mp->setmpNum(15);
+			mp->bindPlayer(this->player);
+			this->m_parrent->addChild(mp, (int)this->m_parrent->getChildren().size());
+			mp->setPosition(this->getPosition());
+			break;
+		}
+		case 2:{
+			auto hp = t_HP::create();
+			hp->sethpNum(15);
+			hp->bindPlayer(this->player);
+			this->m_parrent->addChild(hp, (int)this->m_parrent->getChildren().size());
+			hp->setPosition(this->getPosition());
+			break;
+		}
+		}
+		
+		/*主角加经验*/
+		player->m_exp += monsdata.exp;
+
+		/*remove掉怪物对应的血条*/
+		auto monbar = BarManager::getInstance()->getBars(monsterIdForBar);
+		if (monbar != NULL)
+		{
+			//第一个parent是血槽条，第二次parent是血槽条左边那个圆槽
+			monbar->getParent()->getParent()->removeFromParent();
+		}
+
+		//从怪物管理器中Pop出来
+		auto& Vec = MonsterManager::getInstance()->getMonsterVec();
+		for (int i = 0; i < Vec.size(); i++)
+		{
+			if (Vec.at(i) == this)
+			{
+				Vec.eraseObject(this);
+				break;
+			}
+		}
+		this->removeFromParent();
+		return;
+	}
 	stateMachine->Update();
 }
 
@@ -632,16 +684,48 @@ std::vector<Vec2> Monster::getPatrolpointvec()
 
 bool Monster::IsattackedByPlayer()
 {
+
 	// 判断是否被投射物击中
 	if (isAttackedByProjectile)
 	{
 		isAttackedByProjectile = false;
+
+		//设置此被攻击的怪物血条为可见，其他隐藏
+		auto bar = BarManager::getInstance()->getBars(monsterIdForBar);
+		if (bar != NULL)
+		{
+			auto barspr = bar->getParent()->getParent();
+			auto Vec = MonsterBarManager::getInstance()->getmonsterBarVec();
+			for (int i = 0; i < Vec.size(); i++)
+			{
+				auto bar = Vec.at(i);
+				bar->setVisible(false);
+			}
+			//设置可见
+			barspr->setVisible(true);
+		}
+
 		return true;
 	}
 
 	// 判断是否被主角普通攻击打中
 	if (isAttackedByPlayerBaseskill)
 	{
+		//设置此被攻击的怪物血条为可见，其他隐藏
+		auto bar = BarManager::getInstance()->getBars(monsterIdForBar);
+		if (bar != NULL)
+		{
+			auto barspr = bar->getParent()->getParent();
+			auto Vec = MonsterBarManager::getInstance()->getmonsterBarVec();
+			for (int i = 0; i < Vec.size(); i++)
+			{
+				auto bar = Vec.at(i);
+				bar->setVisible(false);
+			}
+			//设置可见
+			barspr->setVisible(true);
+		}
+
 		isAttackedByPlayerBaseskill = false;
 		return true;
 	}
@@ -653,15 +737,26 @@ bool Monster::IsattackedByPlayer()
 			auto swordwave = vec.at(i);
 			if (swordwave->isVisible())
 			{
-				Rect rect;
-				rect.setRect(this->getPositionX()- this->getContentSize().width * this->getAnchorPoint().x,
-					this->getPositionY() - this->getContentSize().height * this->getAnchorPoint().y,
-					this->getContentSize().width,
-					this->getContentSize().height);
-				if (rect.containsPoint(swordwave->getPosition())){
+				if (getBoundingBox().containsPoint(swordwave->getPosition())){
 					swordwave->hide();
 					//扣怪物血,
 					this->cmd_hurt(5);
+
+					//设置此被攻击的怪物血条为可见，其他隐藏
+					auto bar = BarManager::getInstance()->getBars(monsterIdForBar);
+					if (bar != NULL)
+					{
+						auto barspr = bar->getParent()->getParent();
+						auto Vec = MonsterBarManager::getInstance()->getmonsterBarVec();
+						for (int i = 0; i < Vec.size(); i++)
+						{
+							auto bar = Vec.at(i);
+							bar->setVisible(false);
+						}
+						//设置可见
+						barspr->setVisible(true);
+					}
+
 					return true;
 				}
 			}

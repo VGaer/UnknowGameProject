@@ -7,11 +7,11 @@ using namespace cocos2d::ui;
 Scene* SaveGameScene::scene(RenderTexture* sqr) {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	auto scene = Scene::create();
-	auto layer = SaveGameScene::create();	
+	auto layer = SaveGameScene::create();
 	Sprite *_spr = Sprite::createWithTexture(sqr->getSprite()->getTexture());
-	_spr->setPosition(visibleSize / 2);		
+	_spr->setPosition(visibleSize / 2);
 	_spr->setFlipY(true);					//UI坐标系与OpenGL坐标系相反
-	_spr->setColor(Color3B::GRAY);			
+	_spr->setColor(Color3B::GRAY);
 	scene->addChild(_spr);
 	scene->addChild(layer, 1);
 	return scene;
@@ -50,8 +50,9 @@ void SaveGameScene::addSaveBtnListener(Node* node)
 	listener->onTouchEnded = [=](Touch* touch, Event* event){
 		log("save");
 		auto game = GameData::getInstance();
-		game->writeQuestData();
+		//game->writeQuestData();
 		game->writePlayerData();
+		game->writeQuestData();
 		saveBtn->removeFromParent();
 		quitBtn->removeFromParent();
 		// 成功保存
