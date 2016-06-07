@@ -33,14 +33,14 @@ public:
 	void setTiledMap(TMXTiledMap* map);
 	Vec2 tiledCoordForPosition(Vec2 pos);
 	const NpcsData* getData() { return data; }
-	NpcsData* data;
-	//vector<QuestListData*> quests;
+	bool getIsRetain() { return isRetain; }
 private:
 	int activeQuest;
 	int page;
+	bool isRetain;
 	bool bActive;
 	string sourceName;
-	//NpcsData* data;
+	NpcsData* data;
 	map<int, QuestListData*> quests;
 	QuestList* items;
 	Player* m_player;

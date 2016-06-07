@@ -5,30 +5,37 @@
 
 NPC* NPC::create(const std::string& name)
 {
-	auto unit = new NPC();
-	if (unit && unit->init(name)) {
-		unit->autorelease();
+	string nametemp = name;
+	auto npc = QuestDispatcher::getInstance()->getInstance()->getNpc(nametemp);
+	if (npc == NULL) {
+		auto unit = new NPC();
+		if (unit && unit->init(name)) {
+			unit->autorelease();
+		}
+		else {
+			CC_SAFE_DELETE(unit);
+			unit = NULL;
+		}
+		return unit;
 	}
 	else {
-		CC_SAFE_DELETE(unit);
-		unit = NULL;
+		if (!npc) {
+			CC_SAFE_DELETE(npc);
+			npc = NULL;
+		}
+		return npc;
 	}
-	return unit;
 }
 
 bool NPC::init(const std::string& name)
 {
 	auto data = GameData::getInstance()->getDataFromNpcsData(name);
-	auto s = QuestDispatcher::getInstance()->getNpc(data->name);
-	if (s == NULL) {
-		QuestDispatcher::getInstance()->addNpc(data->name, this);
-		this->data = data;
-	}
-	else
-		this->data = QuestDispatcher::getInstance()->recoverNpc(data->name);
+	QuestDispatcher::getInstance()->addNpc(data->name, this);
 	//初始化NPC数据，
+	this->data = data;
 	initDataWithName(name);
 	bActive = false;
+	isRetain = false;
 	bindSprite(Sprite::create("player11.png"));
 	page = 0;
 	auto listener = EventListenerTouchOneByOne::create();
@@ -48,7 +55,11 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 			if (a->targetNpc == data->name) {
 				data->status = NpcStatus::actived;
 				activeQuest = a->id;
-				retain();
+				if (!a->isSameMap)
+				{
+					retain();
+					isRetain = true;
+				}
 				bActive = true;
 			}
 		}
@@ -187,7 +198,8 @@ void NPC::buttonCallback(Node * pNode)
 				for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
 					if (a->type == QuestTypes::search && a->status == QuestStatus::commit) {
 						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->data->status = NpcStatus::normal;
-						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->release();
+						if(isRetain)
+							QuestDispatcher::getInstance()->getNpc(a->targetNpc)->release();
 					}
 					if (a->type == QuestTypes::defeat && a->status == QuestStatus::commit) {
 						QuestDispatcher::getInstance()->unschedule("defeat");

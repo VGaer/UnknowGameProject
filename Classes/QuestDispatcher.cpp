@@ -117,14 +117,6 @@ void QuestDispatcher::addNpc(string& name, NPC * pSender)
 	}
 }
 
-NpcsData* QuestDispatcher::recoverNpc(string& name)
-{
-	if (mNpc.find(name) != mNpc.end())
-		return mNpc[name]->data;
-	else
-		return NULL;
-}
-
 vector<QuestListData*> QuestDispatcher::getQuest(NPC* pSender)
 {
 	auto id = pSender->getData()->quest_id;
@@ -143,6 +135,23 @@ vector<QuestListData*>& QuestDispatcher::getQuestListVec()
 map<int, QuestDlgsData*> QuestDispatcher::getQuestDlgs()
 {
 	return qDlgsdata;
+}
+
+void QuestDispatcher::mNpcClear()
+{
+	NPC* temp = NULL;
+	bool isExist = false;
+	for (auto i = mNpc.begin(); i != mNpc.end();++i) {
+		if (i->second->getIsRetain() == true)
+		{
+			temp = i->second;
+			isExist = true;
+			break;
+		}
+	}
+	mNpc.clear();
+	if(isExist)
+		mNpc[temp->getData()->name] = temp;
 }
 
 void QuestDispatcher::questsUpdate(float dt, QuestListData* pSender)

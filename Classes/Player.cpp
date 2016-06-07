@@ -2657,8 +2657,10 @@ void Player::ChangSceneIdUpdate(float dt)
 				if (ChangeScenePointManager::getInstance()->IsReachCondition(Id) == false)
 					return;
 
-				if (QuestDispatcher::getInstance()->getParent() != NULL)
+				if (QuestDispatcher::getInstance()->getParent() != NULL) {
 					QuestDispatcher::getInstance()->removeFromParentAndCleanup(false);
+					QuestDispatcher::getInstance()->mNpcClear();
+				}
 
 				if (proValueMap.find("nextscenedir") != proValueMap.end())
 				{
