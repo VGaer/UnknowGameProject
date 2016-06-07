@@ -15,9 +15,9 @@ public:
 	CREATE_FUNC(PopLayer);
 	virtual bool onTouchBegan(Touch* _touch, Event* _event);
 	static PopLayer* create(const char* backgroundImage);
-	void setTitle(const string& title, Color3B color = Color3B::WHITE, int fontsize = 20, string font = "arial.ttf");
+	void setTitle(const string& title, Color3B color = Color3B::WHITE, int fontsize = 20, string font = "Arial");
 	// padding和paddingTop文字内容两边的空白区 
-	void setContentText(const string& text, int fontsize = 20, int padding = 40, int paddintTop = 800, string font = "arial.ttf", Color3B color = Color3B::RED);
+	void setContentText(const string& text, int fontsize = 20, int padding = 40, int paddintTop = 800, string font = "Arial", Color3B color = Color3B::RED);
 	void setCallbackFunc(Ref* target, SEL_CallFuncN callfun);
 	bool addButton(const char* normalImage, const char* selectedImage, Vec2 pos, int tag = 0);
 	void popBack();

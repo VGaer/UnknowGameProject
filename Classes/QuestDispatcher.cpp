@@ -23,7 +23,7 @@ QuestDispatcher::QuestDispatcher()
 	for (auto& a : this->getQuestListVec()) {
 		if (a->type == QuestTypes::defeat && a->status == QuestStatus::active) {
 			auto questDat = GameData::getInstance()->getDataFromQuestsData(a->id);
-			schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, this, questDat), "defeat");
+			schedule(schedule_selector(QuestDispatcher::questsUpdate));
 		}
 	}
 }
@@ -154,19 +154,27 @@ void QuestDispatcher::mNpcClear()
 		mNpc[temp->getData()->name] = temp;
 }
 
-void QuestDispatcher::questsUpdate(float dt, QuestListData* pSender)
+void QuestDispatcher::questsUpdate(float dt)
 {
-	log("fMAPID:%d", pSender->mapID);
-	if (pSender->mapID == GameScene::sceneId) {
-		if (MonsterManager::getInstance()->getMonsterVec().size() == 0) {
-			pSender->status = QuestStatus::commit;
-			log("status:%d", pSender->status);
+	bool isFind = false;
+	for (auto& i : activeQuestList)
+	{
+		if (i->type == QuestTypes::defeat)
+		{
+			isFind = true;
+			if (i->mapID == GameScene::sceneId) {
+				if (MonsterManager::getInstance()->getMonsterVec().size() == 0) {
+					i->status = QuestStatus::commit;
+				}
+			}
 		}
 	}
-	log("aMAPID:%d", pSender->mapID);
+	if (!isFind)
+		unschedule(schedule_selector(QuestDispatcher::questsUpdate));
 }
 
-void QuestDispatcher::openUpdate(QuestListData * pSender, string name)
+void QuestDispatcher::openUpdate()
 {
-	schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, QuestDispatcher::getInstance(), pSender), name);
+	/*schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, QuestDispatcher::getInstance(), pSender), name);*/
+	schedule(schedule_selector(QuestDispatcher::questsUpdate));
 }

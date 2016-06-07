@@ -189,7 +189,7 @@ void NPC::buttonCallback(Node * pNode)
 				else if (QuestDispatcher::getInstance()->getQuestType(this, items->getQuestTag()) == QuestTypes::defeat) {
 					auto tag = QuestDispatcher::getInstance()->getQuest(this, items->getQuestTag());
 					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
-					QuestDispatcher::getInstance()->openUpdate(tag, "defeat");
+					QuestDispatcher::getInstance()->openUpdate();
 					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
 				}
 			}
@@ -200,9 +200,6 @@ void NPC::buttonCallback(Node * pNode)
 						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->data->status = NpcStatus::normal;
 						if(isRetain)
 							QuestDispatcher::getInstance()->getNpc(a->targetNpc)->release();
-					}
-					if (a->type == QuestTypes::defeat && a->status == QuestStatus::commit) {
-						QuestDispatcher::getInstance()->unschedule("defeat");
 					}
 				}
 				//移除已完成任务

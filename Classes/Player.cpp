@@ -2611,7 +2611,11 @@ void Player::Playerhp_mp_Update(float dt)
 	if (bar != NULL)
 	{
 		BarManager::getInstance()->setPercent(bar->m_hp, curLevel_Maxhp, m_hp);
+		BarManager::getInstance()->setBarLabel(bar->l_hp, m_hp, curLevel_Maxhp);
 		BarManager::getInstance()->setPercent(bar->m_mp, curLevel_Maxmp, m_mp);
+		BarManager::getInstance()->setBarLabel(bar->l_mp, m_mp, curLevel_Maxmp);
+		BarManager::getInstance()->setPercent(bar->m_exp, 100 * m_playerlevel, m_exp);
+		BarManager::getInstance()->setBarLabel(bar->l_exp, m_exp, 100 * m_playerlevel);
 	}
 }
 
@@ -2699,9 +2703,9 @@ void Player::openAllUpdate()
 
 void Player::LevelUpdate(float dt)
 {
-	if (m_exp >= 100 * (m_playerlevel * m_playerlevel))//升级经验为等级二次方函数
+	if (m_exp >= 100 * (m_playerlevel))//升级经验为等级二次方函数
 	{
-		m_exp = m_exp - 100 * (m_playerlevel * m_playerlevel);
+		m_exp = m_exp - 100 * m_playerlevel;
 		//升级
 		m_playerlevel += 1;
 
@@ -2724,6 +2728,7 @@ void Player::LevelUpdate(float dt)
 			Animation* animation = AnimationUtil::createWithSingleFrameName("playerlevelup", 0.1f, 1);
 			Animate* animate = Animate::create(animation);
 			spritelevelup->runAction(Sequence::create(animate, call, NULL));
-		}		
+		}
+		return;
 	}
 }
