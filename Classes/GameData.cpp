@@ -23,6 +23,7 @@ GameData::GameData()
 	readNpcsDataFile();
 	readQuestsDataFile();
 	readQuestDlgsDataFile();
+	readPlayerDlgsDataFile();
 	readPlayerDataFile();
 }
 
@@ -114,6 +115,32 @@ QuestListData * GameData::getDataFromQuestsData(const int id)
 map<int, QuestDlgsData*> GameData::getDataFromQuestDlgsData()
 {
 	return m_mapQuestDlgsData;
+}
+
+void GameData::addDataToPlayerTaskDlgsData(PlayerTaskDlgsData* data)
+{
+	m_mapPlayerTaskDlgs[data->taskId] = data;
+}
+
+PlayerTaskDlgsData* GameData::getDataFromPlayerTaskDlgsData(int taskId)
+{
+	PlayerTaskDlgsData* data = NULL;
+	if (m_mapPlayerTaskDlgs.find(taskId) != m_mapPlayerTaskDlgs.end())
+		data = m_mapPlayerTaskDlgs[taskId];
+	return data;
+}
+
+void GameData::addDataToEnterSceneDlgsData(EnterSceneDlgsData* data)
+{
+	m_mapEnterSceneDlgs[data->sceneId] = data;
+}
+
+EnterSceneDlgsData* GameData::getDataFromEnterSceneDlgsData(int sceneId)
+{
+	EnterSceneDlgsData* data = NULL;
+	if (m_mapEnterSceneDlgs.find(sceneId) != m_mapEnterSceneDlgs.end())
+		data = m_mapEnterSceneDlgs[sceneId];
+	return data;
 }
 
 void GameData::readMonsDataFile()
@@ -348,6 +375,33 @@ void GameData::writePlayerData()
 	document.AddMember("mp", player->m_mp, allocator);
 	document.AddMember("exp", player->m_exp, allocator);
 
+
+	// 保存玩家任务对话状态
+	rapidjson::Value taskDlgsStatus(rapidjson::kArrayType);
+	for (auto task : m_mapPlayerTaskDlgs)
+	{
+		auto taskDlg = task.second;
+		rapidjson::Value taskObject(rapidjson::kObjectType);
+		taskObject.AddMember("taskId", taskDlg->taskId, allocator);
+		taskObject.AddMember("isSaidAcTsDlgs", taskDlg->isSaidAcTsDlgs, allocator);
+		taskObject.AddMember("isSaidCmTsDlgs", taskDlg->isSaidCmTsDlgs, allocator);
+		taskObject.AddMember("isSaidFiTsDlgs", taskDlg->isSaidFiTsDlgs, allocator);
+		taskDlgsStatus.PushBack(taskObject, allocator);
+	}
+	document.AddMember("taskDlgsStatus", taskDlgsStatus, allocator);
+
+	// 保存玩家进入场景对话状态
+	rapidjson::Value etSceneDlgsStatus(rapidjson::kArrayType);
+	for (auto etScene : m_mapEnterSceneDlgs)
+	{
+		auto dlg = etScene.second;
+		rapidjson::Value etSceneObject(rapidjson::kObjectType);
+		etSceneObject.AddMember("sceneId", dlg->sceneId, allocator);
+		etSceneObject.AddMember("isSaid", dlg->isSaid, allocator);
+		etSceneDlgsStatus.PushBack(etSceneObject, allocator);
+	}
+	document.AddMember("etSceneDlgsStatus", etSceneDlgsStatus, allocator);
+
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	document.Accept(writer);
@@ -384,6 +438,102 @@ void GameData::readPlayerDataFile()
 		data->mp = value["mp"].GetDouble();
 		data->exp = value["exp"].GetDouble();
 		playerData = data;
+
+		// 读取玩家对话数据
+		if (value.HasMember("taskDlgsStatus"))
+		{
+			const rapidjson::Value& taskDlgs = value["taskDlgsStatus"];
+			for (int i = 0, size = taskDlgs.Size(); i < size; i++)
+			{
+				const rapidjson::Value& object = taskDlgs[i];
+				auto taskData = m_mapPlayerTaskDlgs.at(object["taskId"].GetInt());
+				taskData->isSaidAcTsDlgs = object["isSaidAcTsDlgs"].GetBool();
+				taskData->isSaidFiTsDlgs = object["isSaidFiTsDlgs"].GetBool();
+			}
+		}
+		// 读取玩家进入地图对话数据
+		if (value.HasMember("etSceneDlgsStatus"))
+		{
+			const rapidjson::Value& dlgs = value["etSceneDlgsStatus"];
+			for (int i = 0, size = dlgs.Size(); i < size; i++)
+			{
+				const rapidjson::Value& object = dlgs[i];
+				auto data = m_mapEnterSceneDlgs.at(object["sceneId"].GetInt());
+				data->isSaid = object["isSaid"].GetBool();
+			}
+		}
+	} while (0);
+}
+
+void GameData::readPlayerDlgsDataFile()
+{
+	std::string jsonPath = PLAYER_DLGS_DATA_PATH;
+	rapidjson::Document _doc;
+	ssize_t size = 0;
+	unsigned char *pBytes = NULL;
+	do {
+		pBytes = FileUtils::getInstance()->getFileData(jsonPath, "r", &size);
+		CC_BREAK_IF(pBytes == NULL || strcmp((char*)pBytes, "") == 0);
+		std::string load_str((const char*)pBytes, size);
+		CC_SAFE_DELETE_ARRAY(pBytes);
+		_doc.Parse<0>(load_str.c_str());
+		CC_BREAK_IF(_doc.HasParseError());
+		// 获取玩家任务对话
+		const rapidjson::Value& taskDlgs = _doc["TaskDlgs"];
+		for (int i = 0, size = taskDlgs.Size(); i < size; i++)
+		{
+			const rapidjson::Value& value = taskDlgs[i];
+			PlayerTaskDlgsData* data = new PlayerTaskDlgsData();
+			data->taskId = value["TaskId"].GetInt();
+			if (value.HasMember("AcceptTaskDlgs"))
+			{
+				const rapidjson::Value& acTaskDlgs = value["AcceptTaskDlgs"];
+				for (int j = 0, size = acTaskDlgs.Size(); j < size; j++)
+					data->acceptTaskDlgs.push_back(acTaskDlgs[j].GetString());
+			}
+			if (value.HasMember("CommitTaskDlgs"))
+			{
+				const rapidjson::Value& cmTaskDlgs = value["CommitTaskDlgs"];
+				for (int j = 0, size = cmTaskDlgs.Size(); j < size; j++)
+					data->commitTaskDlgs.push_back(cmTaskDlgs[j].GetString());
+			}
+			if (value.HasMember("FinishTaskDlgs"))
+			{
+				const rapidjson::Value& fiTaskDlgs = value["FinishTaskDlgs"];
+				for (int j = 0, size = fiTaskDlgs.Size(); j < size; j++)
+					data->finishTaskDlgs.push_back(fiTaskDlgs[j].GetString());
+			}
+			data->isSaidAcTsDlgs = false;
+			data->isSaidCmTsDlgs = false;
+			data->isSaidFiTsDlgs = false;
+			data->isSaying = false;
+			addDataToPlayerTaskDlgsData(data);
+		}
+		// 获取进入场景对话
+		const rapidjson::Value& sceneDlgs = _doc["EnterSceneDlgs"];
+		for (int i = 0, size = sceneDlgs.Size(); i < size; i++)
+		{
+			const rapidjson::Value& value = sceneDlgs[i];
+			EnterSceneDlgsData* data = new EnterSceneDlgsData();
+			data->sceneId = value["SceneId"].GetInt();
+			// 无法进入场景时对话
+			if (value.HasMember("CannotEnterDlgs"))
+			{
+				const rapidjson::Value& cannotEnterDlgs = value["CannotEnterDlgs"];
+				for (int j = 0, size = cannotEnterDlgs.Size(); j < size; j++)
+					data->cannotEnterDlgs.push_back(cannotEnterDlgs[j].GetString());
+			}
+			// 进入场景时对话
+			if (value.HasMember("EnterSceneDlgs"))
+			{
+				const rapidjson::Value& etSceneDlgs = value["EnterSceneDlgs"];
+				for (int j = 0, size = etSceneDlgs.Size(); j < size; j++)
+					data->enterSceneDlgs.push_back(etSceneDlgs[j].GetString());
+				data->isSaid = false;
+				addDataToEnterSceneDlgsData(data);
+			}
+			data->isSaid = false;
+		}
 	} while (0);
 }
 

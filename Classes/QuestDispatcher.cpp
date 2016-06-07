@@ -1,5 +1,7 @@
 #include "QuestDispatcher.h"
 #include "GameScene.h"
+#include "Talk.h"
+
 QuestDispatcher * QuestDispatcher::getInstance()
 {
 	static QuestDispatcher* instance = NULL;
@@ -22,6 +24,15 @@ QuestDispatcher::QuestDispatcher()
 	}
 	for (auto& a : this->getQuestListVec()) {
 		if (a->type == QuestTypes::defeat && a->status == QuestStatus::active) {
+			//获取玩家任务对话
+			auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(a->id);
+			if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
+			{
+				if (playerDlgs->acceptTaskDlgs.empty() || playerDlgs->acceptTaskDlgs.at(0) == "NULL")
+					return;
+				auto talk = Talk::create(playerDlgs->acceptTaskDlgs, playerDlgs->taskId, Talk_AcTask);
+				Player::getInstance()->getTiledMap()->addChild(talk, 100);
+			}
 			schedule(schedule_selector(QuestDispatcher::questsUpdate));
 		}
 	}
@@ -165,7 +176,18 @@ void QuestDispatcher::questsUpdate(float dt)
 			if (i->mapID == GameScene::sceneId) {
 				if (MonsterManager::getInstance()->getMonsterVec().size() == 0) {
 					i->status = QuestStatus::commit;
-					if (i->id == 4) {	//如果是事先激活的4号任务
+					// 如果存在对话
+					auto taskDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(i->id);
+					if (taskDlgs && !taskDlgs->isSaying && !taskDlgs->isSaidCmTsDlgs)
+					{
+						if (taskDlgs->commitTaskDlgs.empty() || taskDlgs->commitTaskDlgs.at(0) == "NULL")
+							return;
+						taskDlgs->isSaying = true;
+						auto talk = Talk::create(taskDlgs->commitTaskDlgs, taskDlgs->taskId, Talk_CmTask);
+						Player::getInstance()->getTiledMap()->addChild(talk, 666);
+					}
+					if (i->id == 4)
+					{
 						i->status = QuestStatus::finish;
 						temp = i;
 					}
@@ -173,13 +195,17 @@ void QuestDispatcher::questsUpdate(float dt)
 			}
 		}
 	}
-	if(temp)
-		for (auto j = activeQuestList.begin(); j != activeQuestList.end(); ++j) {
-			if (*j == temp) {
+	if (temp)
+	{
+		for (auto j = activeQuestList.begin(); j != activeQuestList.end(); ++j)
+		{
+			if (*j == temp)
+			{
 				activeQuestList.erase(j);
 				break;
 			}
 		}
+	}
 	if (!isFind)
 		unschedule(schedule_selector(QuestDispatcher::questsUpdate));
 }

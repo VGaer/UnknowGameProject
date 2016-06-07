@@ -33,7 +33,8 @@ public:
 
 	void ChangeState(State* newState) {
 		preState = currState;
-		currState->Exit(owner);
+		if (currState)
+			currState->Exit(owner);
 		currState = newState;
 		currState->Enter(owner);
 	}

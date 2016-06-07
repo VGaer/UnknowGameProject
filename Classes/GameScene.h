@@ -29,6 +29,7 @@ public:
 	void addNpc(vector<NpcsData*> nData);
 	void addMonster(const std::string& name, Point pos);  // 还需要更改详细属性
 	void loadPlistFile(); // 应该放在游戏开始界面加载。只加载一次
+	void firstEnterTalk();
 	static int sceneId;
 private:
 	// 基本对象

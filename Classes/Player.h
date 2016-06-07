@@ -76,6 +76,7 @@ public:
 	void keyPressed(EventKeyboard::KeyCode keyCode, Event* event);
 	void keyReleased(EventKeyboard::KeyCode keyCode, Event* event);
 	void setTiledMap(TMXTiledMap* map);
+	TMXTiledMap* getTiledMap();
 	Vec2 tiledCoordForPosition(Vec2 pos);
 	bool setPlayerPosition(Vec2 position);
 	bool IsSussesfulForsetRemoteSkillPos(Vec2 position);
@@ -105,7 +106,11 @@ public:
 	float m_exp; //Ö÷½Ç¾­Ñé
 	void LevelUpdate(float dt);
 	std::string gamescenedir;
+	void setEnableAction(bool);
+	void playStaticAnim();
 private:
+	bool isAcceptInput;
+	bool isInChangeScenePoint;
 	TMXTiledMap* m_map;
 	std::vector<int> vec;
 	std::vector<int> vecskill;

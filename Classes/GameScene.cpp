@@ -10,6 +10,7 @@
 #include <sstream>
 #include "G2U.h"
 #include "MonsterBarManager.h"
+#include "Talk.h"
 
 int GameScene::sceneId = 2;
 
@@ -220,6 +221,7 @@ bool GameScene::init(int sceneId)
 
 	scheduleUpdate();
 	this->schedule(schedule_selector(GameScene::MonHP_MPBar_Update), 0.2f);
+	firstEnterTalk();
 	return true;
 }
 
@@ -524,5 +526,15 @@ void GameScene::MonHP_MPBar_Update(float dt)
 			BarManager::getInstance()->setPercent(monbar, monster->monMaxHp, monster->monsdata.hp);
 			BarManager::getInstance()->setBarLabel(monbarLabel, monster->monsdata.hp, monster->monMaxHp);
 		}
+	}
+}
+
+void GameScene::firstEnterTalk()
+{
+	auto enterDlgs = GameData::getInstance()->getDataFromEnterSceneDlgsData(sceneId);
+	if (enterDlgs && !enterDlgs->isSaid)
+	{
+		auto talk = Talk::create(enterDlgs->enterSceneDlgs, enterDlgs->sceneId, Talk_EtScene);
+		m_map->addChild(talk, 999);
 	}
 }

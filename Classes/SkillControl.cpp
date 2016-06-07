@@ -20,11 +20,9 @@ void SkillControl::useSkill(int id)
 bool SkillControl::skill_laser()
 {
 	float time = skillCounter[skillType_laser]->getCurTime();
-	log("time %f",time);
 	// 判断是否在cd范围内
 	if (time > 0 && time < Laser::attr_inter)
 		return false;
-	log("----------");
 
 	skillCounter[skillType_laser]->start();
 	auto laser = Laser::create();
@@ -79,10 +77,11 @@ bool SkillControl::skill_fire()
 	auto fire = Fire::create();
 	fire->setAnchorPoint(Vec2(0, 0.5));
 	// 数值设定
-	fire->attr_damage = 10;
+	fire->attr_damage = 7;
 	fire->attr_moveSpeed = 6.5;
 	fire->attr_duration = 2.5;
 	fire->attr_direction = m_player->getPlayerDir();
+	float attackInterval = 0.2f;           // 攻击间隔
 	auto map = m_player->getParent();
 	map->addChild(fire, map->getChildren().size());
 	Point pos = m_player->getPosition();
@@ -109,6 +108,7 @@ bool SkillControl::skill_fire()
 		break;
 	}
 	fire->setPosition(pos);
+	fire->schedule(schedule_selector(Fire::collideUpdate), attackInterval);
 	fire->scheduleUpdate();
 
 	return true;

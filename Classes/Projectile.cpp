@@ -83,26 +83,44 @@ bool Fire::init()
 void Fire::update(float dt)
 {
 	this->dt += dt;
+	setVertexZ(-(getPositionY() + 64) / 64.f);
+	// 如果物体没有爆炸，继续移动
+	if (isBombing)
+	{
+		unschedule(schedule_selector(Fire::update));
+		return;
+	}
+	if (this->dt >= attr_duration)
+	{
+		removeFromParent();
+		return;
+	}
+	Vec2 move(0, 0);
+	if (attr_direction == em_up)
+		move.y = attr_moveSpeed;
+	else if (attr_direction == em_down)
+		move.y = -attr_moveSpeed;
+	else if (attr_direction == em_left)
+		move.x = -attr_moveSpeed;
+	else if (attr_direction == em_right)
+		move.x = attr_moveSpeed;
+	Point afterPos(getPosition() + move);
+	setPosition(afterPos);
+}
+
+void Fire::collideUpdate(float dt)
+{
 	// 碰撞检测
 	Vector<Monster*> monsVec = MonsterManager::getInstance()->getMonsterVec();
 	for (auto mons : monsVec)
 	{
 		if (mons->getBoundingBox().intersectsRect(getBoundingBox()))
 		{
-			int i;
-			for (i = collidedVector.size() - 1; i >= 0; i--)
-			{
-				if (collidedVector.at(i) == mons)
-					break;
-			}
-			if (i < 0)
-			{
-				if (!isBombing)
-					bomb();
-				mons->cmd_hurt(attr_damage);
-				mons->isAttackedByProjectile = true;
-				collidedVector.pushBack(mons);
-			}
+			if (!isBombing)
+				bomb();
+			mons->cmd_hurt(attr_damage);
+			mons->isAttackedByProjectile = true;
+			collidedVector.pushBack(mons);
 		}
 	}
 	// 判断是否撞到障碍物
@@ -111,27 +129,6 @@ void Fire::update(float dt)
 	{
 		if (!isBombing)
 			bomb();
-	}
-
-	// 如果物体没有爆炸，继续移动
-	if (!isBombing)
-	{
-		if (this->dt >= attr_duration)
-		{
-			removeFromParent();
-			return;
-		}
-		Vec2 move(0, 0);
-		if (attr_direction == em_up)
-			move.y = attr_moveSpeed;
-		else if (attr_direction == em_down)
-			move.y = -attr_moveSpeed;
-		else if (attr_direction == em_left)
-			move.x = -attr_moveSpeed;
-		else if (attr_direction == em_right)
-			move.x = attr_moveSpeed;
-		Point afterPos(getPosition() + move);
-		setPosition(afterPos);
 	}
 }
 

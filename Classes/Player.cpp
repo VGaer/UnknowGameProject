@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "GameScene.h"
 #include "ChangeScenePointManager.h"
-
+#include "Talk.h"
 
 Player::Player()
 {
@@ -117,11 +117,15 @@ bool Player::init()
 
 	gamescenedir = "none";
 
+	isAcceptInput = true;
+	isInChangeScenePoint = false;
 	return true;
 }
 
 void Player::update(float dt)
 {
+	if (!isAcceptInput)
+		return;
 	/*如果玩家超出了地图边界*/
 	if (this->getPositionX() - getContentSize().width / 2 <= 0)
 	{
@@ -1788,19 +1792,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)//run状态下一帧使用basepoke技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:
@@ -1835,19 +1843,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)//run状态下一帧使用swordwave技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:
@@ -1874,19 +1886,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)//run状态下一帧使用雷电技能时，使vec[0](如果有run状态，vec[0]永远代表着run状态)变为walk
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:
@@ -1913,19 +1929,23 @@ void Player::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
 					switch (PlayerState)
 					{
 					case enum_doubleup: {
-						vec[0] = enum_up;
+						if (vec.size() == 1)
+							vec[0] = enum_up;
 						break;
 					}
 					case enum_doubledown: {
-						vec[0] = enum_down;
+						if (vec.size() == 1)
+							vec[0] = enum_down;
 						break;
 					}
 					case enum_doubleleft: {
-						vec[0] = enum_left;
+						if (vec.size() == 1)
+							vec[0] = enum_left;
 						break;
 					}
 					case enum_doubleright: {
-						vec[0] = enum_right;
+						if (vec.size() == 1)
+							vec[0] = enum_right;
 						break;
 					}
 					default:
@@ -2024,6 +2044,11 @@ void Player::setTiledMap(TMXTiledMap* map)
 {
 	m_map = map;
 	m_map->addChild(this, m_map->getChildren().size());
+}
+
+TMXTiledMap* Player::getTiledMap()
+{
+	return m_map;
 }
 
 Vec2 Player::tiledCoordForPosition(Vec2 pos)
@@ -2659,7 +2684,17 @@ void Player::ChangSceneIdUpdate(float dt)
 				int Id = SceneId.asInt();
 				/*判断是否达成切换地图的条件*/
 				if (ChangeScenePointManager::getInstance()->IsReachCondition(Id) == false)
+				{
+					auto dlgs = GameData::getInstance()->getDataFromEnterSceneDlgsData(Id);
+					if (!isInChangeScenePoint && dlgs && !dlgs->cannotEnterDlgs.empty())
+					{
+						auto talk = Talk::create(dlgs->cannotEnterDlgs, dlgs->sceneId, -1);
+						m_map->addChild(talk, 999);
+						isInChangeScenePoint = true;
+					} 
 					return;
+				}
+
 
 				if (QuestDispatcher::getInstance()->getParent() != NULL) {
 					QuestDispatcher::getInstance()->removeFromParentAndCleanup(false);
@@ -2679,11 +2714,13 @@ void Player::ChangSceneIdUpdate(float dt)
 				Vec2.clear();
 				/*一定要先Pop本场景,再创建新场景，这样才不会把新场景怪物也Pop了*/
 				Scene* sc = NULL;
-				sc = GameScene::createSceneWithId(Id);	
+				sc = GameScene::createSceneWithId(Id);
 				auto reScene = TransitionJumpZoom::create(0.0f, sc);
-				Director::getInstance()->replaceScene(sc);		
+				Director::getInstance()->replaceScene(sc);
 			}
 		}
+		else
+			isInChangeScenePoint = false;
 	}
 }
 
@@ -2731,4 +2768,59 @@ void Player::LevelUpdate(float dt)
 		}
 		return;
 	}
+}
+
+void Player::setEnableAction(bool isEnable)
+{
+	isAcceptInput = isEnable;
+	if (!isEnable)
+		playStaticAnim();
+}
+
+void Player::playStaticAnim()
+{
+	switch (PlayerDir)
+	{
+	case em_up: {
+		Animation* animation = AnimationUtil::createWithSingleFrameName("ustatic", 0.2f, -1);
+		Animate* animate = Animate::create(animation);
+		if (PlayerState != enum_static) {
+			this->getPlayerSprite()->stopAllActions();
+			this->getPlayerSprite()->runAction(animate);
+		}
+		break;
+	}
+	case em_down: {
+		Animation* animation = AnimationUtil::createWithSingleFrameName("dstatic", 0.2f, -1);
+		Animate* animate = Animate::create(animation);
+		if (PlayerState != enum_static) {
+			this->getPlayerSprite()->stopAllActions();
+			this->getPlayerSprite()->runAction(animate);
+		}
+		break;
+	}
+	case em_left: {
+		Animation* animation = AnimationUtil::createWithSingleFrameName("hstatic", 0.2f, -1);
+		Animate* animate = Animate::create(animation);
+		if (PlayerState != enum_static) {
+			this->getPlayerSprite()->stopAllActions();
+			this->getPlayerSprite()->setScaleX(m_player_magnification);
+			this->getPlayerSprite()->runAction(animate);
+		}
+		break;
+	}
+	case em_right: {
+		Animation* animation = AnimationUtil::createWithSingleFrameName("hstatic", 0.2f, -1);
+		Animate* animate = Animate::create(animation);
+		if (PlayerState != enum_static) {
+			this->getPlayerSprite()->stopAllActions();
+			this->getPlayerSprite()->setScaleX(-m_player_magnification);
+			this->getPlayerSprite()->runAction(animate);
+		}
+		break;
+	}
+	default:
+		break;
+	}
+	PlayerState = enum_static;
 }

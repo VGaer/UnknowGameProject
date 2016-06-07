@@ -67,9 +67,9 @@ void StartGameScene::onEnterTransitionDidFinish()
 {
 	Layer::onEnterTransitionDidFinish();
 	//log("StartGameScene onEnterTransitionDidFinish");
-	if (UserDefault::getInstance()->getBoolForKey(MUSIC_KEY)) {
+	/*if (UserDefault::getInstance()->getBoolForKey(MUSIC_KEY)) {
 		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/startgamebgm.mp3", true);
-	}
+	}*/
 }
 
 void StartGameScene::onExit()
@@ -101,9 +101,9 @@ void StartGameScene::menuItemHelpCallback(Ref* pSender)
 void StartGameScene::menuItemStartCallback(Ref* pSender)
 {
 	if (startmenuItem_counter->getCurTime() == 0.0f || startmenuItem_counter->getCurTime() > 10.0f){
-		if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
+		/*if (UserDefault::getInstance()->getBoolForKey(SOUND_KEY)) {
 			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/Blip.wav");
-		}
+		}*/
 		startmenuItem_counter->start();
 
 		Scene* sc = NULL;

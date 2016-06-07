@@ -11,7 +11,8 @@ using namespace std;
 #define NPCS_DATA_PATH "JsonText/NpcDlgs.json"	// NPC数据文件路径
 #define QUESTS_DATA_PATH "JsonText/QuestList.json"	// 任务数据文件路径
 #define QDLGS_DATA_PATH "JsonText/QuestDlgs.json"	// 任务对话数据文件路径
-#define PLAYER_DATA_PATH "JsonText/PlayerData.json" // 玩家数据文件路径
+#define PLAYER_DATA_PATH "JsonText/PlayerData.json" // 玩家存档文件路径
+#define PLAYER_DLGS_DATA_PATH "JsonText/PlayerDlgs.json" // 玩家对话数据路径
 
 struct NpcsData {
 	int id;				// id
@@ -110,6 +111,26 @@ struct PlayerData
 	float exp;//当前经验
 };
 
+struct PlayerTaskDlgsData
+{
+	int taskId;
+	vector<string> acceptTaskDlgs;	// 接受任务时对话
+	vector<string> commitTaskDlgs;  // 可提交任务时对话
+	vector<string> finishTaskDlgs;	// 完成任务时对话
+	bool isSaidAcTsDlgs;
+	bool isSaidCmTsDlgs;
+	bool isSaidFiTsDlgs;
+	bool isSaying;
+};
+
+struct EnterSceneDlgsData
+{
+	int sceneId;
+	vector<string> cannotEnterDlgs; // 无法进入场景时对话
+	vector<string> enterSceneDlgs;  // 第一次进入场景时对话
+	bool isSaid;
+};
+
 class GameData
 {
 public:
@@ -123,6 +144,8 @@ public:
 	map<int, QuestListData*> m_mapQuestsData;
 	map<int, QuestDlgsData*> m_mapQuestDlgsData;
 	map<int, vector<NpcsData*>> m_mapIDtoNpc;
+	map<int, PlayerTaskDlgsData*> m_mapPlayerTaskDlgs;
+	map<int, EnterSceneDlgsData*> m_mapEnterSceneDlgs;
 public:
 	// 加入一条怪物数据
 	void addDataToMonsData(MonsData* data);
@@ -141,6 +164,11 @@ public:
 	void addDataToQuestDlgsData(QuestDlgsData* data);
 	// 获取一条任务对话数据
 	map<int, QuestDlgsData*> getDataFromQuestDlgsData();
+	// 加入、获取玩家对话
+	void addDataToPlayerTaskDlgsData(PlayerTaskDlgsData* data);		// 加入一条玩家对话数据
+	PlayerTaskDlgsData* getDataFromPlayerTaskDlgsData(int taskId);	// 获取一条玩家对话数据
+	void addDataToEnterSceneDlgsData(EnterSceneDlgsData* data);		// 加入一条进入场景对话
+	EnterSceneDlgsData* getDataFromEnterSceneDlgsData(int sceneId);	// 获取一条进入场景对话
 	// 保存玩家数据
 	void writePlayerData();
 	// 获取玩家数据
@@ -157,7 +185,8 @@ private:
 	void readNpcsDataFile();
 	void readQuestsDataFile();
 	void readQuestDlgsDataFile();
-	void readPlayerDataFile();
+	void readPlayerDataFile();			// 玩家存档文件
+	void readPlayerDlgsDataFile();		// 玩家对话数据文件
 private:
 	PlayerData* playerData;
 	map<int, QuestListData*> m_mapQuestSaveData;

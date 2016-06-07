@@ -2,6 +2,7 @@
 #include "G2U.h"
 #include "PopManager.h"
 #include "GameScene.h"
+#include "Talk.h"
 
 NPC* NPC::create(const std::string& name)
 {
@@ -42,6 +43,8 @@ bool NPC::init(const std::string& name)
 	listener->onTouchBegan = CC_CALLBACK_2(NPC::onTouchBegan, this);
 	listener->onTouchEnded = CC_CALLBACK_2(NPC::onTouchEnded, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	m_timeCounter = TimeCounter::create();
+	addChild(m_timeCounter);
 	return true;
 }
 
@@ -64,7 +67,6 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 			}
 		}
 	}
-	log("refcount:%d", getReferenceCount());
 	return true;
 }
 
@@ -153,6 +155,9 @@ void NPC::buttonCallback(Node * pNode)
 	switch (btnTag)
 	{
 	case 0:
+		if (!(m_timeCounter->getCurTime() == 0 || m_timeCounter->getCurTime() > 0.31))
+			return;
+		m_timeCounter->start();
 		log("page:%d", page);
 		runAction(a);
 		if (items)
@@ -192,6 +197,15 @@ void NPC::buttonCallback(Node * pNode)
 					QuestDispatcher::getInstance()->openUpdate();
 					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
 				}
+				//获取玩家任务对话
+				auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
+				if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
+				{
+					if (playerDlgs->acceptTaskDlgs.empty() || playerDlgs->acceptTaskDlgs.at(0) == "NULL")
+						return;
+					auto talk = Talk::create(playerDlgs->acceptTaskDlgs, playerDlgs->taskId, Talk_AcTask);
+					m_map->addChild(talk, 100);
+				}
 			}
 			//完成任务
 			else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(this, items->getQuestTag()) == QuestStatus::commit) {
@@ -206,6 +220,15 @@ void NPC::buttonCallback(Node * pNode)
 				items->getMenuItems()->getChildByTag(items->getQuestTag())->removeFromParent();
 				items->setBtnPos(0.3);
 				QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::complete, items->getQuestTag());
+				//获取玩家任务对话
+				auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
+				if (playerDlgs && !playerDlgs->isSaidFiTsDlgs)
+				{
+					if (playerDlgs->finishTaskDlgs.empty() || playerDlgs->finishTaskDlgs.at(0) == "NULL")
+						return;
+					auto talk = Talk::create(playerDlgs->finishTaskDlgs, playerDlgs->taskId, Talk_FiTask);
+					m_map->addChild(talk, 100);
+				}
 			}
 		}
 		break;
