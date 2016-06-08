@@ -85,10 +85,10 @@ struct QuestListData {
 	int type;		//任务类型(0:跑腿，1：杀怪)
 	int status;		//激活状态 （0：未接、1：激活、2：完成、3：可提交）
 	int mapID;
-	bool isSameMap;		//是否与发起人在同一个地图
 	vector<int> mons_id;	//任务目标（如果有）
 	vector<int> forgeID;
 	string targetNpc; //任务目标（如果有）
+	string launchNpc; //任务发起人
 };
 
 struct QuestDlgsData {
@@ -96,7 +96,6 @@ struct QuestDlgsData {
 	string start;	//任务开始前对话
 	string active;	//任务激活后对话
 	string finish;	//任务完成后对话
-	string answer;	//目标NPC回复（如果有）
 };
 
 struct PlayerData

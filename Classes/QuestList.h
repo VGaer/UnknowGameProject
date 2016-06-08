@@ -22,7 +22,7 @@ public:
 
 	virtual void setTitle(const string& title, Color3B color = Color3B::YELLOW, int fontsize = 20, string font = "Arial");
 	// padding和paddingTop文字内容两边的空白区 
-	virtual void setContentText(const string& text, int fontsize = 20, int padding = 50, int paddintTop = 100, string font = "Arial", Color3B color = Color3B::YELLOW);
+	virtual void setContentText(const string& text, int fontsize = 20, int padding = 30, int paddintTop = 100, string font = "Arial", Color3B color = Color3B::ORANGE);
 	virtual void setCallbackFunc(Ref* target, SEL_CallFuncN callfun);
 	void onMouseMove(Event* _event);
 	void setQuestTag(int sender);

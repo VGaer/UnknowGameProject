@@ -53,6 +53,7 @@ public:
 	// 获取已接任务容器
 	vector<QuestListData*>& getQuestListVec();
 	map<int, QuestDlgsData*> getQuestDlgs();
+	map<int, QuestListData*>& getmData() { return mData; }
 	void mNpcClear();
 private:
 	map<string, NPC*> mNpc;

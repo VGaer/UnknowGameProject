@@ -227,7 +227,7 @@ bool GameScene::init(int sceneId)
 
 void GameScene::setMapInfo(int id)
 {
-
+	GameScene::sceneId = id;
 	if (SceneIdManager::getInstance()->map_sceneIdToSceneData.find(id) != SceneIdManager::getInstance()->map_sceneIdToSceneData.end())
 	{
 		m_map = TMXTiledMap::create(SceneIdManager::getInstance()->map_sceneIdToSceneData[id].name);

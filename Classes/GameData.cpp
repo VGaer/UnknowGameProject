@@ -322,7 +322,7 @@ void GameData::readQuestsDataFile()
 			}
 
 			data->targetNpc = value["targetNpc"].GetString();
-			data->isSameMap = value["isSameMap"].GetBool();
+			data->launchNpc = value["launchNpc"].GetString();
 			addDataToQuestsData(data);
 		}
 	} while (0);
@@ -353,7 +353,6 @@ void GameData::readQuestDlgsDataFile()
 			data->start = value["start"].GetString();
 			data->active = value["active"].GetString();
 			data->finish = value["finish"].GetString();
-			data->answer = value["answer"].GetString();
 			addDataToQuestDlgsData(data);
 		}
 	} while (0);
@@ -566,7 +565,8 @@ void GameData::writeQuestData()
 		str.SetString(second->targetNpc.c_str(), second->targetNpc.length(), allocator);
 		object.AddMember("targetNpc", str, allocator);
 
-		object.AddMember("isSameMap", second->isSameMap, allocator);
+		str.SetString(second->launchNpc.c_str(), second->launchNpc.length(), allocator);
+		object.AddMember("launchNpc", str, allocator);
 
 		rapidjson::Value farray(rapidjson::kArrayType);
 		for (auto& j : second->forgeID) {
@@ -632,7 +632,7 @@ void GameData::readQuestSaveDataFile()
 				data->forgeID.push_back(fArray[i].GetInt());
 			}
 			data->targetNpc = value["targetNpc"].GetString();
-			data->isSameMap = value["isSameMap"].GetBool();
+			data->launchNpc = value["launchNpc"].GetString();
 			m_mapQuestSaveData[data->id] = data;
 		}
 	} while (0);
