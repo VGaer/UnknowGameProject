@@ -46,40 +46,28 @@ bool Talk::init(vector<string>strVec, int id, int idType)
 
 void Talk::addTouchEventListener()
 {
+	// 触摸监听
 	listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = [=](Touch* touch, Event* event){
 		return true;
 	};
 	listener->onTouchEnded = [&](Touch* touch, Event* event){
-		if (isShowFinish)
-		{
-			// 翻页
-			curPage++;			
-			if (curPage < strVec.size())
-			{
-				schedule(schedule_selector(Talk::showFont, this), 0.1);
-				isShowFinish = false;
-			}			
-			// 对话结束
-			else
-			{
-				_eventDispatcher->removeEventListener(listener);
-				setSceneLockState(false);
-				setDlgsIsSaid();
-				removeFromParent();
-			}				
-		}
-		// 显示所有文字
-		else
-		{
-			curTextLen = 0;
-			unschedule(schedule_selector(Talk::showFont));			
-			text->setString(gb2312_to_utf8(strVec.at(curPage)));
-			isShowFinish = true;
-		}
+		opPage();
 	};
 	listener->setSwallowTouches(true);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	// 键盘监听
+	auto keyboardListener = EventListenerKeyboard::create();
+	keyboardListener->onKeyPressed = CC_CALLBACK_2(Talk::keyPressed, this);
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+}
+
+void Talk::keyPressed(EventKeyboard::KeyCode keyCode, Event* event)
+{
+	if (keyCode == EventKeyboard::KeyCode::KEY_J || keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+	{
+		opPage();
+	}
 }
 
 void Talk::setSceneLockState(bool s)
@@ -133,5 +121,35 @@ void Talk::setDlgsIsSaid()
 		break;
 	default:
 		break;
+	}
+}
+
+void Talk::opPage()
+{
+	if (isShowFinish)
+	{
+		// 翻页
+		curPage++;
+		if (curPage < strVec.size())
+		{
+			schedule(schedule_selector(Talk::showFont, this), 0.1);
+			isShowFinish = false;
+		}
+		// 对话结束
+		else
+		{
+			_eventDispatcher->removeEventListener(listener);
+			setSceneLockState(false);
+			setDlgsIsSaid();
+			removeFromParent();
+		}
+	}
+	// 显示所有文字
+	else
+	{
+		curTextLen = 0;
+		unschedule(schedule_selector(Talk::showFont));
+		text->setString(gb2312_to_utf8(strVec.at(curPage)));
+		isShowFinish = true;
 	}
 }

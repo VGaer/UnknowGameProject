@@ -11,8 +11,10 @@ struct SceneData
 	std::string name;
 	int Id;
 	int Level;//主角要求的等级
-	std::vector<int> Misson;//要求的任务清单
+	std::vector<int> Misson;//要求的任务完成清单
+	std::vector<int> MissonActive;//要求的任务active(接受)清单
 };
+
 
 class SceneIdManager
 {

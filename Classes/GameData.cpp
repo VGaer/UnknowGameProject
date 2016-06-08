@@ -306,6 +306,7 @@ void GameData::readQuestsDataFile()
 			QuestListData* data = new QuestListData();
 			const rapidjson::Value &value = pArray[i];  // value为一个对象
 			data->id = value["id"].GetInt();
+			data->level = value["level"].GetInt();
 			data->mapID = value["mapID"].GetInt();
 			data->title = value["title"].GetString();
 			data->instruct = value["instruct"].GetString();
@@ -554,6 +555,8 @@ void GameData::writeQuestData()
 		rapidjson::Value object(rapidjson::kObjectType);
 		object.AddMember("id", second->id, allocator);
 
+		object.AddMember("level", second->level, allocator);
+
 		str.SetString(second->title.c_str(), second->title.length(), allocator);
 		object.AddMember("title", str, allocator);
 
@@ -584,7 +587,7 @@ void GameData::writeQuestData()
 		}
 		object.AddMember("mons_id", marray, allocator);
 
-		object.AddMember("mapID", str, allocator);
+		object.AddMember("mapID", second->mapID, allocator);
 
 		object.AddMember("type", second->type, allocator);
 		document.PushBack(object, allocator);
@@ -619,10 +622,12 @@ void GameData::readQuestSaveDataFile()
 			QuestListData* data = new QuestListData();
 			const rapidjson::Value &value = pArray[i];  // value为一个对象
 			data->id = value["id"].GetInt();
+			data->level = value["level"].GetInt();
 			data->title = value["title"].GetString();
 			data->instruct = value["instruct"].GetString();
 			data->type = value["type"].GetInt();
 			data->status = value["status"].GetInt();
+			data->mapID = value["mapID"].GetInt();
 			const rapidjson::Value &mArray = value["mons_id"];
 			for (int i = 0; i < mArray.Size(); i++) {
 				data->mons_id.push_back(mArray[i].GetInt());

@@ -14,6 +14,8 @@ private:
 	bool IsReachLevel(int newSceneId);
 	//场景切换触发点主角是否完成所需任务
 	bool IsReachMission(int newSceneId);
+	//场景切换触发点主角必须接受所需任务
+	bool IsAcActiveMission(int newSceneId);
 };
 
 #endif

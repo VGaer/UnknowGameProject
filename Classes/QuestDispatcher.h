@@ -10,7 +10,8 @@ class NPC;
 enum QuestTypes
 {
 	search = 0,
-	defeat
+	defeat,
+	level
 };
 
 enum QuestStatus
@@ -39,10 +40,10 @@ public:
 	~QuestDispatcher();
 	void initQuestsDataWithID(const int id);
 	void initQuestDlgsData();
-	void initQuest(NPC* pSender);
-	int getQuestStatus(NPC* pSender, const int id);
-	int getQuestType(NPC* pSender, const int id);
-	QuestListData* getQuest(NPC* pSender, const int id);
+	void initQuestFromGameData();
+	int getQuestStatus(const int id);
+	int getQuestType(const int id);
+	QuestListData* getQuest(const int id);
 	void questsUpdate(float dt);
 	void openUpdate();
 	//任务所属NPC, 任务操作， 任务id
@@ -53,12 +54,12 @@ public:
 	// 获取已接任务容器
 	vector<QuestListData*>& getQuestListVec();
 	map<int, QuestDlgsData*> getQuestDlgs();
-	map<int, QuestListData*>& getmData() { return mData; }
+	map<int, QuestListData*>& getqData();
 	void mNpcClear();
 private:
 	map<string, NPC*> mNpc;
 	//任务列表容器
-	map<int, QuestListData*> mData;
+	map<int, QuestListData*> qData;
 	//任务对话容器
 	map<int, QuestDlgsData*> qDlgsdata;
 

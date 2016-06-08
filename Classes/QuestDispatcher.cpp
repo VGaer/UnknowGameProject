@@ -14,10 +14,14 @@ QuestDispatcher::QuestDispatcher()
 {
 	initQuestDlgsData();
 	map<int, QuestListData*> temp;
-	if (!GameData::getInstance()->isExistSaveDoc())
+	if (!GameData::getInstance()->isExistSaveDoc()) {
+		initQuestFromGameData();
 		temp = GameData::getInstance()->m_mapQuestsData;
-	else
+	}
+	else {
 		temp = GameData::getInstance()->getQuestSaveData();
+		qData = temp;
+	}
 	for (auto& i : temp) {
 		if (i.second->status == QuestStatus::active)
 			activeQuestList.push_back(i.second);
@@ -43,41 +47,24 @@ QuestDispatcher::~QuestDispatcher()
 }
 
 
-void QuestDispatcher::initQuestsDataWithID(const int id)
-{
-	mData[id] = (GameData::getInstance()->getDataFromQuestsData(id));
-}
-
 void QuestDispatcher::initQuestDlgsData()
 {
 	qDlgsdata = GameData::getInstance()->getDataFromQuestDlgsData();
 }
 
-
-void QuestDispatcher::initQuest(NPC* pSender)
+int QuestDispatcher::getQuestStatus(const int id)
 {
-	auto quest_id = pSender->getData()->quest_id;
-	for (int i = 0; i < quest_id.size(); i++) {
-		initQuestsDataWithID(quest_id[i]);
-	}
+	return qData[id]->status;
 }
 
-int QuestDispatcher::getQuestStatus(NPC* pSender, const int id)
+int QuestDispatcher::getQuestType(const int id)
 {
-	auto npc_id = pSender->getData()->id;
-	return mData[id]->status;
+	return qData[id]->type;
 }
 
-int QuestDispatcher::getQuestType(NPC* pSender, const int id)
+QuestListData* QuestDispatcher::getQuest(const int id)
 {
-	auto npc_id = pSender->getData()->id;
-	return mData[id]->type;
-}
-
-QuestListData* QuestDispatcher::getQuest(NPC* pSender, const int id)
-{
-	auto npc_id = pSender->getData()->id;
-	return mData[id];
+	return qData[id];
 }
 
 
@@ -86,22 +73,22 @@ void QuestDispatcher::QuestStatusControl(NPC * pSender, QuestControl ctr, const 
 	switch (ctr)
 	{
 	case accpet:
-		mData[id]->status = QuestStatus::active;
-		activeQuestList.push_back(mData[id]);
+		qData[id]->status = QuestStatus::active;
+		activeQuestList.push_back(qData[id]);
 		break;
 	case complete:
-		mData[id]->status = QuestStatus::finish;
+		qData[id]->status = QuestStatus::finish;
 		for (it = activeQuestList.begin(); it != activeQuestList.end(); it++) {
-			if (*it == mData[id]) {
+			if (*it == qData[id]) {
 				activeQuestList.erase(it);
 				break;
 			}
 		}
 		break;
 	case cancel:
-		mData[id]->status = QuestStatus::start;
+		qData[id]->status = QuestStatus::start;
 		for (it = activeQuestList.begin(); it != activeQuestList.end(); it++) {
-			if (*it == mData[id]) {
+			if (*it == qData[id]) {
 				activeQuestList.erase(it);
 			}
 		}
@@ -132,7 +119,7 @@ vector<QuestListData*> QuestDispatcher::getQuest(NPC* pSender)
 	auto id = pSender->getData()->quest_id;
 	vector<QuestListData*> temp;
 	for (auto i : id) {
-		temp.push_back(mData[i]);
+		temp.push_back(qData[i]);
 	}
 	return temp;
 }
@@ -176,16 +163,19 @@ void QuestDispatcher::questsUpdate(float dt)
 			if (i->mapID == GameScene::sceneId) {
 				if (MonsterManager::getInstance()->getMonsterVec().size() == 0) {
 					i->status = QuestStatus::commit;
-					// 如果存在对话
-					auto taskDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(i->id);
-					if (taskDlgs && !taskDlgs->isSaying && !taskDlgs->isSaidCmTsDlgs)
+					if (i->id == 4)
 					{
-						if (taskDlgs->commitTaskDlgs.empty() || taskDlgs->commitTaskDlgs.at(0) == "NULL")
-							return;
-						taskDlgs->isSaying = true;
-						auto talk = Talk::create(taskDlgs->commitTaskDlgs, taskDlgs->taskId, Talk_CmTask);
-						Player::getInstance()->getTiledMap()->addChild(talk, 666);
-					}
+						// 如果存在对话
+						auto taskDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(i->id);
+						if (taskDlgs && !taskDlgs->isSaying && !taskDlgs->isSaidCmTsDlgs)
+						{
+							if (taskDlgs->commitTaskDlgs.empty() || taskDlgs->commitTaskDlgs.at(0) == "NULL")
+								return;
+							taskDlgs->isSaying = true;
+							auto talk = Talk::create(taskDlgs->commitTaskDlgs, taskDlgs->taskId, Talk_CmTask);
+							Player::getInstance()->getTiledMap()->addChild(talk, 666);
+						}
+					}				
 					if (i->id == 4)
 					{
 						i->status = QuestStatus::finish;
@@ -214,4 +204,14 @@ void QuestDispatcher::openUpdate()
 {
 	/*schedule(CC_CALLBACK_1(QuestDispatcher::questsUpdate, QuestDispatcher::getInstance(), pSender), name);*/
 	schedule(schedule_selector(QuestDispatcher::questsUpdate));
+}
+
+map<int, QuestListData*>& QuestDispatcher::getqData()
+{
+	return qData;
+}
+
+void QuestDispatcher::initQuestFromGameData()
+{
+	qData = GameData::getInstance()->m_mapQuestsData;
 }

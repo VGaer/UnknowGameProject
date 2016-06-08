@@ -56,10 +56,14 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 	if (!bActive)
 	{
 		for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-			if (a->targetNpc == data->name && a->mapID == data->mapID && a->status != QuestStatus::finish) {
+			if (a->type == QuestTypes::search && a->targetNpc == data->name && a->mapID == data->mapID && a->status != QuestStatus::finish) {
 				a->status = QuestStatus::commit;
 				if(quests.find(a->id) == quests.end())
 					quests[a->id] = a;
+				bActive = true;
+			}
+			if (a->type == QuestTypes::level && a->targetNpc == data->name && a->mapID == data->mapID && a->level <= Player::getInstance()->m_playerlevel && a->status == QuestStatus::active) {
+				a->status = QuestStatus::commit;
 				bActive = true;
 			}
 		}
@@ -116,7 +120,7 @@ void NPC::questLayer()
 		forgeFlag = true;
 		auto key = i.first;
 		for (auto k : i.second->forgeID) {
-			if (QuestDispatcher::getInstance()->getQuestStatus(this, k) != QuestStatus::finish) {
+			if (QuestDispatcher::getInstance()->getqData()[k]->status != QuestStatus::finish) {
 				forgeFlag = false;
 				break;
 			}
@@ -161,29 +165,22 @@ void NPC::buttonCallback(Node * pNode)
 		PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false);
 		break;
 	case 1:
-		//if (data->status) {
-		//	//改变任务状态
-		//	for (auto& i : QuestDispatcher::getInstance()->getQuestListVec()) {
-		//		if (i->type == QuestTypes::search && i->targetNpc == data->name) {
-		//			i->status = QuestStatus::commit;
-		//		}
-		//	}
-		//	runAction(a);
-		//	PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false);
-		//}
 		if (items)
 		{
 			//选择任务并接受
-			if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(this, items->getQuestTag()) == QuestStatus::start) {
-				if (QuestDispatcher::getInstance()->getQuestType(this, items->getQuestTag()) == QuestTypes::search)
+			if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(items->getQuestTag()) == QuestStatus::start) {
+				if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::search)
 				{
 					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
 					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
 				}
-				else if (QuestDispatcher::getInstance()->getQuestType(this, items->getQuestTag()) == QuestTypes::defeat) {
-					auto tag = QuestDispatcher::getInstance()->getQuest(this, items->getQuestTag());
+				else if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::defeat) {
 					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
 					QuestDispatcher::getInstance()->openUpdate();
+					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+				}
+				else if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::level) {
+					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
 					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
 				}
 				//获取玩家任务对话
@@ -197,7 +194,7 @@ void NPC::buttonCallback(Node * pNode)
 				}
 			}
 			//完成任务
-			else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(this, items->getQuestTag()) == QuestStatus::commit) {
+			else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(items->getQuestTag()) == QuestStatus::commit) {
 				for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
 					if (a->type == QuestTypes::search && a->status == QuestStatus::commit && a->id == quests[items->getQuestTag()]->id && a->targetNpc != data->name)
 						return;
@@ -252,7 +249,7 @@ void NPC::ItemCallback(Node * pNode)
 		return;
 	}
 	//按任务状态产生对话
-	switch (QuestDispatcher::getInstance()->getQuestStatus(this, quests[btn]->id))
+	switch (QuestDispatcher::getInstance()->getQuestStatus(quests[btn]->id))
 	{
 	case QuestStatus::start:
 		item->getLabelTitle()->setString(gb2312_to_utf8(quests[btn]->title));
@@ -279,7 +276,6 @@ void NPC::ItemCallback(Node * pNode)
 void NPC::initDataWithName(const string & sender)
 {
 	data = GameData::getInstance()->getDataFromNpcsData(sender);
-	QuestDispatcher::getInstance()->initQuest(this);
 	//获取任务信息
 	auto temp = QuestDispatcher::getInstance()->getQuest(this);
 	for (auto i : temp) {

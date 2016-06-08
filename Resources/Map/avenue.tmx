@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="19">
- <tileset firstgid="1" name="backgroundave" tilewidth="64" tileheight="64" tilecount="49" columns="7">
-  <image source="backgroundave.png" width="448" height="448"/>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="26">
+ <tileset firstgid="1" name="backgroundave" tilewidth="64" tileheight="64" tilecount="91" columns="13">
+  <image source="avenue/background.png" width="832" height="448"/>
  </tileset>
- <tileset firstgid="50" name="tree" tilewidth="256" tileheight="320" tilecount="1" columns="1">
-  <image source="tree.png" width="256" height="320"/>
+ <tileset firstgid="92" name="tree" tilewidth="256" tileheight="320" tilecount="3" columns="3">
+  <image source="avenue/tree.png" width="896" height="320"/>
  </tileset>
- <tileset firstgid="51" name="meta_tiles" tilewidth="64" tileheight="64" tilecount="4" columns="4">
-  <image source="meta_tiles.png" width="280" height="70"/>
+ <tileset firstgid="95" name="changescene" tilewidth="64" tileheight="64" tilecount="8" columns="8">
+  <image source="changescene.png" width="560" height="70"/>
   <tile id="0">
    <properties>
     <property name="Collidable" value="true"/>
@@ -36,7 +36,7 @@
    <property name="cc_vertexz" value="-31"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <layer name="tree" width="35" height="30">
@@ -44,23 +44,24 @@
    <property name="cc_vertexz" value="automatic"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJzt00ENAAAIAzE04V8cKshIaBXscauCjE4P4AQd8IneuUiXsM/P+GYArMgA+w==
+   eJxjYMAEsVjEqAGINZcW9pNqZhwN3EAMoFXYDxcwGj7UATED7YBRMGzBaNoaBaNg6IDR/Dq8wGh8joJRMAoGEwAAOjkD/Q==
   </data>
  </layer>
  <layer name="barrier" width="35" height="30">
   <data encoding="base64" compression="zlib">
-   eJxjYKAMmGHBwxmYDrQD6ATo5U9jKB4FIxsQkw5GSt4bSDDSw3i03BsFIxmMpsuhAYZzOT2Y0t9gcssoIB7QI38M5zwIAyZImBIAACobBVE=
+   eJztlGEKwCAIRrtp2+5/iBHtxwjRMueSvgcSlJppmhJNfoSjnF+EcHY9fkf0OP12z8LnqbC1uHeW3KwSve/UMBoLZW+dnx2Jlscv/ySoSDnWzL9I4I/9D2rgj0e/oq52SLmMOn8LK8W9UiwUHj2Fvt2X4yUz3LhkFVA=
   </data>
  </layer>
  <objectgroup name="objects">
-  <object id="6" name="playerpointup" x="1064" y="84" width="64" height="66"/>
-  <object id="7" name="Mon1" x="127.273" y="190.909" width="60.6061" height="66.6667"/>
-  <object id="8" name="Mon2" x="1857.58" y="315.152" width="60.6061" height="66.6667"/>
-  <object id="9" name="Mon3" x="318.182" y="639.394" width="63.6364" height="63.6364"/>
-  <object id="10" name="Mon4" x="1978.79" y="642.424" width="66.6667" height="66.6667"/>
-  <object id="11" name="Mon5" x="512.121" y="1148.48" width="60.6061" height="63.6364"/>
-  <object id="12" name="Mon6" x="1851.52" y="1084.85" width="66.6667" height="63.6364"/>
-  <object id="14" name="playerpointdown" x="1154" y="1774" width="64" height="64"/>
-  <object id="18" name="NPC1" x="646" y="584" width="54" height="56"/>
+  <object id="14" name="playerpointdown" x="1152" y="1780" width="62" height="50"/>
+  <object id="16" name="playerpointup" x="1155" y="88" width="59" height="35"/>
+  <object id="18" name="Mon1" x="193.939" y="318.182" width="60.6061" height="60.6061"/>
+  <object id="19" name="Mon3" x="1024.24" y="830.303" width="63.6364" height="63.6364"/>
+  <object id="20" name="Mon2" x="1854.55" y="451.515" width="63.6364" height="60.6061"/>
+  <object id="21" name="Mon4" x="321.212" y="1278.79" width="60.6061" height="63.6364"/>
+  <object id="22" name="Mon5" x="1154.55" y="1281.82" width="63.6364" height="60.6061"/>
+  <object id="23" name="Mon6" x="1860.61" y="1148.48" width="60.6061" height="63.6364"/>
+  <object id="24" name="savepoint" x="515.152" y="954.545" width="60.6061" height="63.6364"/>
+  <object id="25" name="NPC3" x="830" y="448" width="68" height="62"/>
  </objectgroup>
 </map>

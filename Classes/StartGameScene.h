@@ -12,6 +12,7 @@ class StartGameScene : public Layer
 public:
 	static Scene* createScene();
 
+	void loadPlistFile(); // 应该放在游戏开始界面加载。只加载一次
 	virtual bool init();
 	virtual void onEnter();
 	virtual void onEnterTransitionDidFinish();

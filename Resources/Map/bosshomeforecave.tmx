@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="11">
+ <tileset firstgid="1" name="foreground" tilewidth="64" tileheight="128" tilecount="9" columns="9">
+  <image source="bosshomeforecave/foreground.png" width="576" height="128"/>
+ </tileset>
+ <tileset firstgid="10" name="background" tilewidth="64" tileheight="64" tilecount="77" columns="7">
+  <image source="bosshomeforecave/background.png" trans="ff00ff" width="448" height="704"/>
+ </tileset>
+ <tileset firstgid="87" name="changescene" tilewidth="64" tileheight="64" tilecount="8" columns="8">
+  <image source="changescene.png" width="560" height="70"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="changescene" value="5"/>
+    <property name="nextscenedir" value="up"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="patrolpoint" value="true"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="changescene" value="7"/>
+    <property name="nextscenedir" value="right"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="changescene" value="8"/>
+    <property name="nextscenedir" value="down"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="-31"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJy9l9tOwzAMhnM9slWi2wRsiKPGJASTpoLELYcijuL4/q+CI8XCeHbiVh0Xn7o0jvfbqd20ds7dR+6AWvjNx3XCVrPRbOn4XGDZ8P4z8AK8KvPaWn7vQuCq4f1P4Av4Vua1tfxej3EN3AC3wBSYCFe0HQnr6Vwp3B/E6xDoK2t9vD4Aj8ATcAjsM46Y/YD5Kd3qf0o6qW1gS7CjWiaClinzUSp+txPsAAWJKbAn5OYNeAc+BB0Ixu3daiy96FdbGzgAxsIa7icXE8YlacB9mQEnCeZx7zAnkpbSEBPGpeUkULm/9VERwvhSySXGuRuxaknlMPhL1Rh99vm+Bt/HkSZaNFuctz7HXMtppCsthfutD4uvmRBHV1rGGRvuq2JjSxxWLaFOLLWAdTAkY+xVXT8vFi3433xtrjdgf+hSC9rSPIXxWYbwbl9kdM9jrKMGWjwbh/VVBtqrUnrb5IXmPNePBmwupbeNFhqn1Nf5GcS7fE+lZwPLuwntU73Q2jMlO5yT9o+yIPGl8mbNr2RHexjfPwp9T65bi7Z3eN6j58x1asHnSjpnSjXy33nBWvDs2u9Ii1QroT5oD8Df2hnMCz4sPZ5rSfVDqS8gBRtL33jY45v0qTbw87f0jYcxWbRsONt53UJKt0XLpsHOyg+Sknra
+  </data>
+ </layer>
+ <layer name="foreground" width="35" height="30" opacity="0.72">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt19EKgCAMheFZmXv/J3aCUUHgLsQE/w/Onbixi6EimF20nJajxit0qp8s2vG+llJns+yNc9dc8MZcAGAM/buBB3oBfDxvzJUwDz+Ve7+V/0qqwbcMbYwAgg==
+  </data>
+ </layer>
+ <layer name="barrier" width="35" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztltEOgzAIRf1L1/n//7EXmxhS6D1YfJkkTaqFyynFbtv2WoXt57jOd99d0iI6I99j4OPFqnlVlmxOL8b6tATLqvU7dbn6tSRLM++s7p26RGcwi1/RL976bEQxGRaaT9XMskTrfa4wP8VCtCpYaB//C4uqZ9erWJR7/CkW8lvrzel3qGpTFjWmP8/uuczdSYywk36ZnYF6VvQcLYvSe1kdup8sK2Hx4lbVTWUZ1YZadV0irSqWqC/s/9JMDs+P9qRqlKUb2SsZhIVqe+Mb7E1h+Qh+qv0AVXRlXQ==
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="2" name="Mon4" x="1037" y="1237" width="39" height="27"/>
+  <object id="3" name="Mon1" x="152" y="520" width="56" height="46"/>
+  <object id="4" name="Mon2" x="966" y="474" width="52" height="56"/>
+  <object id="5" name="Mon3" x="2016" y="530" width="48" height="54"/>
+  <object id="6" name="Mon5" x="1548" y="1710" width="52" height="42"/>
+  <object id="7" name="Mon6" x="2016" y="1538" width="54" height="52"/>
+  <object id="8" name="playerpointdown" x="1029.33" y="1784" width="45.3333" height="46.6667"/>
+  <object id="9" name="playerpointup" x="1158.67" y="270.667" width="52" height="49.3333"/>
+  <object id="10" name="playerpointleft" x="110" y="1876" width="44" height="38"/>
+ </objectgroup>
+</map>

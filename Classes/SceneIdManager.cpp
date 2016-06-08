@@ -58,6 +58,12 @@ void SceneIdManager::readSceneDataFile()
 			{
 				scenedata.Misson.push_back(MissonArr[i].GetInt());
 			}
+			const rapidjson::Value& MissonActiveArr = value["MissonActive"];
+			for (int i = 0; i < MissonActiveArr.Size(); i++)
+			{
+				scenedata.MissonActive.push_back(MissonActiveArr[i].GetInt());
+			}
+			
 			addDataToSceneData(scenedata);
 		}
 	} while (0);

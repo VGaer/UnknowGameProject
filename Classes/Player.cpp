@@ -2695,6 +2695,7 @@ void Player::ChangSceneIdUpdate(float dt)
 					return;
 				}
 
+				setEnableAction(false);
 
 				if (QuestDispatcher::getInstance()->getParent() != NULL) {
 					QuestDispatcher::getInstance()->removeFromParentAndCleanup(false);
@@ -2772,9 +2773,11 @@ void Player::LevelUpdate(float dt)
 
 void Player::setEnableAction(bool isEnable)
 {
-	isAcceptInput = isEnable;
 	if (!isEnable)
 		playStaticAnim();
+	vec.clear();
+	vecskill.clear();
+	isAcceptInput = isEnable;
 }
 
 void Player::playStaticAnim()

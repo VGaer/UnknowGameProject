@@ -119,8 +119,9 @@ bool QuestList::addItem(const char *normalImage, const char *selectedImage, cons
 	setContentText(ins, 15);
 	auto ltf = getLabelContentText();
 	ltf->setAnchorPoint(Vec2(0, 0.5));
-	ltf->setPosition(Vec2(0, imenu.height / 2 - 2));
-	ltf->setHorizontalAlignment(TextHAlignment::CENTER);
+	ltf->setPosition(Vec2(0, imenu.height / 2 - 20));
+	ltf->setHorizontalAlignment(TextHAlignment::LEFT);
+	ltf->setDimensions(m_contentPadding, m_contentPaddingTop);
 	itemImage->addChild(ltf);
 	getMenuItems()->addChild(itemImage);
 	Items[tag] = itemImage;

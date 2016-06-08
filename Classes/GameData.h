@@ -82,6 +82,7 @@ struct QuestListData {
 	int id;			//任务id
 	string title;	//任务标题
 	string instruct; //任务简介
+	int level;			//等级需求
 	int type;		//任务类型(0:跑腿，1：杀怪)
 	int status;		//激活状态 （0：未接、1：激活、2：完成、3：可提交）
 	int mapID;

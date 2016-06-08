@@ -34,4 +34,6 @@ private:
 	void addTouchEventListener();
 	void setDlgsIsSaid();
 	void setPos();
+	void opPage();
+	void keyPressed(EventKeyboard::KeyCode keyCode, Event* event);	
 };

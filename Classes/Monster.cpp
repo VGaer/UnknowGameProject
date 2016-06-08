@@ -75,7 +75,7 @@ bool Monster::init(const std::string& name)
 
 	this->scheduleUpdate();
 
-	m_magnification = 1.5;//精灵放大倍数
+	m_magnification = 1;//精灵放大倍数
 
 	Is_firstFindplayer_Track = true;
 

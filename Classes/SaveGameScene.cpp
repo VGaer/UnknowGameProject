@@ -1,6 +1,7 @@
 #include "SaveGameScene.h"
 #include "ui\CocosGUI.h"
 #include "GameData.h"
+#include "Player.h"
 #include "G2U.h"
 using namespace cocos2d::ui;
 
@@ -62,6 +63,7 @@ void SaveGameScene::addSaveBtnListener(Node* node)
 		addChild(succLabel, 1);
 		succLabel->setPosition(Point(vSize.width / 2, vSize.height / 2));
 		auto popDelay = Sequence::create(DelayTime::create(1), CallFunc::create([](){
+			Player::getInstance()->setEnableAction(true);
 			Director::getInstance()->popScene();
 		}), NULL);
 		runAction(popDelay);
@@ -78,6 +80,7 @@ void SaveGameScene::addQuitBtnListener(Node* node)
 		return false;
 	};
 	listener->onTouchEnded = [=](Touch* touch, Event* event){
+		Player::getInstance()->setEnableAction(true);
 		Director::getInstance()->popScene();
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, node);

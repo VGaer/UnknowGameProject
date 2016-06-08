@@ -170,14 +170,14 @@ void PopLayer::Talking()
 {
 	n = 3;
 	temp = getLabelContentText()->getString();
-	this->schedule(schedule_selector(PopLayer::showFont), 0.12f);
+	this->schedule(schedule_selector(PopLayer::showFont), 0.11f);
 }
 
 void PopLayer::Talking(string& sender)
 {
 	n = 3;
 	temp = sender;
-	this->schedule(schedule_selector(PopLayer::showFont), 0.12f);
+	this->schedule(schedule_selector(PopLayer::showFont), 0.11f);
 }
 
 void PopLayer::showFont(float dt)
