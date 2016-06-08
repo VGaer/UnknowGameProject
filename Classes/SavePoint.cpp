@@ -1,10 +1,14 @@
 #include "SavePoint.h"
 #include "SaveGameScene.h"
-
+#include "AnimationUtil.h"
 bool SavePoint::init()
 {
-	bindSprite(Sprite::create("player11.png"));
+	auto sprite = Sprite::createWithSpriteFrameName("save0.png");
+	sprite->setScale(0.6);
+	sprite->setContentSize(sprite->getContentSize() * sprite->getScale());
+	bindSprite(sprite);
 	addTouchEventListener();
+	getSprite()->runAction(Animate::create(AnimationUtil::createWithSingleFrameName("save", 0.1, -1)));
 	return true;
 }
 

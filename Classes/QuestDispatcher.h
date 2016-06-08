@@ -55,7 +55,7 @@ public:
 	vector<QuestListData*>& getQuestListVec();
 	map<int, QuestDlgsData*> getQuestDlgs();
 	map<int, QuestListData*>& getqData();
-	void mNpcClear();
+	//void mNpcClear();
 private:
 	map<string, NPC*> mNpc;
 	//任务列表容器

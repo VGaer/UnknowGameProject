@@ -2699,7 +2699,7 @@ void Player::ChangSceneIdUpdate(float dt)
 
 				if (QuestDispatcher::getInstance()->getParent() != NULL) {
 					QuestDispatcher::getInstance()->removeFromParentAndCleanup(false);
-					QuestDispatcher::getInstance()->mNpcClear();
+					//QuestDispatcher::getInstance()->mNpcClear();
 				}
 
 				if (proValueMap.find("nextscenedir") != proValueMap.end())

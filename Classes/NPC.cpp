@@ -6,26 +6,19 @@
 
 NPC* NPC::create(const std::string& name)
 {
-	string nametemp = name;
-	auto npc = QuestDispatcher::getInstance()->getInstance()->getNpc(nametemp);
-	if (npc == NULL) {
-		auto unit = new NPC();
-		if (unit && unit->init(name)) {
-			unit->autorelease();
-		}
-		else {
-			CC_SAFE_DELETE(unit);
-			unit = NULL;
-		}
-		return unit;
+	//string nametemp = name;
+	//auto npc = QuestDispatcher::getInstance()->getInstance()->getNpc(nametemp);
+	//if (npc == NULL) {
+	auto unit = new NPC();
+	if (unit && unit->init(name)) {
+		unit->autorelease();
 	}
 	else {
-		if (!npc) {
-			CC_SAFE_DELETE(npc);
-			npc = NULL;
-		}
-		return npc;
+		CC_SAFE_DELETE(unit);
+		unit = NULL;
 	}
+	return unit;
+	//}
 }
 
 bool NPC::init(const std::string& name)
@@ -36,8 +29,11 @@ bool NPC::init(const std::string& name)
 	this->data = data;
 	initDataWithName(name);
 	bActive = false;
-	isRetain = false;
-	bindSprite(Sprite::create("player11.png"));
+	auto sprite = Sprite::create(data->imagePath);
+	sprite->setScale(2);
+	sprite->setContentSize(sprite->getContentSize() * sprite->getScale());
+	sprite->setAnchorPoint(Point(0.25, 0.25));
+	bindSprite(sprite);
 	page = 0;
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(NPC::onTouchBegan, this);
@@ -58,7 +54,7 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 		for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
 			if (a->type == QuestTypes::search && a->targetNpc == data->name && a->mapID == data->mapID && a->status != QuestStatus::finish) {
 				a->status = QuestStatus::commit;
-				if(quests.find(a->id) == quests.end())
+				if (quests.find(a->id) == quests.end())
 					quests[a->id] = a;
 				bActive = true;
 			}
@@ -144,88 +140,88 @@ void NPC::buttonCallback(Node * pNode)
 		static_cast<PopLayer*>(PopManager::getInstance()->getPopsMap()[data->name]->getLayerByTag(0)->layer)->popBack();
 	}), DelayTime::create(0.3), CallFunc::create([&]() {
 		PopManager::getInstance()->getPopsMap()[data->name]->releaseLayer(0); }), NULL);
-	//通过获取按钮TAG调用功能
-	switch (btnTag)
-	{
-	case 0:
-		if (!(m_timeCounter->getCurTime() == 0 || m_timeCounter->getCurTime() > 0.31))
-			return;
-		m_timeCounter->start();
-		log("page:%d", page);
-		runAction(a);
-		if (items)
-			//重置任务选项
-			items->setQuestTag(NULL);
-		//闲聊对话翻页
-		page++;
-		if (page >= data->dlgs.size()) {
-			page = 0;
-		}
-		//弹出标记
-		PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false);
-		break;
-	case 1:
-		if (items)
+		//通过获取按钮TAG调用功能
+		switch (btnTag)
 		{
-			//选择任务并接受
-			if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(items->getQuestTag()) == QuestStatus::start) {
-				if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::search)
-				{
-					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
-					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+		case 0:
+			if (!(m_timeCounter->getCurTime() == 0 || m_timeCounter->getCurTime() > 0.31))
+				return;
+			m_timeCounter->start();
+			log("page:%d", page);
+			runAction(a);
+			if (items)
+				//重置任务选项
+				items->setQuestTag(NULL);
+			//闲聊对话翻页
+			page++;
+			if (page >= data->dlgs.size()) {
+				page = 0;
+			}
+			//弹出标记
+			PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false);
+			break;
+		case 1:
+			if (items)
+			{
+				//选择任务并接受
+				if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(items->getQuestTag()) == QuestStatus::start) {
+					if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::search)
+					{
+						QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
+						item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+					}
+					else if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::defeat) {
+						QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
+						QuestDispatcher::getInstance()->openUpdate();
+						item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+					}
+					else if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::level) {
+						QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
+						item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
+					}
+					//获取玩家任务对话
+					auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
+					if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
+					{
+						if (playerDlgs->acceptTaskDlgs.empty() || playerDlgs->acceptTaskDlgs.at(0) == "NULL")
+							return;
+						auto talk = Talk::create(playerDlgs->acceptTaskDlgs, playerDlgs->taskId, Talk_AcTask);
+						m_map->addChild(talk, 100);
+					}
 				}
-				else if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::defeat) {
-					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
-					QuestDispatcher::getInstance()->openUpdate();
-					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
-				}
-				else if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::level) {
-					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
-					item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
-				}
-				//获取玩家任务对话
-				auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
-				if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
-				{
-					if (playerDlgs->acceptTaskDlgs.empty() || playerDlgs->acceptTaskDlgs.at(0) == "NULL")
-						return;
-					auto talk = Talk::create(playerDlgs->acceptTaskDlgs, playerDlgs->taskId, Talk_AcTask);
-					m_map->addChild(talk, 100);
+				//完成任务
+				else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(items->getQuestTag()) == QuestStatus::commit) {
+					for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
+						if (a->type == QuestTypes::search && a->status == QuestStatus::commit && a->id == quests[items->getQuestTag()]->id && a->targetNpc != data->name)
+							return;
+					}
+					//移除已完成任务
+					items->getMenuItems()->getChildByTag(items->getQuestTag())->removeFromParent();
+					items->getTempItem() = NULL;
+					items->getItems().erase(items->getQuestTag());
+					items->setBtnPos(0.3);
+					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::complete, items->getQuestTag());
+					//获取玩家任务对话
+					auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
+					if (playerDlgs && !playerDlgs->isSaidFiTsDlgs)
+					{
+						if (playerDlgs->finishTaskDlgs.empty() || playerDlgs->finishTaskDlgs.at(0) == "NULL")
+							return;
+						auto talk = Talk::create(playerDlgs->finishTaskDlgs, playerDlgs->taskId, Talk_FiTask);
+						m_map->addChild(talk, 100);
+					}
 				}
 			}
-			//完成任务
-			else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(items->getQuestTag()) == QuestStatus::commit) {
-				for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-					if (a->type == QuestTypes::search && a->status == QuestStatus::commit && a->id == quests[items->getQuestTag()]->id && a->targetNpc != data->name)
-						return;
-				}
-				//移除已完成任务
-				items->getMenuItems()->getChildByTag(items->getQuestTag())->removeFromParent();
-				items->getTempItem() = NULL;
-				items->getItems().erase(items->getQuestTag());
-				items->setBtnPos(0.3);
-				QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::complete, items->getQuestTag());
-				//获取玩家任务对话
-				auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
-				if (playerDlgs && !playerDlgs->isSaidFiTsDlgs)
-				{
-					if (playerDlgs->finishTaskDlgs.empty() || playerDlgs->finishTaskDlgs.at(0) == "NULL")
-						return;
-					auto talk = Talk::create(playerDlgs->finishTaskDlgs, playerDlgs->taskId, Talk_FiTask);
-					m_map->addChild(talk, 100);
-				}
-			}
+			break;
+		case 2:
+			//弹出任务列表，并设置弹出标志
+			if (PopManager::getInstance()->getPopsMap()[data->name]->getPopped(1))	break;
+			questLayer();
+			PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, true);
+			break;
+		default:
+			break;
 		}
-		break;
-	case 2:
-		//弹出任务列表，并设置弹出标志
-		if (PopManager::getInstance()->getPopsMap()[data->name]->getPopped(1))	break;
-		questLayer();
-		PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, true);
-		break;
-	default:
-		break;
-	}
 }
 
 void NPC::ItemCallback(Node * pNode)
@@ -245,8 +241,8 @@ void NPC::ItemCallback(Node * pNode)
 			static_cast<PopLayer*>(PopManager::getInstance()->getPopsMap()[data->name]->getLayerByTag(1)->layer)->popBack();
 		}), DelayTime::create(0.3), CallFunc::create([&]() {
 			PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false); }), NULL);
-		runAction(a);
-		return;
+			runAction(a);
+			return;
 	}
 	//按任务状态产生对话
 	switch (QuestDispatcher::getInstance()->getQuestStatus(quests[btn]->id))
@@ -261,7 +257,7 @@ void NPC::ItemCallback(Node * pNode)
 		break;
 	case QuestStatus::commit:
 		item->getLabelTitle()->setString(gb2312_to_utf8(quests[btn]->title));
-		if(this->data->name == quests[btn]->targetNpc)
+		if (this->data->name == quests[btn]->targetNpc)
 			item->Talking(gb2312_to_utf8(questDlgs[btn]->finish));
 		else
 			item->Talking(gb2312_to_utf8(questDlgs[btn]->active));

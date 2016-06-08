@@ -9,7 +9,8 @@
     ],
     "quest_id": [5,7],
     "status" : 0,
-    "mapID" : 4
+    "mapID" : 4,
+    "imagePath": "NPC/NPC_1.png"
   },
   {
   	"id": 2,
@@ -21,7 +22,8 @@
     ],
     "quest_id": [6,8,9,12],
     "status" : 0,
-    "mapID" : 4
+    "mapID" : 4,
+    "imagePath": "NPC/NPC_2.png"
   },
   {
   	"id": 3,
@@ -33,7 +35,8 @@
     ],
     "quest_id": [2],
     "status" : 0,
-    "mapID" : 3
+    "mapID" : 3,
+    "imagePath": "NPC/NPC_3.png"
   },
   {
   	"id": 4,
@@ -45,6 +48,7 @@
     ],
     "quest_id": [10,11],
     "status" : 0,
-    "mapID" : 9
+    "mapID" : 9,
+    "imagePath": "NPC/NPC_4.png"
   }
 ]

@@ -139,6 +139,9 @@ void StartGameScene::menuItemSettingCallback(Ref* pSender)
 void StartGameScene::loadPlistFile()
 {
 	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
+	/*±£´æµã*/
+	frameCache->addSpriteFramesWithFile("NPC/save.plist", "NPC/save.png");
+
 	/*Ê÷¹Ö*/
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdattack/treemonsterdattack.plist", "monster/treemonster/treemonsterdattack/treemonsterdattack.png");
 	frameCache->addSpriteFramesWithFile("monster/treemonster/treemonsterdrun/treemonsterdrun.plist", "monster/treemonster/treemonsterdrun/treemonsterdrun.png");

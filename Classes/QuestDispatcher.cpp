@@ -134,22 +134,22 @@ map<int, QuestDlgsData*> QuestDispatcher::getQuestDlgs()
 	return qDlgsdata;
 }
 
-void QuestDispatcher::mNpcClear()
-{
-	NPC* temp = NULL;
-	bool isExist = false;
-	for (auto i = mNpc.begin(); i != mNpc.end();++i) {
-		if (i->second->getIsRetain() == true)
-		{
-			temp = i->second;
-			isExist = true;
-			break;
-		}
-	}
-	mNpc.clear();
-	if(isExist)
-		mNpc[temp->getData()->name] = temp;
-}
+//void QuestDispatcher::mNpcClear()
+//{
+//	NPC* temp = NULL;
+//	bool isExist = false;
+//	for (auto i = mNpc.begin(); i != mNpc.end();++i) {
+//		if (i->second->getIsRetain() == true)
+//		{
+//			temp = i->second;
+//			isExist = true;
+//			break;
+//		}
+//	}
+//	mNpc.clear();
+//	if(isExist)
+//		mNpc[temp->getData()->name] = temp;
+//}
 
 void QuestDispatcher::questsUpdate(float dt)
 {

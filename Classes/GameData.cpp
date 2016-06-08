@@ -270,6 +270,7 @@ void GameData::readNpcsDataFile()
 			data->name = value["name"].GetString();
 			data->status = value["status"].GetInt();
 			data->mapID = value["mapID"].GetInt();
+			data->imagePath = value["imagePath"].GetString();
 			const rapidjson::Value &intArray = value["quest_id"];
 			for (int i = 0; i < intArray.Size(); i++) {
 				data->quest_id.push_back(intArray[i].GetInt());
