@@ -24,20 +24,25 @@ public:
 	// padding和paddingTop文字内容两边的空白区 
 	virtual void setContentText(const string& text, int fontsize = 20, int padding = 50, int paddintTop = 100, string font = "Arial", Color3B color = Color3B::YELLOW);
 	virtual void setCallbackFunc(Ref* target, SEL_CallFuncN callfun);
+	void onMouseMove(Event* _event);
 	void setQuestTag(int sender);
 	int getQuestTag() { return questTag; }
 	bool addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag = 0, string font = "Arial");
 	virtual bool addButton(const char* normalImage, const char* selectedImage, Vec2 pos, int tag = 0);
 	void setBtnPos(float durtime = 0);
+	map<int, MenuItemImage*>& getItems() { return Items; }
+	MenuItemImage*& getTempItem() { return tempItem; }
 	virtual void onEnter();
 	virtual void onExit();
 
 private:
 	int questTag;
+	MenuItemImage* tempItem;
 	Size contentSize;
 	void menuCallback(Ref* pSender);
 	void buttonCallback(Ref* pSender, Widget::TouchEventType type);
-
+	map<int, MenuItemImage*> Items;
+	bool isHover;
 	// 文字内容两边的空白区  
 	int m_contentPadding;
 	int m_contentPaddingTop;

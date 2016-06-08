@@ -52,13 +52,14 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 {
 	if (!_event->getCurrentTarget()->getBoundingBox().containsPoint(m_map->convertToNodeSpace(_touch->getLocation())))
 		return false;
+	bActive = false;
 	if (!bActive)
 	{
 		for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-			if (a->targetNpc == data->name) {
+			if (a->targetNpc == data->name && a->mapID == data->mapID && a->status != QuestStatus::finish) {
 				data->status = NpcStatus::actived;
 				activeQuest = a->id;
-				if (!a->isSameMap)
+				if (!a->isSameMap && !isRetain)
 				{
 					retain();
 					isRetain = true;
@@ -67,6 +68,7 @@ bool NPC::onTouchBegan(Touch * _touch, Event * _event)
 			}
 		}
 	}
+	log("refcount%d", getReferenceCount());
 	return true;
 }
 
@@ -210,14 +212,16 @@ void NPC::buttonCallback(Node * pNode)
 			//完成任务
 			else if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(this, items->getQuestTag()) == QuestStatus::commit) {
 				for (auto& a : QuestDispatcher::getInstance()->getQuestListVec()) {
-					if (a->type == QuestTypes::search && a->status == QuestStatus::commit) {
+					if (a->type == QuestTypes::search && a->status == QuestStatus::commit && a->id == quests[items->getQuestTag()]->id) {
 						QuestDispatcher::getInstance()->getNpc(a->targetNpc)->data->status = NpcStatus::normal;
-						if(isRetain)
+						if(QuestDispatcher::getInstance()->getNpc(a->targetNpc)->isRetain && !a->isSameMap)
 							QuestDispatcher::getInstance()->getNpc(a->targetNpc)->release();
 					}
 				}
 				//移除已完成任务
 				items->getMenuItems()->getChildByTag(items->getQuestTag())->removeFromParent();
+				items->getTempItem() = NULL;
+				items->getItems().erase(items->getQuestTag());
 				items->setBtnPos(0.3);
 				QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::complete, items->getQuestTag());
 				//获取玩家任务对话

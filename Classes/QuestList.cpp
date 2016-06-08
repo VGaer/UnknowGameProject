@@ -28,6 +28,8 @@ bool QuestList::init() {
 	}
 	this->setContentSize(Size::ZERO);
 	questTag = NULL;
+	tempItem = NULL;
+	isHover = false;
 	// 初始化需要的 Menu  
 	DBMenu* menu = DBMenu::create();
 	menu->setPosition(Vec2::ZERO);
@@ -41,6 +43,11 @@ bool QuestList::init() {
 	setScView(view);
 
 	setTouchEnabled(true);
+
+	auto listener = EventListenerMouse::create();
+	//分发MouseMove事件
+	listener->onMouseMove = CC_CALLBACK_1(QuestList::onMouseMove, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
 QuestList * QuestList::create(const char * backgroundImage)
@@ -72,6 +79,26 @@ void QuestList::setCallbackFunc(Ref *target, SEL_CallFuncN callfun) {
 	m_callback = callfun;
 }
 
+void QuestList::onMouseMove(Event * _event)
+{
+	EventMouse*e = (EventMouse*)_event;
+	for (auto&i : Items)
+	{
+		if (i.second == NULL) break;
+		if (isHover == false && i.second->getBoundingBox().containsPoint(i.second->getParent()->convertToNodeSpace(Vec2(e->getCursorX(), e->getCursorY())))) {
+			i.second->setNormalImage(Sprite::create("UI/UI_Quest_11.png"));
+			isHover = true;
+		}
+		else {
+			if (tempItem != i.second)
+				i.second->setNormalImage(Sprite::create("UI/UI_QuestPanel_cont.png"));
+			else
+				i.second->selected();
+			isHover = false;
+		}
+	}
+}
+
 void QuestList::setQuestTag(int sender)
 {
 	questTag = sender;
@@ -86,16 +113,17 @@ bool QuestList::addItem(const char *normalImage, const char *selectedImage, cons
 	setTitle(title, Color3B::YELLOW, 20);
 	auto ttf = getLabelTitle();
 	ttf->setAnchorPoint(Vec2(0.5, 1));
-	ttf->setPosition(Vec2(imenu.width / 2, imenu.height));
+	ttf->setPosition(Vec2(imenu.width / 2, imenu.height - 2));
 	itemImage->addChild(ttf);
 
 	setContentText(ins, 15);
 	auto ltf = getLabelContentText();
 	ltf->setAnchorPoint(Vec2(0, 0.5));
-	ltf->setPosition(Vec2(0, imenu.height / 2));
+	ltf->setPosition(Vec2(0, imenu.height / 2 - 2));
 	ltf->setHorizontalAlignment(TextHAlignment::CENTER);
 	itemImage->addChild(ltf);
 	getMenuItems()->addChild(itemImage);
+	Items[tag] = itemImage;
 	return true;
 }
 
@@ -132,10 +160,14 @@ void QuestList::setBtnPos(float durtime)
 
 void QuestList::menuCallback(Ref* pSender) {
 	Node* node = dynamic_cast<Node*>(pSender);
+	if (tempItem)
+		tempItem->unselected();
+	tempItem = dynamic_cast<MenuItemImage*>(pSender);
 	log("touch tag: %d", node->getTag());
 	if (m_callback && m_callbackListener) {
 		//执行调用层的回调函数，传递node参数
 		(m_callbackListener->*m_callback)(node);
+		tempItem->selected();
 	}
 }
 
