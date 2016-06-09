@@ -27,7 +27,7 @@ public:
 	void onMouseMove(Event* _event);
 	void setQuestTag(int sender);
 	int getQuestTag() { return questTag; }
-	bool addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag = 0, string font = "Arial");
+	bool addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag = 0, string font = "Arial", Color3B color = Color3B::ORANGE);
 	virtual bool addButton(const char* normalImage, const char* selectedImage, Vec2 pos, int tag = 0);
 	void setBtnPos(float durtime = 0);
 	map<int, MenuItemImage*>& getItems() { return Items; }

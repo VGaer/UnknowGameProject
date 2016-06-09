@@ -38,7 +38,6 @@ public:
 	static QuestDispatcher* getInstance();
 	QuestDispatcher();
 	~QuestDispatcher();
-	void initQuestsDataWithID(const int id);
 	void initQuestDlgsData();
 	void initQuestFromGameData();
 	int getQuestStatus(const int id);

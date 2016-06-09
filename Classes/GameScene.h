@@ -24,7 +24,7 @@ public:
 public:
 	void setMapInfo(int id);
 	void setViewpointCenter(Vec2 Position);
-	void addPlayer(Point pos, int direction = enum_down);
+	void addPlayer(Point pos, int direction = em_down);
 	void addPlayer(PlayerData* data);
 	void addNpc(vector<NpcsData*> nData);
 	void addMonster(const std::string& name, Point pos);  // 还需要更改详细属性

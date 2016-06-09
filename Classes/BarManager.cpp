@@ -1,5 +1,6 @@
 #include "BarManager.h"
-
+#include "QuestDispatcher.h"
+#include "G2U.h"
 BarManager * BarManager::getInstance()
 {
 	static BarManager* instance = NULL;
@@ -11,6 +12,7 @@ BarManager * BarManager::getInstance()
 BarManager::BarManager()
 {
 	playerBar = NULL;
+	questView = NULL;
 }
 
 Sprite* BarManager::create(const string& hp, int tag, float maxhp)
@@ -115,6 +117,28 @@ Sprite * BarManager::create(const string & exp, float lexp)
 	return m_bar;
 }
 
+Sprite * BarManager::create(const string & inv, const string & quest)
+{
+	auto menu = Sprite::create("UI/ActionBar.png");
+	auto sub1 = Button::create(inv, inv);
+	auto sub2 = Button::create(quest, quest);
+	auto size = menu->getContentSize();
+	sub1->addTouchEventListener(CC_CALLBACK_2(BarManager::buttonCallback, this));
+	sub1->setTag(30);
+	sub1->setAnchorPoint(Vec2(0.5, 0.5));
+	sub2->addTouchEventListener(CC_CALLBACK_2(BarManager::buttonCallback, this));
+	sub2->setTag(31);
+	sub2->setAnchorPoint(Vec2(0.5, 0.5));
+
+	sub1->setPosition(Vec2(size.width - 60, size.height / 2));
+	sub2->setPosition(Vec2(size.width - 25, size.height / 2));
+
+	menu->addChild(sub1, 20);
+	menu->addChild(sub2, 20);
+	actBar = menu;
+	return menu;
+}
+
 ProgressTimer* BarManager::getBars(int tag)
 {
 	if (mbars.find(tag) != mbars.end())
@@ -158,4 +182,63 @@ void BarManager::releaseEnemyBar(int tag)
 	auto temp = mbars[tag];
 	mbars.erase(tag);
 	delete temp;
+}
+
+void BarManager::buttonCallback(Ref * pSender, Widget::TouchEventType type)
+{
+	Node* node = dynamic_cast<Node*>(pSender);
+	auto tag = node->getTag();
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+		if (tag == 30)
+			log("inventory");
+		if (tag == 31) {
+			if (questView != NULL) {
+				CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/close.wav");
+				questView->removeAllChildren();
+				questView = NULL;
+				break;
+			}
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/accept.wav");
+			popQuest();
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void BarManager::popQuest()
+{
+	// 定义一个弹出层，传入一张背景图  
+	QuestList* ql = QuestList::create("UI/UI_QuestPanel.png");
+
+	// ContentSize 是可选的设置，可以不设置，如果设置把它当作 9 图缩放  
+	//ql->setContentSize(Size(300, 150));
+
+	// 设置回调函数，回调传回一个 CCNode 以获取 tag 判断点击的按钮  
+	ql->setCallbackFunc(this, callfuncN_selector(BarManager::ItemCallback));
+	auto bg = ql->getSpriteBackGround();
+	// 添加按钮，设置图片，文字，tag, 颜色(颜色默认是白色（Color3B）), 字体信息 
+	ql->addButton("UI/UI_QuestPanel_close.png", "UI_QuestPanel_close.png", Vec2(bg->getContentSize().width + 6, bg->getContentSize().height / 2), 20);
+	auto quests = QuestDispatcher::getInstance()->getQuestListVec();
+	for (auto&i : quests) {
+		ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(i->title), gb2312_to_utf8(i->instruct), i->id, "Arial", Color3B(255, 230, 0));
+	}
+	ql->setPosition(actBar->getContentSize().width, actBar->getContentSize().height);
+	// 添加到Menu层  
+	actBar->addChild(ql);
+	questView = ql;
+}
+
+void BarManager::ItemCallback(Node * pNode)
+{
+	auto btn = pNode->getTag();
+	//关闭任务列表
+	if (btn == 20) {
+		CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/close.wav");
+		questView->removeAllChildren();
+		questView = NULL;
+	}
 }

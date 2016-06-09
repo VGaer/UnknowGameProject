@@ -3,8 +3,15 @@
 #include "map"
 #include "string"
 #include "Player.h"
+#include "ui\UIButton.h"
+#include "QuestList.h"
+#include "SimpleAudioEngine.h"
+
+using namespace cocos2d::ui;
 using namespace std;
 USING_NS_CC;
+
+class QuestList;
 
 enum BarType {
 	HP = 0,
@@ -36,7 +43,9 @@ public:
 	//创建玩家HP,MP
 	Sprite* create(const string& hp, const string& mp, float maxhp, float maxmp);
 	//创建玩家exp
-	Sprite* create(const string & exp, float lexp);
+	Sprite* create(const string& exp, float lexp);
+	//创建玩家行动条
+	Sprite* create(const string& inv, const string& quest);
 	//获取敌方HP
 	ProgressTimer* getBars(int tag);
 	Label* getBarsLabel(int tag);
@@ -47,7 +56,15 @@ public:
 	void setPercent(ProgressTimer* pSender, float total, float nowNum);
 	void setBarLabel(Label* pSender, float cur, float max);
 	void releaseEnemyBar(int tag);
+
+	//按钮调用
+	void buttonCallback(Ref * pSender, Widget::TouchEventType type);
+	//弹出任务窗口
+	void popQuest();
+	void ItemCallback(Node *pNode);
 private:
 	PlayerBar* playerBar;
+	QuestList* questView;
+	Sprite* actBar;
 	map<int, EnemyBar*> mbars;
 };

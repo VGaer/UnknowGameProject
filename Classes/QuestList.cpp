@@ -104,7 +104,7 @@ void QuestList::setQuestTag(int sender)
 	questTag = sender;
 }
 
-bool QuestList::addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag, string font) {
+bool QuestList::addItem(const char *normalImage, const char *selectedImage, const string& title, const string& ins, int tag, string font, Color3B color) {
 	// 创建图片菜单按钮  
 	MenuItemImage* itemImage = MenuItemImage::create(normalImage, selectedImage, this, menu_selector(QuestList::menuCallback));
 	itemImage->setTag(tag);
@@ -114,6 +114,7 @@ bool QuestList::addItem(const char *normalImage, const char *selectedImage, cons
 	auto ttf = getLabelTitle();
 	ttf->setAnchorPoint(Vec2(0.5, 1));
 	ttf->setPosition(Vec2(imenu.width / 2, imenu.height - 2));
+	ttf->setColor(color);
 	itemImage->addChild(ttf);
 
 	setContentText(ins, 15);
@@ -122,6 +123,7 @@ bool QuestList::addItem(const char *normalImage, const char *selectedImage, cons
 	ltf->setPosition(Vec2(0, imenu.height / 2 - 20));
 	ltf->setHorizontalAlignment(TextHAlignment::LEFT);
 	ltf->setDimensions(m_contentPadding, m_contentPaddingTop);
+	ltf->setColor(color);
 	itemImage->addChild(ltf);
 	getMenuItems()->addChild(itemImage);
 	Items[tag] = itemImage;
@@ -168,7 +170,8 @@ void QuestList::menuCallback(Ref* pSender) {
 	if (m_callback && m_callbackListener) {
 		//执行调用层的回调函数，传递node参数
 		(m_callbackListener->*m_callback)(node);
-		tempItem->selected();
+		if(node->getTag() != 20)
+			tempItem->selected();
 	}
 }
 

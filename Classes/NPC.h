@@ -6,6 +6,7 @@
 #include "GameData.h"
 #include "QuestList.h"
 #include "TimeCounter.h"
+#include "SimpleAudioEngine.h"
 USING_NS_CC;
 
 class QuestList;
@@ -32,6 +33,7 @@ public:
 	void setPlayer(Player* sender) { m_player = sender; }
 	void initDataWithName(const string& sender);
 	void setTiledMap(TMXTiledMap* map);
+	void reQuest(QuestList* ql);
 	Vec2 tiledCoordForPosition(Vec2 pos);
 	const NpcsData* getData() { return data; }
 private:

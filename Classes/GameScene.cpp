@@ -118,9 +118,14 @@ bool GameScene::init(int sceneId)
 		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png", m_player->m_hp, m_player->m_mp);		
 		bar->setAnchorPoint(Vec2(0, 1));
 		bar->setPosition(0, size.height);
+		//创建行动条
+		auto act = BarManager::getInstance()->create("UI/inventoryBtn.png", "UI/questBtn.png");
+		act->setAnchorPoint(Vec2(0.5, 0));
+		act->setPosition(size.width / 2 + 30, 0);
+
 		auto exp = BarManager::getInstance()->create("UI/exp.png", 100 * m_player->m_playerlevel);
 		exp->setAnchorPoint(Vec2(0.5, 0));
-		exp->setPosition(size.width / 2, 0);
+		exp->setPosition(size.width / 2, act->getContentSize().height - 5);
 
 		auto playerbar = BarManager::getInstance()->getPlayerBars();
 		if (playerbar != NULL)
@@ -133,6 +138,7 @@ bool GameScene::init(int sceneId)
 			BarManager::getInstance()->setBarLabel(playerbar->l_exp, m_player->m_exp, 100 * m_player->m_playerlevel);
 		}
 		this->addChild(bar, 100);
+		this->addChild(act, 100);
 		this->addChild(exp, 100);
 	}
 	else
@@ -141,9 +147,13 @@ bool GameScene::init(int sceneId)
 		auto bar = BarManager::getInstance()->create("UI/PlayerBar_hp.png", "UI/PlayerBar_mp.png", m_player->m_hp, m_player->m_mp);
 		bar->setAnchorPoint(Vec2(0, 1));
 		bar->setPosition(0, size.height);
+		//创建行动条
+		auto act = BarManager::getInstance()->create("UI/inventoryBtn.png", "UI/questBtn.png");
+		act->setAnchorPoint(Vec2(0.5, 0));
+		act->setPosition(size.width / 2 + 30, 0);
 		auto exp = BarManager::getInstance()->create("UI/exp.png", 100 * m_player->m_playerlevel);
 		exp->setAnchorPoint(Vec2(0.5, 0));
-		exp->setPosition(size.width / 2, 0);
+		exp->setPosition(size.width / 2, act->getContentSize().height - 5);
 
 
 		auto playerbar = BarManager::getInstance()->getPlayerBars();
@@ -157,6 +167,7 @@ bool GameScene::init(int sceneId)
 			BarManager::getInstance()->setBarLabel(playerbar->l_exp, m_player->m_exp, 100 * m_player->m_playerlevel);
 		}
 		this->addChild(bar, 100);
+		this->addChild(act, 100);
 		this->addChild(exp, 100);
 	}
 
@@ -303,10 +314,15 @@ void GameScene::addPlayer(PlayerData* saveData)
 	bar->setAnchorPoint(Vec2(0, 1));
 	bar->setPosition(0, size.height);
 	this->addChild(bar, 100);
+	//创建行动条
+	auto act = BarManager::getInstance()->create("UI/inventoryBtn.png", "UI/questBtn.png");
+	act->setAnchorPoint(Vec2(0.5, 0));
+	act->setPosition(size.width / 2 + 30, 0);
+	this->addChild(act, 100);
 	//创建经验条
 	auto exp = BarManager::getInstance()->create("UI/exp.png", 100 * saveData->level);
 	exp->setAnchorPoint(Vec2(0.5, 0));
-	exp->setPosition(size.width / 2, 0);
+	exp->setPosition(size.width / 2, act->getContentSize().height - 5);
 	this->addChild(exp, 100);
 	//初始化主角经验条
 	//初始化主角血条和HP条

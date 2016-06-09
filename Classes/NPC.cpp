@@ -110,21 +110,8 @@ void NPC::questLayer()
 	auto bg = ql->getSpriteBackGround();
 	// 添加按钮，设置图片，文字，tag, 颜色(颜色默认是白色（Color3B）), 字体信息 
 	ql->addButton("UI/UI_QuestPanel_close.png", "UI_QuestPanel_close.png", Vec2(4, bg->getContentSize().height / 2), 20);
-
-	bool forgeFlag = true;
-	for (auto i : quests) {
-		forgeFlag = true;
-		auto key = i.first;
-		for (auto k : i.second->forgeID) {
-			if (QuestDispatcher::getInstance()->getqData()[k]->status != QuestStatus::finish) {
-				forgeFlag = false;
-				break;
-			}
-			forgeFlag = true;
-		}
-		if (i.second->status == QuestStatus::finish || forgeFlag == false)	continue;
-		ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests[key]->title), gb2312_to_utf8(quests[key]->instruct), key, "arial.ttf");
-	}
+	//检查是否有前置，刷新任务列表
+	reQuest(ql);
 	// 添加到Menu层  
 	PopManager::getInstance()->getPopsMap()[data->name]->getLayerByTag(0)->layer->getChildByTag(0)->addChild(ql);
 	PopManager::getInstance()->getPopsMap()[data->name]->addLayer(1, ql, true);
@@ -157,13 +144,14 @@ void NPC::buttonCallback(Node * pNode)
 			if (page >= data->dlgs.size()) {
 				page = 0;
 			}
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/close.wav");
 			//弹出标记
 			PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, false);
 			break;
 		case 1:
 			if (items)
 			{
-				//选择任务并接受
+				//按类型选择任务并接受
 				if (items->getQuestTag() != NULL  && QuestDispatcher::getInstance()->getQuestStatus(items->getQuestTag()) == QuestStatus::start) {
 					if (QuestDispatcher::getInstance()->getQuestType(items->getQuestTag()) == QuestTypes::search)
 					{
@@ -179,6 +167,8 @@ void NPC::buttonCallback(Node * pNode)
 						QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::accpet, items->getQuestTag());
 						item->Talking(gb2312_to_utf8(questDlgs[items->getQuestTag()]->active));
 					}
+					static_cast<QuestList*>(PopManager::getInstance()->getPopsMap()[data->name]->getLayerByTag(1)->layer)->getMenuItems()->setColor(Color3B(255, 230, 00));
+					CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/accept.wav");
 					//获取玩家任务对话
 					auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
 					if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
@@ -195,12 +185,14 @@ void NPC::buttonCallback(Node * pNode)
 						if (a->type == QuestTypes::search && a->status == QuestStatus::commit && a->id == quests[items->getQuestTag()]->id && a->targetNpc != data->name)
 							return;
 					}
+					CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/commit.wav");
 					//移除已完成任务
 					items->getMenuItems()->getChildByTag(items->getQuestTag())->removeFromParent();
 					items->getTempItem() = NULL;
 					items->getItems().erase(items->getQuestTag());
 					items->setBtnPos(0.3);
 					QuestDispatcher::getInstance()->QuestStatusControl(this, QuestControl::complete, items->getQuestTag());
+
 					//获取玩家任务对话
 					auto playerDlgs = GameData::getInstance()->getDataFromPlayerTaskDlgsData(items->getQuestTag());
 					if (playerDlgs && !playerDlgs->isSaidFiTsDlgs)
@@ -216,6 +208,7 @@ void NPC::buttonCallback(Node * pNode)
 		case 2:
 			//弹出任务列表，并设置弹出标志
 			if (PopManager::getInstance()->getPopsMap()[data->name]->getPopped(1))	break;
+			CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/accept.wav");
 			questLayer();
 			PopManager::getInstance()->getPopsMap()[data->name]->setPopped(1, true);
 			break;
@@ -282,6 +275,31 @@ void NPC::initDataWithName(const string & sender)
 void NPC::setTiledMap(TMXTiledMap* map)
 {
 	m_map = map;
+}
+
+void NPC::reQuest(QuestList* ql)
+{
+	bool forgeFlag = true;
+	for (auto i : quests) {
+		forgeFlag = true;
+		auto key = i.first;
+		for (auto k : i.second->forgeID) {
+			if (QuestDispatcher::getInstance()->getqData()[k]->status != QuestStatus::finish) {
+				forgeFlag = false;
+				break;
+			}
+			forgeFlag = true;
+		}
+		if (i.second->status == QuestStatus::finish || forgeFlag == false)	continue;
+		if (quests[key]->status == QuestStatus::start)
+			ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests[key]->title), gb2312_to_utf8(quests[key]->instruct), key, "arial.ttf", Color3B(255, 255, 251));
+		else if (quests[key]->status == QuestStatus::active)
+			ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests[key]->title), gb2312_to_utf8(quests[key]->instruct), key, "arial.ttf", Color3B(255, 230, 0));
+		else if (quests[key]->status == QuestStatus::commit && quests[key]->targetNpc == data->name)
+			ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests[key]->title), gb2312_to_utf8(quests[key]->instruct), key, "arial.ttf", Color3B(69, 185, 124));
+		else if (quests[key]->status == QuestStatus::commit && quests[key]->targetNpc != data->name)
+			ql->addItem("UI/UI_QuestPanel_cont.png", "UI/UI_Quest_10.png", gb2312_to_utf8(quests[key]->title), gb2312_to_utf8(quests[key]->instruct), key, "arial.ttf", Color3B(255, 230, 0));
+	}
 }
 
 Vec2 NPC::tiledCoordForPosition(Vec2 pos)
