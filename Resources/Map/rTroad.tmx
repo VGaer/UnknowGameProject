@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="15">
+ <tileset firstgid="1" name="foreground" tilewidth="64" tileheight="128" tilecount="4" columns="4">
+  <image source="rTroad/foreground.png" width="256" height="192"/>
+ </tileset>
+ <tileset firstgid="5" name="free" tilewidth="256" tileheight="320" tilecount="4" columns="4">
+  <image source="rTroad/free.png" width="1088" height="384"/>
+ </tileset>
+ <tileset firstgid="9" name="background" tilewidth="64" tileheight="64" tilecount="169" columns="13">
+  <image source="rTroad/background.png" width="832" height="832"/>
+ </tileset>
+ <tileset firstgid="178" name="changescene" tilewidth="64" tileheight="64" tilecount="8" columns="8">
+  <image source="changescene.png" width="560" height="70"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="changescene" value="4"/>
+    <property name="nextscenedir" value="right"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="patrolpoint" value="true"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="changescene" value="10"/>
+    <property name="nextscenedir" value="left"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="changescene" value="11"/>
+    <property name="nextscenedir" value="down"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="-31"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJy1l0lvE0EQRvsHWGK9gFjFEpYLcLEEciwrJEF2QBMWxQYBl3FAcETsF4ewScQQNimY/Fi+lqo0XyrdM22LHJ7sme6pel29eDzvnLsGvlWwDrrgAjiZwCXp71mRGLvAbrCnItd8hdM6xT5R4XEq4OE5BA6DIyV55sBtcCfRxdfmYglakxUTg102BZvnVsIceVbJR+mBaSKntq8lLtrnb2LuEO8E9bIu7GPznAXnwHkzHus8CeqzkOhzGkyBM6D/n13YpyNYr5x82MW3LRmX5xPwIuLDsJP6VLm0JmQSn51yaUXqFfLJJDe71CIuV8fI36TvMwl+z6g+KXW5Dx4EclkWI+1ZidvAFfu+yiWT+GW1sfn9dZvGsFDSfxwXjqGxfR7dnzpW66pxutKm/blfvcSl47afL1zbBsXoBsbdpPnQOHX6znPNdVkOuIR+O21t/ZrIZdxLkqtHfRrUV+PNymcm7Tdpngau2NchFz6XdZyZ2+qVC33xs2szM337Mn5//dDUZVrc7G+A4n02aYx2TdSNm9bErmN9Zsa02bq8BK/Aa/AGvJX718ENwa7bhsnVlHu8nuuBnLFzSl3egw/gI/gEPsv9u+CeYGvQpGuN7T103/QC+ex4/JzOGpfv4Af4CX6B33L/EXgshOa/RbHUY1Fcll2xbvgZ9bd1Hbj4udt2xV7y70Rrpgacp+G2niPqEqvLE/CUrn3soSs/63hPXwZfzBxxzFw87dnRpM+GK/aajmsosa9EXDpu+/vwn4BPjMzk0zraeRmKg489cuGzzu/l0PvcBvmsJbAX7AP7A23qMaI5DZ11tYjLKvmkcBQcA8cDbdZD313agTkqe8/dkLpWwS62beSKM1jrofuFXexaGQf9rxb6DxIjIw/rEsszN4YLv/OnoM/UEl38/8YD4OAOM1Xh8g+Em2rw
+  </data>
+ </layer>
+ <layer name="foreground" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzrEJADAMBDEn3n9nf5kNTECC668KAAD+dNJ96t0dAGIASCAACw==
+  </data>
+ </layer>
+ <layer name="tree" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1rEKACAIhGGXrPd/4sYgCguCM/i/xUXw4BbNcMs/vd2epdCoBzuqbqK7Pk3o7Dqgm6GoAwAAAARWv1uGfy5Dhgw6qekAVw==
+  </data>
+ </layer>
+ <layer name="barrier" width="35" height="30">
+  <data encoding="base64" compression="zlib">
+   eJy9l1EOwyAMQ7n/cSjd+fZVCUUOsQPBEppG1+SRGpr11lpvun5gROrmc/W7DFOkIbL05rOcZGRZsrntupk8FfVXhViYtVf4R/FLdH2Xz2MZ03xmMBrme5VfMvEUFmZfR/VkWW7spRVf1run2FWWnTwoLjr3EYv19kPE3pFSl8eZ/+5R2LxnfYIlK5Q/w2Kf4U2WjBRee6Z4Z9Fr7qnaa7O8dbzO/E5ez7tKXaqk+CV6Lqo3Vn1S1DOga9l3QtRnM3U57dvddyOKEfVSar/F9gxsbRALG0c5607VZZb6X22OG82hHKwUvzAMWdl6fkL9+a1hWWb9AWdhvsY=
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="1" name="Mon1" x="578.788" y="766.667" width="60.6061" height="60.6061"/>
+  <object id="2" name="Mon2" x="1084.85" y="1021.21" width="63.6364" height="69.697"/>
+  <object id="3" name="Mon6" x="2051.52" y="512.121" width="63.6364" height="63.6364"/>
+  <object id="4" name="Mon5" x="1221.21" y="321.212" width="63.6364" height="60.6061"/>
+  <object id="5" name="Mon4" x="1409.09" y="1733.33" width="60.6061" height="60.6061"/>
+  <object id="6" name="Mon3" x="642.424" y="1224.24" width="63.6364" height="57.5758"/>
+  <object id="7" name="playerpointleft" x="93.9394" y="915.152" width="57.5758" height="63.6364"/>
+  <object id="8" name="playerpointright" x="2090.91" y="1148.48" width="51.5152" height="60.6061"/>
+  <object id="9" name="savepoint" x="763.636" y="890.909" width="66.6667" height="63.6364"/>
+  <object id="11" name="playerpointup" x="1009.09" y="96.9697" width="69.697" height="51.5152"/>
+  <object id="13" name="NPC4" x="897" y="386" width="60" height="53"/>
+ </objectgroup>
+</map>

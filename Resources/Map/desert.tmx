@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="12">
+ <tileset firstgid="1" name="tree" tilewidth="320" tileheight="320" tilecount="2" columns="2">
+  <image source="desert/tree.png" width="640" height="320"/>
+ </tileset>
+ <tileset firstgid="3" name="background" tilewidth="64" tileheight="64" tilecount="108" columns="18">
+  <image source="desert/background.png" width="1152" height="384"/>
+ </tileset>
+ <tileset firstgid="111" name="foreground" tilewidth="64" tileheight="128" tilecount="12" columns="12">
+  <image source="desert/foreground.png" width="768" height="128"/>
+ </tileset>
+ <tileset firstgid="123" name="changescene" tilewidth="64" tileheight="64" tilecount="8" columns="8">
+  <image source="changescene.png" width="560" height="70"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="changescene" value="4"/>
+    <property name="nextscenedir" value="left"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="patrolpoint" value="true"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="changescene" value="6"/>
+    <property name="nextscenedir" value="down"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="-31"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzFl2dPwzAQQC21QNlDAhWKaFlilw1qSUEpq1LZG/7/D+Es3UnXq+04A/rhyYlH/HKXOE5OKZUH+oB+oAFMAxt/TBEYBIaAYWAEPTQz6KFZA9YZSd2K4jqcTXR5BJ6AZxEPogbUGdLNx6+I89UtBAaXAeFRANrAHUO6cT+TE3kEMV0aqtulIOqkG/nVLDEjj8AwjnjwcJHkLPVt5mO65wDnM41dwNLmwnMl42KDfMjhjLlIj6a4r1xEXGwxsNXL/N2z+Mt+eUOdT45cc7vaSpY+0oPWEO2yC+wB+8BsRsyhy7xH31EsV9EtxPInI7aBKrDj0bfMjnm8tjKCu0T1LWN5yjxC5X4OmoY6W/9zzNGFY8x/UmLHrmecI9f9UJzr64wBk8A4YyqGi8/75+tbwXKJlYsRY6oZx5liVmEevi4yLr73HcUB5kXnaQLLQ9HnKkaOJLSHon1UlvGM60Jrv239fwPee+iSVU41Uc8un4u+Q/Qt6mWOfLkEXtn5EXDswTI7XrH0aYm55NpmimEvYvSSot3VltRFfhOSxoiPIRfT3lzu033jcp0yR3JvfgPcqs59Oq0l3CVuLFye5CL/Z76Ab9X5b+IzV5q170R1v0O6/gP4VOa1KEwQjzRU0cfU9gv77eEr
+  </data>
+ </layer>
+ <layer name="foreground" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1t0KgDAIBWDfs4eIav08fnVVxNo0hzvGPhCii3mYSBHhmg17BcNeOUhZcsbaAYSkefvIu+5j79hZXKncz3Ot9gZl9ig5mvo0O/Ynw8uzluU3mQsxE0fJuTT+BLr+9aZbWfC6M1Y0s5Dc7XLUmqhNmaU0pCyND+c+7KucEuI=
+  </data>
+ </layer>
+ <layer name="tree" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztzsEJADAIBEFj/0VbgsGPCcx8l4OLgHu5fQAAAOAxZ9i73a8KL7AABg==
+  </data>
+ </layer>
+ <layer name="barrier" width="35" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzVVosKxCAM87933rePYzeQ0kdSq2MB2abOJK2v1i4c/9KG51MYdezQonFo3Lu0IL4Pou+MlvHJtGW1yX/lOLNeLU1WrrX6SEt3uKN6yy8S74hHg6ZV04DELMPP4EvwSe2VRfIgc3ZFTJj9acYD6jE7Jgqkb1WcP0Xj3LD2BKSPpwWJa+Xck2N1p62aW+KOC8q7Q4uG1TnKrqcViDxlNSLrh9WyCtGZqp0Lu/PH7qWZ+L8ZaD6iuwfDU3lWZoB4teYwc7fw6vvQntHi+bG+kX5sXjyvVrv37uHpPT/CT98JKvp8iw==
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="1" name="playerpointright" x="2096" y="902" width="56" height="62"/>
+  <object id="3" name="playerpointup" type="NPC5" x="1216" y="592" width="58" height="46"/>
+  <object id="4" name="Mon2" x="576" y="1214" width="62" height="64"/>
+  <object id="5" name="Mon1" x="196" y="832" width="58" height="54"/>
+  <object id="6" name="Mon3" x="896" y="1344" width="62" height="54"/>
+  <object id="7" name="Mon5" x="1346" y="1090" width="56" height="58"/>
+  <object id="8" name="Mon4" x="1410" y="1468" width="58" height="60"/>
+  <object id="9" name="Mon6" x="1598" y="896" width="68" height="56"/>
+  <object id="10" name="savepoint" x="1154" y="958" width="60" height="60"/>
+  <object id="11" name="NPC5" x="1151" y="833" width="52" height="45"/>
+ </objectgroup>
+</map>

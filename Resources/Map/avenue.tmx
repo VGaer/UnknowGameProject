@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="26">
+ <tileset firstgid="1" name="backgroundave" tilewidth="64" tileheight="64" tilecount="91" columns="13">
+  <image source="avenue/background.png" width="832" height="448"/>
+ </tileset>
+ <tileset firstgid="92" name="tree" tilewidth="256" tileheight="320" tilecount="3" columns="3">
+  <image source="avenue/tree.png" width="896" height="320"/>
+ </tileset>
+ <tileset firstgid="95" name="changescene" tilewidth="64" tileheight="64" tilecount="8" columns="8">
+  <image source="changescene.png" width="560" height="70"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="changescene" value="2"/>
+    <property name="nextscenedir" value="up"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="patrolpoint" value="true"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="changescene" value="4"/>
+    <property name="nextscenedir" value="down"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="-31"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzFl0uv0zAQhUeKQbwEVLwFZAOsmlTALs2ORdIdizT/h5+OK51PPvVtpQsXicVRE3vsOZ45M067iJiEXUaXsWYcMsaMXuOzxk+/jX4fyL7TO89PZMP4CUPGov16vTM3yt/Jz152Wz2Pwl6YbV+4pYxX4vMw41HGY/F4p72O1brZ9oXbTnY78Rk03+n3KKzV2eDBmRvxeZ3xJuOteDTiMpqPg+2H/152k+Ym+eEXW8ZarWG81Vwyn58yPmd8sTHON2gd+Z/1PInPrPjsNT6YTa8zNBrHnrh4bLbC14xvGd8tHr3O2sq20To0h0ZTtXeSDZpatB/83La3veHC+KTxRWeYbC/ik/Q8RdEpvA8XcthH0Y9rH17zFR6MJb33Wu9aSfqdotQO2jxq7BjntQSfpYoLNb3VOuexEZKdkf1r3bZRNIu+yd2g98Xi1VY5QrvXYtLK31ghWZzRMXGD9xilfskxtTVE0Qw8qINLMdlGqUPPZ7JcDTY3RNEmc+RnbzzoR8RtjFLzqeJCj2iVH2oUPaxmy15+5qP5721slS25pT8QW+rkGp+NxY7+TW6odXhSo8zTS6ifIYr2iAVc0T49gbx4rrin4EHOPN69/KUo/Qwd+JkPlivuEuqAfeECLtUSts6JfFE/c5zrlJphznvU3vwSY+/BHh/vgxuLj4P8wMvjhA4PdsZFvOkr9Em0xHsXRavXcrWp4sJZqfMlzvsQtpPNdzbvukdnk9lwPzYVlzo2xH2NogF8jJZ77iH/JkIvzHssPTabKL2v1o3nh17idck3B72MHoifxdZgs4nzmuAe47weE69t7Mk92qQe2ItceX/BdtRZV2EwW76z4Epc6rug1q3bcDb67C7K/bvYPL3Kv6foRV5ra9zsd/X96N+Do+2JT8b9+8DXcAezxvsQPokTuvWYwGO+sC8x8Ji0cd6L/buJ2qUXo7PVnul79R3gOav/F8AFv+TBv3FOPn5EqenB/PJ9QH/x+66undvmaKjW0PPY92cUnWPjfRmtsq6N828m77nOh/8ybZRvSnh5z0o2zvNtQazweU2/2HdxWT8A/03c5PIn3C7VkuvXcY0LOK25l3H/L/FC53ma8SzjecbLiF8v7rDfXZB9x/uMDxkfjcv/wL/k8huN4dGb
+  </data>
+ </layer>
+ <layer name="tree" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYMAEsVjEqAGINZcW9pNqZhwN3EAMoFXYDxcwGj7UATED7YBRMGzBaNoaBaNg6IDR/Dq8wGh8joJRMAoGEwAAOjkD/Q==
+  </data>
+ </layer>
+ <layer name="barrier" width="35" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlGEKwCAIRrtp2+5/iBHtxwjRMueSvgcSlJppmhJNfoSjnF+EcHY9fkf0OP12z8LnqbC1uHeW3KwSve/UMBoLZW+dnx2Jlscv/ySoSDnWzL9I4I/9D2rgj0e/oq52SLmMOn8LK8W9UiwUHj2Fvt2X4yUz3LhkFVA=
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="14" name="playerpointdown" x="1152" y="1780" width="62" height="50"/>
+  <object id="16" name="playerpointup" x="1155" y="88" width="59" height="35"/>
+  <object id="18" name="Mon1" x="193.939" y="318.182" width="60.6061" height="60.6061"/>
+  <object id="19" name="Mon3" x="1024.24" y="830.303" width="63.6364" height="63.6364"/>
+  <object id="20" name="Mon2" x="1854.55" y="451.515" width="63.6364" height="60.6061"/>
+  <object id="21" name="Mon4" x="321.212" y="1278.79" width="60.6061" height="63.6364"/>
+  <object id="22" name="Mon5" x="1154.55" y="1281.82" width="63.6364" height="60.6061"/>
+  <object id="23" name="Mon6" x="1860.61" y="1148.48" width="60.6061" height="63.6364"/>
+  <object id="24" name="savepoint" x="515.152" y="954.545" width="60.6061" height="63.6364"/>
+  <object id="25" name="NPC3" x="830" y="448" width="68" height="62"/>
+ </objectgroup>
+</map>

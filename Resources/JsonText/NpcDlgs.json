@@ -1,0 +1,93 @@
+[
+  {
+  	"id": 1,
+    "name": "梁嘉辉",
+    "dlgs": [
+      "信仰圣光吧！",
+      "我很抱歉。",
+      "打得不错。"
+    ],
+    "quest_id": [5,7],
+    "status" : 0,
+    "mapID" : 4,
+    "imagePath": "NPC/NPC_1.png"
+  },
+  {
+  	"id": 2,
+    "name": "余永燊",
+    "dlgs": [
+      "为了部落！",
+      "'@#￥%……",
+      "excuse 喵？"
+    ],
+    "quest_id": [6,8,9,12,17],
+    "status" : 0,
+    "mapID" : 4,
+    "imagePath": "NPC/NPC_2.png"
+  },
+  {
+  	"id": 3,
+    "name": "廖浩雄",
+    "dlgs": [
+	  "剑气，与你同在。",
+      "今天的风儿有点喧嚣...",
+      "小伙子挺有潜力。" 
+    ],
+    "quest_id": [2,18],
+    "status" : 0,
+    "mapID" : 3,
+    "imagePath": "NPC/NPC_3.png"
+  },
+  {
+  	"id": 4,
+    "name": "守墓人",
+    "dlgs": [
+      "为无辜的人默哀...",
+      "死去的灵魂总会被超度的。",
+      "你不应该来打扰这些灵魂。"
+    ],
+    "quest_id": [10,11],
+    "status" : 0,
+    "mapID" : 9,
+    "imagePath": "NPC/NPC_4.png"
+  },
+  {
+  	"id": 5,
+    "name": "旷工",
+    "dlgs": [
+      "家里的妻子应该很挂念我吧，可是我没得回去...",
+      "好想回家看看啊。",
+      "沙漠的夜晚真的好冷。"
+    ],
+    "quest_id": [13,16],
+    "status" : 0,
+    "mapID" : 5,
+    "imagePath": "NPC/miner.png"
+  },
+  {
+  	"id": 6,
+    "name": "寻宝者",
+    "dlgs": [
+      "这里的某个角落一定藏着宝藏。",
+      "这藏宝图谁画的，真难看懂。",
+      "宝藏啊宝藏啊，你在哪里呀？"
+    ],
+    "quest_id": [14],
+    "status" : 0,
+    "mapID" : 6,
+    "imagePath": "NPC/treasure_hunter.png"
+  },
+  {
+  	"id": 7,
+    "name": "鬼魂",
+    "dlgs": [
+      "我死得好冤啊。",
+      "这世上还有我放不下的东西。",
+      "死神也不想来搭理我们这些冤魂，总有一天我们也会因为怨念而无法自控的。"
+    ],
+    "quest_id": [15],
+    "status" : 0,
+    "mapID" : 11,
+    "imagePath": "NPC/ghost.png"
+  }
+]

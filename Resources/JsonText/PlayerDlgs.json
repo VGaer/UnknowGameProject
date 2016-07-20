@@ -1,0 +1,133 @@
+{
+	"TaskDlgs":
+	[
+		{
+			"TaskId": 4,
+			"AcceptTaskDlgs":
+			[
+				"什么声音，怎么有奇怪的叫声....."
+			],
+			"CommitTaskDlgs":
+			[
+				"这些是什么东西，怎么会袭击人类呢。",
+				"真奇怪，外面到底发生了什么事"
+			],
+			"FinishTaskDlgs":
+			[
+				"外面到底发生了为什么事"
+			]
+		},
+		{
+			"TaskId": 14,
+			"AcceptTaskDlgs":
+			[
+				"NULL"
+			],
+			"CommitTaskDlgs":
+			[
+				"NULL"
+
+			],
+			"FinishTaskDlgs":
+			[
+				"这...好像被实力坑了一波..."
+			]
+		},
+		{
+			"TaskId": 16,
+			"AcceptTaskDlgs":
+			[
+				"NULL"
+			],
+			"CommitTaskDlgs":
+			[
+				"NULL"
+
+			],
+			"FinishTaskDlgs":
+			[
+				"原来是这样，导致了这场异变..."
+			]
+		}
+	],
+	"EnterSceneDlgs":
+	[
+		{
+			"SceneId": 3,
+			"CannotEnterDlgs":
+			[
+				"还有怪物在我家附近..."
+			],
+			"EnterSceneDlgs":
+			[
+				"好久没出来外面看看了..."
+			]
+		},
+		{
+			"SceneId": 4,
+			"CannotEnterDlgs":
+			[
+				"刚才好像看到了个人，过去看看吧..."
+			],
+			"EnterSceneDlgs":
+			[
+				"NULL"
+			]
+		},
+		{
+			"SceneId": 5,
+			"CannotEnterDlgs":
+			[
+				"圣骑士让我去找个人，还没找到呢。"
+			],
+			"EnterSceneDlgs":
+			[
+				"这里！！！怎么会是一片沙漠，曾经可是一片绿洲！！！"
+			]
+		},
+		{
+			"SceneId": 11,
+			"CannotEnterDlgs":
+			[
+				"好像有看不见的东西挡着，这是怎么回事？有个人在这里，问问他吧。"
+			],
+			"EnterSceneDlgs":
+			[
+				"坟墓？！这是....."
+			]
+		},
+		{
+			"SceneId": 6,
+			"CannotEnterDlgs":
+			[
+				"我还是到时再进来看看吧。"
+			],
+			"EnterSceneDlgs":
+			[
+				"好昏暗...味道好难受..."
+			]
+		},
+		{
+			"SceneId": 8,
+			"CannotEnterDlgs":
+			[
+				"我还是到时再进来看看吧"
+			],
+			"EnterSceneDlgs":
+			[
+				"NULL"
+			]
+		},
+		{
+			"SceneId": 10,
+			"CannotEnterDlgs":
+			[
+				"暂时就不过去了"
+			],
+			"EnterSceneDlgs":
+			[
+				"NULL"
+			]
+		}
+	]
+}

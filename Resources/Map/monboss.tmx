@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="35" height="30" tilewidth="64" tileheight="64" nextobjectid="8">
+ <tileset firstgid="1" name="background" tilewidth="64" tileheight="64" tilecount="153" columns="9">
+  <image source="monboss/background.png" width="576" height="1088"/>
+ </tileset>
+ <tileset firstgid="154" name="foreground" tilewidth="64" tileheight="192" tilecount="16" columns="8">
+  <image source="monboss/foreground.png" width="512" height="448"/>
+ </tileset>
+ <tileset firstgid="170" name="free" tilewidth="256" tileheight="320" tilecount="4" columns="4">
+  <image source="monboss/free.png" width="1088" height="384"/>
+ </tileset>
+ <tileset firstgid="174" name="changescene" tilewidth="64" tileheight="64" tilecount="8" columns="8">
+  <image source="changescene.png" width="560" height="70"/>
+  <tile id="0">
+   <properties>
+    <property name="Collidable" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="changescene" value="9"/>
+    <property name="nextscenedir" value="right"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="patrolpoint" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="-1000"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJydl+lrFEEQxcc7eINHVLzFWzReeIM3eIN4gfot6iZhs2qWkeguGj/F/at9A134eKnqafzwY2anq7teV1XXzI5VVbUMLAcrwEqwCqwGa8ACGCMWwR95VkqnwGYtWAfWgw1gI9gENoNRsumBz8LvYL0h3Q8K/E/R/RawFWwD28E42AF2gl3JpuvMm03XvjPGv+eCuHo6d4M9YC/YB/aDA+AgOJRi8s2ZN+s805ywP42tF9fD4Ag4Co6B4+AEOAlOZXzy80GiH9h6++k6ek6DM2ACnAXnwHlwAVws0DIXjOd0mJZmDT4fl8BlcAVcBdfAdXAj2bEW9utptBoZik+26dPzRuOIxm6CW+A2uAPugnvgfrJjn3wuo3ixTRSTaP4D8BA8Ao/BE/AUPHPiojH2cq42XtwiLc/TXl6Al+AVeA3eOHEZ0Hq1o0drV7VEcdF+oPN7lNOcfeQzlx/TkluT95tbR/dfO7mKatbuo9wPM35LUd/6u8kv13VbrzRsju5/KqObY9OWn0gLrx31zTasX0X51X44qJa+z3Lo/jsZW+5XdWCj78KS/tS2huUqGvsJfqX7TzLG78fSemnT97906ap59L6PZqql33PGjPyOcs3x4Fjk6rkrWNxGmTkRXJ8D8VEyf55gLR6lPYjt7GwvpJhOO/adpH2x+vfNp1q4BrVmPbw6tphEcY5ybHkq+b7uBeOq1fqN2rX1FK0do83W06sxqp395f4j1FWsh/1pf/feizly9lZPWjtK7lxyLrTOvP7Aejg+Xm03tvMOjQ7uMZ2MDzs3Ud3mzuw0Xd+Cdxney554b1wbUf1zntvqeBJ8BR/Aj3Rt+JKuH5050XlXbZZni69Xw5yryeTT9HwnPapF14rOh/n2+lbDX2IhuGU=
+  </data>
+ </layer>
+ <layer name="foreground" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJztltsKwCAIhnv/R2iHYOfHXDdjIi0rirL5gVRQ9qMZKiX0yGntqi0iEF1bQAQc4qqBYYYEfylnXEA9uXwKfrjUVqn30Hq94vxwydcXpfLo88spZljrRKwfDJjv1g7insXaisa/0vofsEXsHdF6zimEESE14MLQW7okNV7CC4xh6f61t/74Br5jHMc=
+  </data>
+ </layer>
+ <layer name="tree" width="35" height="30">
+  <properties>
+   <property name="cc_vertexz" value="automatic"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFIxmsGmgHjIIBA6NxTxkYDT/qgzUU6KVGfKylghn0tHM1Enukp8fVhJWMglGAF1BS/owCCBiIMnQ4gtFwHHpguNXB1EqDAF48Cgw=
+  </data>
+ </layer>
+ <layer name="barrier" width="35" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzVV0kSwCAI8/+PsT6xV8cGCCJqc+noaABZW4qOCtbj3i6ckouwWpfIu6J7iK8lyGZ0ybhzind8K1bGjtit3VfyKdI/opsUUwi1fHW7Pact+07WQwY36yYhWguj8b3Tp2POamDqt8WTbZeH35NvrE0rfHfC/9Ia7TO9fay1Wk/Q5K7AE5Dp6S8SerslXaTzUZlW3LJ9ut/X1j0acSYLK3MIxcAs/9/6oTc+ojyZ7+OZlaP+1erfLD+aW9nYtGTN9n6Ww+PjmX9+a/54AWW3ZAM=
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="1" name="playerpointleft" x="90" y="1254" width="50" height="52"/>
+  <object id="2" name="Mon4" x="900" y="830.303" width="60.6061" height="57.5758"/>
+  <object id="3" name="Mon5" x="1860.61" y="515.152" width="57.5758" height="54.5455"/>
+  <object id="4" name="Mon1" x="581.818" y="1603.03" width="60.6061" height="60.6061"/>
+  <object id="5" name="Mon3" x="1909.09" y="1212.12" width="69.697" height="69.697"/>
+  <object id="6" name="Mon6" x="1021.21" y="130.303" width="63.6364" height="63.6364"/>
+  <object id="7" name="Mon2" x="957.576" y="1403.03" width="66.6667" height="63.6364"/>
+ </objectgroup>
+</map>
