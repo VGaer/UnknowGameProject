@@ -152,6 +152,11 @@ void StartGameScene::menuItemSettingCallback(Ref* pSender)
 void StartGameScene::loadPlistFile()
 {
 	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
+
+	/*ÏÂÓê±³¾°*/
+	frameCache->addSpriteFramesWithFile("Rain/Rain.plist","Rain/Rain.png");
+
+
 	/*±£´æµã*/
 	frameCache->addSpriteFramesWithFile("NPC/save.plist", "NPC/save.png");
 
@@ -206,6 +211,10 @@ void StartGameScene::loadPlistFile()
 
 	frameCache->addSpriteFramesWithFile("MonsterProj/bonemonster/bonemonproj.plist", "MonsterProj/bonemonster/bonemonproj.png");
 	frameCache->addSpriteFramesWithFile("MonsterProj/bonemonster/bonemonprojdur.plist", "MonsterProj/bonemonster/bonemonprojdur.png");
+
+
+	//////BOSS
+	frameCache->addSpriteFramesWithFile("BossProj/eyecubeboss/eyecubebosslaser.plist", "BossProj/eyecubeboss/eyecubebosslaser.png");
 }
 
 void StartGameScene::menuItemRestartCallback(Ref* pSender)

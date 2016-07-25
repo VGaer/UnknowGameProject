@@ -272,7 +272,7 @@ void QuestDispatcher::twoIdSceneTalk(TMXTiledMap* map)
 			if (playerDlgs && !playerDlgs->isSaidAcTsDlgs)
 			{
 				if (playerDlgs->acceptTaskDlgs.empty() || playerDlgs->acceptTaskDlgs.at(0) == "NULL")
-					;//return; //存档后开游戏,return后定时器就开不了了
+					;
 				else
 				{
 					auto talk = Talk::create(playerDlgs->acceptTaskDlgs, playerDlgs->taskId, Talk_AcTask);

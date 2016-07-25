@@ -167,7 +167,7 @@
 "damage":13,
 "attackNums":10,
 "attackNumsInter":0.5,
-"duration":5.0,
+"duration":7.0,
 "hAnimateName":"gdragonmonsterhattack",
 "dAnimateName":"gdragonmonsterdattack",
 "uAnimateName":"gdragonmonsteruattack"
@@ -226,7 +226,7 @@
 "damage":7,
 "attackNums":1,
 "attackNumsInter":0.1,
-"duration":5.0,
+"duration":7.0,
 "hAnimateName":"bonemonsterhattack",
 "dAnimateName":"bonemonsterdattack",
 "uAnimateName":"bonemonsteruattack"
@@ -248,7 +248,7 @@
 "damage":15,
 "attackNums":10,
 "attackNumsInter":0.5,
-"duration":5.0,
+"duration":7.0,
 "hAnimateName":"bonemonsterhattack",
 "dAnimateName":"bonemonsterdattack",
 "uAnimateName":"bonemonsteruattack"

@@ -64,12 +64,12 @@
  </layer>
  <objectgroup name="objects">
   <object id="12" name="playerpointdown" x="1160" y="1797.33" width="50.6667" height="42.6667"/>
-  <object id="13" name="Mon1" x="448.485" y="1218.18" width="54.5455" height="57.5758"/>
-  <object id="14" name="Mon2" x="1151.52" y="1093.94" width="60.6061" height="57.5758"/>
-  <object id="15" name="Mon3" x="1600" y="1278.79" width="69.697" height="60.6061"/>
-  <object id="16" name="Mon6" x="448.485" y="448.485" width="60.6061" height="57.5758"/>
-  <object id="17" name="Mon5" x="766.667" y="703.03" width="66.6667" height="63.6364"/>
-  <object id="18" name="Mon4" x="1472.73" y="700" width="63.6364" height="60.6061"/>
+  <object id="13" name="gdragonmonster1" x="448.485" y="1218.18" width="54.5455" height="57.5758"/>
+  <object id="14" name="bonemonster1" x="1151.52" y="1093.94" width="60.6061" height="57.5758"/>
+  <object id="15" name="treemonster1" x="1600" y="1278.79" width="69.697" height="60.6061"/>
+  <object id="16" name="gdragonmonster2" x="448.485" y="448.485" width="60.6061" height="57.5758"/>
+  <object id="17" name="treemonster2" x="766.667" y="703.03" width="66.6667" height="63.6364"/>
+  <object id="18" name="bonemonster2" x="1472.73" y="700" width="63.6364" height="60.6061"/>
   <object id="19" name="NPC7" x="1024" y="1602" width="62" height="54"/>
  </objectgroup>
 </map>

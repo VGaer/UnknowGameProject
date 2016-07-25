@@ -30,13 +30,19 @@
     <property name="nextscenedir" value="down"/>
    </properties>
   </tile>
+  <tile id="4">
+   <properties>
+    <property name="changescene" value="12"/>
+    <property name="nextscenedir" value="down"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="background" width="35" height="30">
   <properties>
    <property name="cc_vertexz" value="-31"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
  <layer name="tree" width="35" height="30">
@@ -49,18 +55,18 @@
  </layer>
  <layer name="barrier" width="35" height="30">
   <data encoding="base64" compression="zlib">
-   eJztlGEKwCAIRrtp2+5/iBHtxwjRMueSvgcSlJppmhJNfoSjnF+EcHY9fkf0OP12z8LnqbC1uHeW3KwSve/UMBoLZW+dnx2Jlscv/ySoSDnWzL9I4I/9D2rgj0e/oq52SLmMOn8LK8W9UiwUHj2Fvt2X4yUz3LhkFVA=
+   eJztlN0KwCAIhXvT9vP+7zCCLiJETZ0z5gcyWNlOx2kpMLUHRlu/gMDyOOeu7MP2z+8szjwFuRbf1VKnJwX3nhJWtUD51v5oub8WMMDV4uGjpS/afzJSjaJCeSyZfzvx5txLeGQN/PHo16yrHZSXu87fRiTdkbRAePRU9u1/OYbQ8ADCKRbc
   </data>
  </layer>
  <objectgroup name="objects">
   <object id="14" name="playerpointdown" x="1152" y="1780" width="62" height="50"/>
   <object id="16" name="playerpointup" x="1155" y="88" width="59" height="35"/>
-  <object id="18" name="Mon1" x="193.939" y="318.182" width="60.6061" height="60.6061"/>
-  <object id="19" name="Mon3" x="1024.24" y="830.303" width="63.6364" height="63.6364"/>
-  <object id="20" name="Mon2" x="1854.55" y="451.515" width="63.6364" height="60.6061"/>
-  <object id="21" name="Mon4" x="321.212" y="1278.79" width="60.6061" height="63.6364"/>
-  <object id="22" name="Mon5" x="1154.55" y="1281.82" width="63.6364" height="60.6061"/>
-  <object id="23" name="Mon6" x="1860.61" y="1148.48" width="60.6061" height="63.6364"/>
+  <object id="18" name="bonemonster1" x="193.939" y="318.182" width="60.6061" height="60.6061"/>
+  <object id="19" name="gdragonmonster2" x="1024.24" y="830.303" width="63.6364" height="63.6364"/>
+  <object id="20" name="treemonster2" x="1854.55" y="451.515" width="63.6364" height="60.6061"/>
+  <object id="21" name="treemonster1" x="321.212" y="1278.79" width="60.6061" height="63.6364"/>
+  <object id="22" name="bonemonster2" x="1154.55" y="1281.82" width="63.6364" height="60.6061"/>
+  <object id="23" name="gdragonmonster1" x="1860.61" y="1148.48" width="60.6061" height="63.6364"/>
   <object id="24" name="savepoint" x="515.152" y="954.545" width="60.6061" height="63.6364"/>
   <object id="25" name="NPC3" x="830" y="448" width="68" height="62"/>
  </objectgroup>

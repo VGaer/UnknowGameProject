@@ -33,6 +33,8 @@ public:
 	void firstEnterTalk();
 	static int sceneId;
 private:
+	Vec2 FindOneTiledNoBarrier();
+
 	// 基本对象
 	Player* m_player;
 	TMXTiledMap* m_map;
@@ -40,6 +42,11 @@ private:
 	TMXObjectGroup* objGroup;
 	NPC* m_npc;
 	static bool OnlyOnceSetScale;
+
+private:
+	//特殊需要
+	Sprite* m_spriteRain; //11号地图下雨
+	ParticleSystem* m_particleFire; //5号地图火堆
 };
 
 #endif

@@ -55,16 +55,16 @@
  </layer>
  <layer name="barrier" width="35" height="30">
   <data encoding="base64" compression="zlib">
-   eJzlltEOwyAIRf1L5/b//7Ens4UI3kOxWTISE61wPSK1ba3GepFOhf0CS28fjm7GWS2is/J9LXy8WHVdlSW7phdjfUaCpWr+Sl6+/UaSZZhnVvdKXqIz2MVX1Is3v2tRTIaFrqdqZlmi+dlXmO9iIVonWGgd/wuLqmfnT7Eo9/hdLORb6/Xpe6hqUxY1Zo5391zm7iRG2Em97M5APSt6jpZFqb2sDt1PlpWweHFVeVNZVrmhdjovkdYplqgu7H9pZg3Pj9akapRlGtkraYSFanvtGexNYXkIfqq9ARxFZgs=
+   eJztltEOgCAIRfnLsv7/P1pvxVC5INhmd+MpuB7AuTYi2v4IC/oIw62T3vJ4oR7PfEmec28VRw9oP1KNxYf7FSNLqdSgLJKQO1yrRXuK2pFnLh7eTBbEbyUWbc5qLIgfz41g0b7jGSxaL54fwWL104jnzWSpMbXyLPfFuu9ojxksGXORxGszWKTvLc2YC8Ixci41Nv5f2uspcy6jWFq9Imdm7qgXR6M3Tf0+kOUCkiYOUw==
   </data>
  </layer>
  <objectgroup name="objects">
-  <object id="2" name="Mon4" x="1037" y="1237" width="39" height="27"/>
-  <object id="3" name="Mon1" x="152" y="520" width="56" height="46"/>
-  <object id="4" name="Mon2" x="966" y="474" width="52" height="56"/>
-  <object id="5" name="Mon3" x="2016" y="530" width="48" height="54"/>
-  <object id="6" name="Mon5" x="1548" y="1710" width="52" height="42"/>
-  <object id="7" name="Mon6" x="2016" y="1538" width="54" height="52"/>
+  <object id="2" name="gdragonmonster1" x="1037" y="1237" width="39" height="27"/>
+  <object id="3" name="treemonster2" x="152" y="520" width="56" height="46"/>
+  <object id="4" name="gdragonmonster2" x="966" y="474" width="52" height="56"/>
+  <object id="5" name="bonemonster2" x="2016" y="530" width="48" height="54"/>
+  <object id="6" name="bonemonster1" x="1548" y="1710" width="52" height="42"/>
+  <object id="7" name="treemonster1" x="2016" y="1538" width="54" height="52"/>
   <object id="8" name="playerpointdown" x="1029.33" y="1784" width="45.3333" height="46.6667"/>
   <object id="9" name="playerpointup" x="1158.67" y="270.667" width="52" height="49.3333"/>
   <object id="10" name="playerpointleft" x="110" y="1876" width="44" height="38"/>

@@ -52,6 +52,10 @@ PlayerTaskDlgsData* TalkManager::getDataFromPlayerTaskDlgsData(int id)
 	{
 		return m_mapCurPlayerTaskDlgs[id];
 	}
+	else
+	{
+		return NULL;
+	}
 }
 
 EnterSceneDlgsData* TalkManager::getDataFromEnterSceneDlgsData(int id)
@@ -59,6 +63,10 @@ EnterSceneDlgsData* TalkManager::getDataFromEnterSceneDlgsData(int id)
 	if (m_mapCurEnterSceneDlgs.find(id) != m_mapCurEnterSceneDlgs.end())
 	{
 		return m_mapCurEnterSceneDlgs[id];
+	}
+	else //如果没有加上else,在Release版本会崩溃，因为如果不存在，返回的指针Debug版本会自动为NULL，但Release版本是随机的， 那么就可能造成非法操作内存
+	{
+		return NULL;
 	}
 }
 

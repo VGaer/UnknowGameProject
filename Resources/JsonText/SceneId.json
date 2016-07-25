@@ -78,6 +78,14 @@
 "Level":0,
 "Mission":[10],
 "MissonActive":[]
+},
+
+{
+"scenename":"Map/eyecubeboss.tmx",
+"Id":12,
+"Level":0,
+"Mission":[],
+"MissonActive":[]
 }
 
 ]

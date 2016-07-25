@@ -66,18 +66,18 @@
  </layer>
  <layer name="barrier" width="35" height="30">
   <data encoding="base64" compression="zlib">
-   eJzNV8sOwzAI4/8v2eOHd2m1CJFg88hmiUMVYgy0JBXhMC5DfVkw/My+AfhkYkW4T9YH2X9aD9KvClhcT0KL5rF6/wrwIUDqoHVValnl6/nc0FqqweTmadHvhI6T7enM310XFG/5atnlfwKzFgae7t28W61FtXiY46H17tISwb9rYb/Tqjnt1QXptXdGdaLyvP31HGHvp5W5s1qGYV06drbz74if2S+S1xa5qw/j2bsbsbxRWHrYOZjVYfVnxbmaEd3/fwxX17c4x0B9u2Pea4+NZWryAX9lWks=
+   eJzNl90KwzAIRvP+N/t74d1UFoRUzxdt90EobDaeGFE7BtPjWMQ2u+j+hEthIb4UboVFjU/mfSUuOzy790X8ePsXYMkwvYX9MiL5aHaVLKscjGxMnqVa5GwRi88J72f3Tuf9u+OS1Wf8WM7Of4VmFqKIO6p3lSyRZn/ZeHexKPp3FqU3dLHMytx11KM6VVHfTHfXETKf2rPq7JRlZ66hHMpcVz3HqHNd1XcC5fH2K5759w4OOgNSFsKR6aeR7apGUI5sPpB8URiUvtPNQ3zaf8+TtROXL23oo3g=
   </data>
  </layer>
  <objectgroup name="objects">
   <object id="1" name="playerpointdown" x="1025" y="1778" width="62" height="53"/>
   <object id="2" name="playerpointleft" x="100" y="702" width="74" height="74"/>
-  <object id="3" name="Mon1" x="575.758" y="442.424" width="66.6667" height="63.6364"/>
-  <object id="4" name="Mon4" x="715.152" y="957.576" width="57.5758" height="63.6364"/>
-  <object id="5" name="Mon2" x="1348.48" y="572.727" width="63.6364" height="66.6667"/>
-  <object id="6" name="Mon6" x="1721.21" y="1030.3" width="69.697" height="60.6061"/>
-  <object id="7" name="Mon5" x="1151.52" y="1281.82" width="66.6667" height="66.6667"/>
-  <object id="8" name="Mon3" x="1090.91" y="830.303" width="66.6667" height="66.6667"/>
+  <object id="3" name="bonemonster1" x="575.758" y="442.424" width="66.6667" height="63.6364"/>
+  <object id="4" name="gdragonmonster2" x="715.152" y="957.576" width="57.5758" height="63.6364"/>
+  <object id="5" name="gdragonmonster1" x="1348.48" y="572.727" width="63.6364" height="66.6667"/>
+  <object id="6" name="treemonster2" x="1721.21" y="1030.3" width="69.697" height="60.6061"/>
+  <object id="7" name="treemonster1" x="1151.52" y="1281.82" width="66.6667" height="66.6667"/>
+  <object id="8" name="bonemonster2" x="1090.91" y="830.303" width="66.6667" height="66.6667"/>
   <object id="9" name="playerpointright" x="2103.03" y="845.455" width="63.6364" height="60.6061"/>
   <object id="11" name="savepoint" x="384" y="766" width="62" height="58"/>
   <object id="12" name="NPC1" x="1602" y="770" width="62" height="60"/>

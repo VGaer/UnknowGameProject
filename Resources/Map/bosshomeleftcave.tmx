@@ -43,16 +43,16 @@
  </layer>
  <layer name="barrier" width="35" height="30">
   <data encoding="base64" compression="zlib">
-   eJy1l4kKwzAMQ/P7WX96gzEIQZZl2TMEmuDjtT6yrfWVvTxx7PZhd9ujczUG8hXZRnHRfi/OzPwj3Z0sFJ/FUVaFj+mczw+xzaSSq4gF7Sd5qiy/s8pSmFyWipx+UB2qLBP5UGOq32+K5X6/59LLenkqRx37qKedFfmv2juzPpOKH4Wl08sOC5tHnbqf+C7nvsri5jqbuao/d5ZEup06ZrOky3Luu98F1bfb01Mz2303x27inn6ATvVeUDjY/Mh6ETEq8bI7IYrPWNBzRRgL4vrn3VRhUfx07kg1R5U+dXhYPbA6ZfqT+XFj/CtH6Fz9TdJhcezv/4Wvz3oDY36SJw==
+   eJzNl1EKwCAMQ72+89LbjzCkrU1jqQF/pNZnjIP11lonBypPvxMsFp9WK/WKskn7RM+mKbqe8XlqGFw7efzPyl82zyl29i1EWLT83sAi+VPJ8s8/2iMjLztls0TXnzxjFgtzN2zeqlksHpQFPYd3P6Rfpi9ovynkW5JxRzf54hFSz3qy28PDMoRalAXhWGutuTk0RobPy8/khWFhMl3FwnDc7ksT5qt8kZgqWap82Xmzav0vfL7xAgGYhsc=
   </data>
  </layer>
  <objectgroup name="objects">
-  <object id="1" name="Mon4" x="1284.85" y="1730.3" width="57.5758" height="60.6061"/>
-  <object id="2" name="Mon3" x="1027.27" y="1275.76" width="54.5455" height="60.6061"/>
-  <object id="3" name="Mon2" x="960.606" y="766.667" width="57.5758" height="57.5758"/>
-  <object id="4" name="Mon1" x="957.576" y="306.061" width="63.6364" height="57.5758"/>
-  <object id="5" name="Mon5" x="1606.06" y="1281.82" width="57.5758" height="57.5758"/>
-  <object id="6" name="Mon6" x="1951.52" y="730.303" width="57.5758" height="54.5455"/>
+  <object id="1" name="bonemonster2" x="1284.85" y="1730.3" width="57.5758" height="60.6061"/>
+  <object id="2" name="gdragonmonster2" x="1027.27" y="1275.76" width="54.5455" height="60.6061"/>
+  <object id="3" name="gdragonmonster1" x="960.606" y="766.667" width="57.5758" height="57.5758"/>
+  <object id="4" name="treemonster1" x="957.576" y="306.061" width="63.6364" height="57.5758"/>
+  <object id="5" name="bonemonster1" x="1606.06" y="1281.82" width="57.5758" height="57.5758"/>
+  <object id="6" name="treemonster2" x="1951.52" y="730.303" width="57.5758" height="54.5455"/>
   <object id="7" name="playerpointright" x="2078.79" y="1860.61" width="57.5758" height="51.5152"/>
   <object id="8" name="savepoint" x="490.909" y="300" width="66.6667" height="54.5455"/>
  </objectgroup>

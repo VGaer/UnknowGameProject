@@ -13,6 +13,8 @@ Player::Player()
 	//≥ı ºªØ∏∏¿‡
 	Entity::init();
 
+	IscanMove = true;
+
 	m_map = NULL;
 }
 
@@ -2271,6 +2273,12 @@ Vec2 Player::tiledCoordForPosition(Vec2 pos)
 
 bool Player::setPlayerPosition(Vec2 position)
 {
+	if (!IscanMove)
+	{
+		return false;
+	}
+
+
 	Vec2 positionVleft;
 	Vec2 positionVright;
 	switch (PlayerDir) {

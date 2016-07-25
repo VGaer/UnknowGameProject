@@ -32,6 +32,7 @@ bool PopLayer::init() {
 	menu->setPosition(Vec2::ZERO);
 	setMenuButton(menu);
 
+	//只是当前层触摸有用，不会扩散到其孩子
 	setTouchEnabled(true);
 	return true;
 }
@@ -43,27 +44,47 @@ bool PopLayer::onTouchBegan(Touch * _touch, Event * _event) {
 
 PopLayer* PopLayer::create(const char *backgroundImage) {
 	PopLayer* ml = PopLayer::create();
-	ml->setSpriteBackGround(Sprite::create(backgroundImage));
-	ml->setSprite9BackGround(Scale9Sprite::create(backgroundImage));
+	if (ml != NULL)
+	{
+		ml->setSpriteBackGround(Sprite::create(backgroundImage));
+		ml->setSprite9BackGround(Scale9Sprite::create(backgroundImage));
+	}
 	return ml;
 }
 
 void PopLayer::setTitle(const string& title, Color3B color, int fontsize, string font) {
-	Label* ltfTitle = Label::create(title, font, fontsize);
-	ltfTitle->setAnchorPoint(Vec2(0.5, 1));
-	ltfTitle->setColor(color);
-	setLabelTitle(ltfTitle);
+	//fontsize必须大于0
+	if (fontsize > 0)
+	{
+		Label* ltfTitle = Label::create(title, font, fontsize);
+		ltfTitle->setAnchorPoint(Vec2(0.5, 1));
+		ltfTitle->setColor(color);
+		setLabelTitle(ltfTitle);
+	}
+	else
+	{
+		log("fontsize < 0");
+	}
 }
 
 void PopLayer::setContentText(const string& text, int fontsize, int padding, int paddingTop, string font, Color3B color) {
-	Label* ltf = Label::create(text, font, fontsize);
-	ltf->setColor(color);
-	ltf->setAnchorPoint(Vec2(0, 1));
-	setLabelContentText(ltf);
-	m_contentPadding = padding;
-	m_contentPaddingTop = paddingTop;
+	if (fontsize > 0)
+	{
+		Label* ltf = Label::create(text, font, fontsize);
+		ltf->setColor(color);
+		ltf->setAnchorPoint(Vec2(0, 1));
+		setLabelContentText(ltf);
+		m_contentPadding = padding;
+		m_contentPaddingTop = paddingTop;
+	}
+	else
+	{
+		log("fontsize < 0");
+	}
+	
 }
 
+//SEL_CallFuncN(函数指针) 类型： void (Ref::*SEL_CallFuncN)(Node*);
 void PopLayer::setCallbackFunc(Ref *target, SEL_CallFuncN callfun) {
 	m_callbackListener = target;
 	m_callback = callfun;

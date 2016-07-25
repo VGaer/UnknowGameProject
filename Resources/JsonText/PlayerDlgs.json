@@ -78,11 +78,22 @@
 			"SceneId": 5,
 			"CannotEnterDlgs":
 			[
-				"圣骑士让我去找个人，还没找到呢。"
+				"先在附近逛逛吧。"
 			],
 			"EnterSceneDlgs":
 			[
 				"这里！！！怎么会是一片沙漠，曾经可是一片绿洲！！！"
+			]
+		},
+		{
+			"SceneId": 9,
+			"CannotEnterDlgs":
+			[
+				"先在附近逛逛吧。"
+			],
+			"EnterSceneDlgs":
+			[
+				"NULL"
 			]
 		},
 		{

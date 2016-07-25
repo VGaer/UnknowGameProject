@@ -26,6 +26,7 @@ GameData::GameData()
 	readPlayerDlgsDataFile();
 	readPlayerDataFile();
 	readQuestDlgsDataFile();
+	readSceneIdToSetMonFile();
 	//因为是根据playerdata判断是否存在存档，所以要有先后顺序
 	if (isExistSaveDoc())
 	{
@@ -819,5 +820,67 @@ void GameData::restartReadDate()
 	//由于任务的存档也没清空，但是只要Player存档没读取，让playerData为NULL，就不可能在其他地方读取任务的存档。如果生成的是Release模式就不会有这问题
 	//readPlayerDataFile();
 	playerData = NULL;
+}
+
+void GameData::readSceneIdToSetMonFile()
+{
+	std::string jsonPath = SceneId_Mon_PATH;
+	rapidjson::Document _doc;
+	ssize_t size = 0;
+	unsigned char* pBytes = NULL;
+	do{
+		pBytes = FileUtils::getInstance()->getFileData(jsonPath, "r", &size);
+		CC_BREAK_IF(pBytes == NULL || strcmp((char*)pBytes, "") == 0);
+		std::string loda_str((const char*)pBytes, size);
+		CC_SAFE_DELETE_ARRAY(pBytes);
+		_doc.Parse<0>(loda_str.c_str());
+		CC_BREAK_IF(_doc.HasParseError());
+		//判断是否是一个数组
+		if (!_doc.IsArray())
+			return;
+		const rapidjson::Value& pArray = _doc;
+		for (rapidjson::SizeType i = 0; i < pArray.Size(); i++)
+		{
+			SceneIdToSetMon* data = new SceneIdToSetMon();
+			const rapidjson::Value& value = pArray[i]; //数组对象
+			data->sceneId = value["sceneId"].GetInt();
+			const rapidjson::Value& MArray  = value["MonsForObj"];
+			for (rapidjson::SizeType j = 0; j < MArray.Size(); j++)
+			{
+				const rapidjson::Value& mvalue = MArray[j];
+				MonsForObj monforobj;
+				monforobj.Monname = mvalue["Monname"].GetString();
+				monforobj.MonNums = mvalue["MonNums"].GetInt();
+				data->MonForObjVec.push_back(monforobj);
+			}		
+
+			addDataToSceneIdToSetMonData(data);
+		}
+
+	} while (0);
+}
+
+void GameData::addDataToSceneIdToSetMonData(SceneIdToSetMon* data)
+{
+	if (m_mapSceneIdToSetMon.find(data->sceneId) != m_mapSceneIdToSetMon.end())
+	{
+		;
+	}
+	else
+	{
+		m_mapSceneIdToSetMon[data->sceneId] = data;
+	}
+}
+
+SceneIdToSetMon* GameData::getDataFromSceneIdToSetMonData(int sceneId)
+{
+	if (m_mapSceneIdToSetMon.find(sceneId) != m_mapSceneIdToSetMon.end())
+	{
+		return m_mapSceneIdToSetMon[sceneId];
+	}
+	else
+	{
+		return NULL;
+	}
 }
 

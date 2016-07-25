@@ -39,26 +39,46 @@ void Pop::addLayer(int tag, Layer * sender, bool isPop)
 
 pop* Pop::getLayerByTag(int tag)
 {
-	if (!layer[tag]) return NULL;
-	return layer[tag];
+	if (layer.find(tag) != layer.end())
+	{
+		if(!layer[tag]) return NULL;
+		return layer[tag]; 
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 void Pop::releaseLayer(int tag)
 {
-	if (!layer[tag]) return;
-	auto a = layer[tag];
-	layer.erase(tag);
-	delete a;
+	if (layer.find(tag) != layer.end()){
+		if (!layer[tag]) return;
+		auto a = layer[tag];
+		layer.erase(tag);
+		delete a;
+	}
+	
 }
 
 bool Pop::getPopped(int tag)
 {
-	if (!layer[tag]) return NULL;
-	return layer[tag]->isPop;
+	if (layer.find(tag) != layer.end())
+	{
+		if (!layer[tag]) return false;
+		return layer[tag]->isPop;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void Pop::setPopped(int tag, bool isPop)
 {
-	if (!layer[tag]) return;
-	layer[tag]->isPop = isPop;
+	if (layer.find(tag) != layer.end())
+	{
+		if (!layer[tag]) return;
+		layer[tag]->isPop = isPop;
+	}	
 }

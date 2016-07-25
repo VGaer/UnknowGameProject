@@ -65,6 +65,9 @@ class Monster;
 
 class Player : public Entity
 {
+	// 来自外部类提供的信息决定
+public:
+	bool IscanMove;
 public:
 	Player();
 	std::queue<int> attackedqueue;

@@ -13,7 +13,7 @@ using namespace std;
 #define QDLGS_DATA_PATH "JsonText/QuestDlgs.json"	// 任务对话数据文件路径
 #define PLAYER_DATA_PATH "JsonText/PlayerData.json" // 玩家存档文件路径
 #define PLAYER_DLGS_DATA_PATH "JsonText/PlayerDlgs.json" // 玩家对话数据路径
-
+#define SceneId_Mon_PATH "JsonText/SceneIdToSetMon.json" //地图id怪物分布数据路径
 struct NpcsData {
 	int id;				// id
 	int status;			//npc状态（0：无、1：任务过程中）
@@ -133,6 +133,18 @@ struct EnterSceneDlgsData
 	bool isSaid;
 };
 
+
+//////////////////////////////////////////////////////////////////////////
+struct MonsForObj{
+	string Monname;
+	int MonNums;
+};
+struct SceneIdToSetMon{
+	int sceneId;
+	vector<MonsForObj> MonForObjVec;
+};
+//////////////////////////////////////////////////////////////////////////
+
 class GameData
 {
 public:
@@ -148,6 +160,7 @@ public:
 	map<int, vector<NpcsData*>> m_mapIDtoNpc;
 	map<int, PlayerTaskDlgsData*> m_mapPlayerTaskDlgs;
 	map<int, EnterSceneDlgsData*> m_mapEnterSceneDlgs;
+	map<int, SceneIdToSetMon*> m_mapSceneIdToSetMon;
 public:
 	// 加入一条怪物数据
 	void addDataToMonsData(MonsData* data);
@@ -171,6 +184,10 @@ public:
 	PlayerTaskDlgsData* getDataFromPlayerTaskDlgsData(int taskId);	// 获取一条玩家对话数据
 	void addDataToEnterSceneDlgsData(EnterSceneDlgsData* data);		// 加入一条进入场景对话
 	EnterSceneDlgsData* getDataFromEnterSceneDlgsData(int sceneId);	// 获取一条进入场景对话
+
+	void addDataToSceneIdToSetMonData(SceneIdToSetMon* data); //加入一条地图怪物分布的数据
+	SceneIdToSetMon* getDataFromSceneIdToSetMonData(int sceneId); //获取一条地图怪物分布的数据
+
 	// 保存玩家数据
 	void writePlayerData();
 	// 获取玩家数据
@@ -193,6 +210,7 @@ private:
 	void readQuestDlgsDataFile();
 	void readPlayerDataFile();			// 玩家存档文件
 	void readPlayerDlgsDataFile();		// 玩家对话数据文件
+	void readSceneIdToSetMonFile();		// 地图怪物分布文件
 private:
 	PlayerData* playerData;
 };

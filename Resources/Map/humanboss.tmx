@@ -32,7 +32,7 @@
  </layer>
  <layer name="barrier" width="35" height="30">
   <data encoding="base64" compression="zlib">
-   eJztlVEKwCAMQz2Hev9z7ksQmdjWZMhiwI/CI4aCMaWrvygHDjPLm6qTR2j09s4KWWb3WBhmlmpgmFkYvNd79mZ6NUZpLzszMwuaZ3qr/gFoPup9Uu8yeKb3F1ms3au2l+jMzILmEd6369b3KHfdqf1SumPhV3oAgP0JpA==
+   eJztlVEKACEIRD1H2/3P2VfgSoN+bK4wDvihCD6msiEio6PjQpw0QT2TJZKzsaDzsj3ZLBPU/7i7SLdZ0JvR2j1MvthZXs7oS0WWCn+ApywWxGV72HypwhLdvWy+6FlezujLVu+69xw0P5slogyWqvvlUfGFLws+AVCi
   </data>
  </layer>
  <objectgroup name="objects">

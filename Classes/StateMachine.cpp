@@ -673,7 +673,8 @@ void Attack::Excute(Monster* target)
 				int diretion = target->getAnimBase()->getCurDirection();
 				int attackNums = remoteskillstr.attackNums;
 				float attackNumsInter = remoteskillstr.attackNumsInter;
-				auto projectile = MonsterRemoteskillDur::createWithName_width_height_damage_duration_speed_diretion_attackNums_attackNumsInter(projectileName, projectileAniamteName, width, height, damage, duration, speed, diretion,attackNums,attackNumsInter);
+				float distance = ccpDistance(Player::getInstance()->getPosition(), target->getPosition());
+				auto projectile = MonsterRemoteskillDur::createWithName_width_height_damage_duration_speed_diretion_attackNums_attackNumsInter_distance(projectileName, projectileAniamteName, width, height, damage, duration, speed, diretion,attackNums,attackNumsInter,distance);
 				target->getParent()->addChild(projectile, target->getParent()->getChildren().size()); //投掷物添加到地图层上
 				Point pos = target->getPosition();
 				pos.y += target->getContentSize().height / 2;
