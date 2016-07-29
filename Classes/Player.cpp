@@ -31,6 +31,12 @@ Player* Player::getInstance()
 
 bool Player::init()
 {
+	//由于是回调函数，而且是Sequence的，到回调函数执行的那段时间可能攻击队列又有东西了，所以在init的时候清一次,主角死后的加载就会清掉被攻击的队列
+	//清掉当前被攻击的队列
+	while (!attackedqueue.empty())
+		attackedqueue.pop();
+
+
 	//判断为空才添加精灵，防止重复添加
 	if (getSprite() == NULL)
 	{
@@ -3151,6 +3157,7 @@ void Player::PlayerDiedUpdate(float dt)
 			dielabel->setPosition(Director::getInstance()->getVisibleSize().width / 2, Director::getInstance()->getVisibleSize().height / 2);
 			Blink* blink = Blink::create(1.0f, 3);
 			CallFunc* call = CallFunc::create([](){
+
 				Scene* sc = NULL;
 				sc = StartGameScene::createScene();
 				auto reScene = TransitionJumpZoom::create(0.0f, sc);

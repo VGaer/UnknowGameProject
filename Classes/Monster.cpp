@@ -35,6 +35,15 @@ bool Monster::init(const std::string& name)
 	bindSprite(Sprite::create(data->imagePath));
 	//记录怪物颜色
 	m_monstercolor = this->getSprite()->getColor();
+	//怪物的缩放
+
+	getSprite()->setScale(data->width / getSprite()->getContentSize().width,data->height / getSprite()->getContentSize().height);
+	getSprite()->setAnchorPoint(Vec2(0.5,0));
+	this->setContentSize(Size(this->getContentSize().width * data->width / getSprite()->getContentSize().width, this->getContentSize().height * data->height / getSprite()->getContentSize().height));
+	this->setAnchorPoint(Vec2(0.5,0));
+	getSprite()->setPosition(Vec2(this->getContentSize().width / 2,0));
+
+	m_magnification = data->width / getSprite()->getContentSize().width;//精灵放大倍数,为了转向时用的 只需要记录X的缩放比例
 
 	findPath = new FindPath();//findPath需要绑定monster
 	findPath->bindMonster(this);
@@ -80,7 +89,6 @@ bool Monster::init(const std::string& name)
 
 	this->scheduleUpdate();
 
-	m_magnification = 1;//精灵放大倍数
 
 	Is_firstFindplayer_Track = true;
 
@@ -654,7 +662,7 @@ void Monster::setMonsterParent(TMXTiledMap* parent)
 	m_parrent = parent;
 }
 
-int Monster::getMonster_magnification()
+float Monster::getMonster_magnification()
 {
 	return m_magnification;
 }

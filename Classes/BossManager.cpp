@@ -15,7 +15,7 @@ BossManager* BossManager::getInstance()
 	return instance;
 }
 
-Vector<Node*>& BossManager::getBossVec()
+Vector<BossABC*>& BossManager::getBossVec()
 {
 	return m_bossVector;
 }

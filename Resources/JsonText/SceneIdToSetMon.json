@@ -20,6 +20,11 @@
 {
 "Monname":"bonemonster",
 "MonNums":2
+},
+
+{
+"Monname":"skeletonmonster",
+"MonNums":1
 }
 
 ]
@@ -47,6 +52,11 @@
 {
 "Monname":"bonemonster",
 "MonNums":2
+},
+
+{
+"Monname":"skeletonmonster",
+"MonNums":1
 }
 
 ]
@@ -209,7 +219,12 @@
 
 {
 "Monname":"bonemonster",
-"MonNums":2
+"MonNums":0
+},
+
+{
+"Monname":"skeletonmonster",
+"MonNums":3
 }
 
 ]

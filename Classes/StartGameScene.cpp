@@ -212,6 +212,23 @@ void StartGameScene::loadPlistFile()
 	frameCache->addSpriteFramesWithFile("MonsterProj/bonemonster/bonemonproj.plist", "MonsterProj/bonemonster/bonemonproj.png");
 	frameCache->addSpriteFramesWithFile("MonsterProj/bonemonster/bonemonprojdur.plist", "MonsterProj/bonemonster/bonemonprojdur.png");
 
+	/*÷¼÷Ã¹Ö*/
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterdattack/skeletonmonsterdattack.plist", "monster/skeletonmonster/skeletonmonsterdattack/skeletonmonsterdattack.png");
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterdrun/skeletonmonsterdrun.plist", "monster/skeletonmonster/skeletonmonsterdrun/skeletonmonsterdrun.png");
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterdstatic/skeletonmonsterdstatic.plist", "monster/skeletonmonster/skeletonmonsterdstatic/skeletonmonsterdstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterhattack/skeletonmonsterhattack.plist", "monster/skeletonmonster/skeletonmonsterhattack/skeletonmonsterhattack.png");
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterhrun/skeletonmonsterhrun.plist", "monster/skeletonmonster/skeletonmonsterhrun/skeletonmonsterhrun.png");
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterhstatic/skeletonmonsterhstatic.plist", "monster/skeletonmonster/skeletonmonsterhstatic/skeletonmonsterhstatic.png");
+
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsteruattack/skeletonmonsteruattack.plist", "monster/skeletonmonster/skeletonmonsteruattack/skeletonmonsteruattack.png");
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterurun/skeletonmonsterurun.plist", "monster/skeletonmonster/skeletonmonsterurun/skeletonmonsterurun.png");
+	frameCache->addSpriteFramesWithFile("monster/skeletonmonster/skeletonmonsterustatic/skeletonmonsterustatic.plist", "monster/skeletonmonster/skeletonmonsterustatic/skeletonmonsterustatic.png");
+
+
+	frameCache->addSpriteFramesWithFile("MonsterProj/skeletonmonster/skeletonmonproj.plist", "MonsterProj/skeletonmonster/skeletonmonproj.png");
+	frameCache->addSpriteFramesWithFile("MonsterProj/skeletonmonster/skeletonmonprojdur.plist", "MonsterProj/skeletonmonster/skeletonmonprojdur.png");
+
 
 	//////BOSS
 	frameCache->addSpriteFramesWithFile("BossProj/eyecubeboss/eyecubebosslaser.plist", "BossProj/eyecubeboss/eyecubebosslaser.png");

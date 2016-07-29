@@ -16,6 +16,7 @@
 #include "BossManager.h"
 
 #include "CubeBoss.h"
+#include "NeedSetZorderProj.h"
 
 int GameScene::sceneId = 2;
 bool GameScene::OnlyOnceSetScale = false;
@@ -124,6 +125,36 @@ bool GameScene::init()
 
 	setMapInfo(saveData->sceneId);
 
+	//创建BOSS
+	{
+		auto mapId_Boss = GameData::getInstance()->getDataFromSceneIdToSetBossData(GameScene::sceneId);
+		if (mapId_Boss)
+		{
+			int curScene_BossId = 0;
+			for (auto it : mapId_Boss->BossForObjVec)
+			{
+				for (int i = 1; i <= it.BossNums; i++)
+				{
+					ValueMap bosspos;
+					if (objGroup){
+						bosspos = objGroup->getObject(it.Bossname + convertToString(i));
+					}
+					float bossposx = bosspos["x"].asFloat();
+					float bossposy = bosspos["y"].asFloat();
+
+					CubeBoss* cureboss = CubeBoss::create("fc");
+					m_map->addChild(cureboss);
+					cureboss->setPosition(Vec2(bossposx, bossposy));
+					cureboss->setParent(m_map);
+
+					////将boss添加到boss管理器
+					BossManager::getInstance()->getBossVec().pushBack(cureboss);
+
+				}
+			}
+		}
+	}
+
 	///需要先创建怪物，在addPlayer，因为在addPlayer的时候，会创建主角开始时的对话框，此时要锁定怪物，但是怪物还没创建出来的话就锁定不了了，造成怪物可以动
 	/*判断开头任务是否完成，是的话不添加怪物*/
 	//且地图id为主角家2
@@ -172,6 +203,13 @@ bool GameScene::init()
 					else if (it.Monname == "bonemonster")
 					{
 						auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
+						monLabelname->setColor(Color3B::ORANGE);
+						monbar->addChild(monLabelname);
+						monLabelname->setPosition(Vec2(43, 48));
+					}
+					else if (it.Monname == "skeletonmonster")
+					{
+						auto monLabelname = Label::create(gb2312_to_utf8("骷髅兵"), "Arial", 25);
 						monLabelname->setColor(Color3B::ORANGE);
 						monbar->addChild(monLabelname);
 						monLabelname->setPosition(Vec2(43, 48));
@@ -227,6 +265,13 @@ bool GameScene::init()
 					else if (it.Monname == "bonemonster")
 					{
 						auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
+						monLabelname->setColor(Color3B::ORANGE);
+						monbar->addChild(monLabelname);
+						monLabelname->setPosition(Vec2(43, 48));
+					}
+					else if (it.Monname == "skeletonmonster")
+					{
+						auto monLabelname = Label::create(gb2312_to_utf8("骷髅兵"), "Arial", 25);
 						monLabelname->setColor(Color3B::ORANGE);
 						monbar->addChild(monLabelname);
 						monLabelname->setPosition(Vec2(43, 48));
@@ -318,6 +363,36 @@ bool GameScene::init(int sceneId)
 
 	setMapInfo(sceneId);
 
+	//创建BOSS
+	{
+		auto mapId_Boss = GameData::getInstance()->getDataFromSceneIdToSetBossData(GameScene::sceneId);
+		if (mapId_Boss)
+		{
+			int curScene_BossId = 0;
+			for (auto it : mapId_Boss->BossForObjVec)
+			{
+				for (int i = 1; i <= it.BossNums; i++)
+				{
+					ValueMap bosspos;
+					if (objGroup){
+						bosspos = objGroup->getObject(it.Bossname + convertToString(i));
+					}
+					float bossposx = bosspos["x"].asFloat();
+					float bossposy = bosspos["y"].asFloat();
+
+					CubeBoss* cureboss = CubeBoss::create("fc");
+					m_map->addChild(cureboss);
+					cureboss->setPosition(Vec2(bossposx, bossposy));
+					cureboss->setParent(m_map);
+
+					////将boss添加到boss管理器
+					BossManager::getInstance()->getBossVec().pushBack(cureboss);
+
+				}
+			}
+		}
+	}
+
 	///需要先创建怪物，在addPlayer，因为在addPlayer的时候，会创建主角开始时的对话框，此时要锁定怪物，但是怪物还没创建出来的话就锁定不了了，造成怪物可以动
 	/*判断开头任务是否完成，是的话不添加怪物,否则添加怪物*/
 	//且地图id为主角家2
@@ -370,6 +445,13 @@ bool GameScene::init(int sceneId)
 						monbar->addChild(monLabelname);
 						monLabelname->setPosition(Vec2(43, 48));
 					}
+					else if (it.Monname == "eyecubeboss")
+					{
+						auto monLabelname = Label::create(gb2312_to_utf8("眼箱怪"), "Arial", 25);
+						monLabelname->setColor(Color3B::ORANGE);
+						monbar->addChild(monLabelname);
+						monLabelname->setPosition(Vec2(43, 48));
+					}
 				}
 			}
 		}		
@@ -414,13 +496,6 @@ bool GameScene::init(int sceneId)
 					else if (it.Monname == "gdragonmonster")
 					{
 						auto monLabelname = Label::create(gb2312_to_utf8("青龙"), "Arial", 25);
-						monLabelname->setColor(Color3B::ORANGE);
-						monbar->addChild(monLabelname);
-						monLabelname->setPosition(Vec2(43, 48));
-					}
-					else if (it.Monname == "bonemonster")
-					{
-						auto monLabelname = Label::create(gb2312_to_utf8("石怪"), "Arial", 25);
 						monLabelname->setColor(Color3B::ORANGE);
 						monbar->addChild(monLabelname);
 						monLabelname->setPosition(Vec2(43, 48));
@@ -543,13 +618,7 @@ bool GameScene::init(int sceneId)
 	this->schedule(schedule_selector(GameScene::MonHP_MPBar_Update), 0.2f);
 	firstEnterTalk();
 
-	CubeBoss* cureboss = CubeBoss::create("fc");
-	m_map->addChild(cureboss);
-	cureboss->setPosition(Vec2(600,500));
-	cureboss->setParent(m_map);
-
-	//将boss添加到boss管理器
-	BossManager::getInstance()->getBossVec().pushBack(cureboss);
+	
 
 	return true;
 }
@@ -767,11 +836,11 @@ void GameScene::addMonster(const std::string& name, Point pos)
 	//添加到怪物管理器
 	MonsterManager::getInstance()->getMonsterVec().pushBack(m_monster);
 	//怪物的各种初始化
-	m_monster->getSprite()->setScaleY(1.5);
+	/*m_monster->getSprite()->setScaleY(1.5);
 	m_monster->getSprite()->setAnchorPoint(Vec2(0.5, 0));
-	m_monster->setContentSize(m_monster->getContentSize() * 1.5);
+	m_monster->setContentSize(Size(m_monster->getContentSize().width, m_monster->getContentSize().height * 1.5));
 	m_monster->getSprite()->setPosition(Vec2(m_monster->getContentSize().width / 2, 0));
-	m_monster->setAnchorPoint(Vec2(0.5, 0));
+	m_monster->setAnchorPoint(Vec2(0.5, 0));*/
 	m_monster->setMonsterParent(m_map);
 	m_monster->setvecPatrolpoint();
 }
@@ -813,6 +882,12 @@ void GameScene::update(float dt)
 	for (int i = 0; i < Vecboss.size(); i++)
 	{
 		Vec.pushBack(Vecboss.at(i));
+	}
+
+	auto VecNeedSetZorderProj = NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec();
+	for (int i = 0; i < VecNeedSetZorderProj.size(); i++)
+	{
+		Vec.pushBack(VecNeedSetZorderProj.at(i));
 	}
 
 	for (int i = 0; i < Vec.size(); i++)

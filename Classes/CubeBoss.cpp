@@ -2,6 +2,7 @@
 #include "Graph.h"
 #include "CCShake.h"
 #include "MonsterRemoteskill.h"
+#include "NeedSetZorderProj.h"
 
 
 void CubeBossFindPath::run(Vec2 startId, Vec2 endId)
@@ -107,6 +108,7 @@ void CubeBoss::update(float dt)
 	IsColliWithPlayer();
 
 	//ControlPlayerMove();
+	SetCanBeAttacked();
 }
 
 void CubeBoss::JumpUpdate(float dt)
@@ -170,6 +172,11 @@ void CubeBoss::JumpUpdate(float dt)
 							skilll->setPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2 + 165, 0));
 							m_parrent->addChild(skillr);
 							skillr->setPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 - 165, 0));
+
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skillu);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skilld);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skilll);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skillr);
 						
 							m_timecounter->start();
 						}
@@ -180,19 +187,35 @@ void CubeBoss::JumpUpdate(float dt)
 						std::string laser = proValueMap.at("laserhard").asString();
 						if (laser == "true")
 						{
-							MonsterRemoteskillDur_NoMove* skillu = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "upright", 5, 0.5f);
-							MonsterRemoteskillDur_NoMove* skilld = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "downleft", 5, 0.5f);
-							MonsterRemoteskillDur_NoMove* skilll = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "leftup", 5, 0.5f);
-							MonsterRemoteskillDur_NoMove* skillr = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "rightdown", 5, 0.5f);
+							MonsterRemoteskillDur_NoMove* skillur = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "upright", 5, 0.5f);
+							MonsterRemoteskillDur_NoMove* skilldl = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "downleft", 5, 0.5f);
+							MonsterRemoteskillDur_NoMove* skilllu = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "leftup", 5, 0.5f);
+							MonsterRemoteskillDur_NoMove* skillrd = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "rightdown", 5, 0.5f);
+							MonsterRemoteskillDur_NoMove* skillu = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "up", 5, 0.5f);
+							MonsterRemoteskillDur_NoMove* skilld = MonsterRemoteskillDur_NoMove::createWithName_width_height_damage_duration_diretion_attackNums_attackNumsInter("eyecubebosslaser1.png", "eyecubebosslaser", 900, 64, 50, 2.0f, "down", 5, 0.5f);
+
+							m_parrent->addChild(skillur);
+							skillur->setPosition(this->getPosition() + Vec2(0, this->getContentSize().height / 2 - 150));
+							m_parrent->addChild(skilldl);
+							skilldl->setPosition(this->getPosition() + Vec2(0, -this->getContentSize().height / 2 + 195));
+							m_parrent->addChild(skilllu);
+							skilllu->setPosition(this->getPosition() + Vec2(0, -this->getContentSize().height / 2 + 50));
+							m_parrent->addChild(skillrd);
+							skillrd->setPosition(this->getPosition() + Vec2(0, this->getContentSize().height / 2 - 8));
+
 
 							m_parrent->addChild(skillu);
 							skillu->setPosition(this->getPosition() + Vec2(0, this->getContentSize().height / 2 - 150));
 							m_parrent->addChild(skilld);
 							skilld->setPosition(this->getPosition() + Vec2(0, -this->getContentSize().height / 2 + 195));
-							m_parrent->addChild(skilll);
-							skilll->setPosition(this->getPosition() + Vec2(-this->getContentSize().width / 2 + 165, 0));
-							m_parrent->addChild(skillr);
-							skillr->setPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 - 165, 0));
+
+
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skillur);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skilldl);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skilllu);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skillrd);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skillu);
+							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skilld);
 
 							m_timecounter->start();
 						}
@@ -217,8 +240,11 @@ void CubeBoss::setParent(TMXTiledMap* parent)
 {
 	m_parrent = parent;
 
-	m_parrent->getLayer("twocolortiled")->setVisible(false);
-
+	auto layer = m_parrent->getLayer("twocolortiled");
+	if (layer)
+	{
+		layer->setVisible(false);
+	}
 }
 
 CubeBoss::CubeBoss()
@@ -229,6 +255,10 @@ CubeBoss::CubeBoss()
 	isLasering = false;
 	caljumpNums = 0;
 	OneOnLand = false;
+	CanBeAttacked = true;
+
+	monMaxHp = 100;
+
 }
 
 TMXTiledMap* CubeBoss::getParent()
@@ -392,3 +422,28 @@ void CubeBoss::ControlPlayerMove()
 		
 	}
 }
+
+bool CubeBoss::GetCanBeAttacked()
+{
+	return CanBeAttacked;
+}
+
+void CubeBoss::SetCanBeAttacked()
+{
+	//非跳跃状态
+	if (isJumping == false)
+		CanBeAttacked = true;
+	else
+		CanBeAttacked = false;
+}
+
+Rect CubeBoss::getBoundingBox()
+{
+	Rect rect = BossABC::getBoundingBox();
+	//此怪物时当场正方体的,伪立体，用2/3Contensize的高跟主角的
+	//Boundingbox判断
+	rect.setRect(rect.getMinX(), rect.getMinY(), this->getContentSize().width, this->getContentSize().height * 2.0f / 3.0f);
+	return rect;
+}
+
+

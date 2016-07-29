@@ -2,7 +2,8 @@
 #define __BossManager_H__
 
 #include "CubeBoss.h"
-
+#include "Entity.h"
+#include "BossABC.h"
 
 class BossManager
 {
@@ -11,11 +12,11 @@ public:
 	static BossManager* getInstance();
 public:
 	// ªÒ»°π÷ŒÔ»›∆˜
-	Vector<Node*>& getBossVec();
+	Vector<BossABC*>& getBossVec();
 	//void setMonsEnableAction(bool);
 private:
 	//bool canMonsEnableAction;
-	Vector<Node*> m_bossVector;
+	Vector<BossABC*> m_bossVector;
 };
 
 #endif

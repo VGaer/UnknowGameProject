@@ -58,7 +58,7 @@ public:
 	int checkInSectorRange();   //…»–Œ ”“∞«¯”Ú
 	int getCurMachineState();
 	void setMonsterParent(TMXTiledMap* parent);
-	int getMonster_magnification();
+	float getMonster_magnification();
 	bool Is_firstFindplayer_Track;
 	void setvecPatrolpoint();
 	~Monster();

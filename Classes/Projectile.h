@@ -4,6 +4,8 @@
 #include "cocos2d.h"
 #include "Monster.h"
 #include "SkillControl.h"
+#include "BossABC.h"
+
 USING_NS_CC;
 
 class Laser :Entity
@@ -20,6 +22,7 @@ private:
 	float attr_duration;
 	int attr_direction;
 	Vector<Monster*> collidedVector;	// 碰撞清单
+	Vector<BossABC*> bosscollidedVector; //boss碰撞清单
 	// 定时器
 	float dt;
 	void update(float dt);

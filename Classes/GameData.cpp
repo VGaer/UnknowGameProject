@@ -27,6 +27,7 @@ GameData::GameData()
 	readPlayerDataFile();
 	readQuestDlgsDataFile();
 	readSceneIdToSetMonFile();
+	readSceneIdToSetBossFile();
 	//因为是根据playerdata判断是否存在存档，所以要有先后顺序
 	if (isExistSaveDoc())
 	{
@@ -179,6 +180,8 @@ void GameData::readMonsDataFile()
 			data->attackedrestoretime = value["attackedrestoretime"].GetDouble();
 			data->imagePath = value["imagePath"].GetString();
 			data->exp = value["exp"].GetDouble();
+			data->width = value["width"].GetDouble();
+			data->height = value["height"].GetDouble();
 			const rapidjson::Value& baseskillArray = value["baseskill"];
 			if (baseskillArray.Size() > 0)
 			{
@@ -882,5 +885,67 @@ SceneIdToSetMon* GameData::getDataFromSceneIdToSetMonData(int sceneId)
 	{
 		return NULL;
 	}
+}
+
+SceneIdToSetBoss* GameData::getDataFromSceneIdToSetBossData(int sceneId)
+{
+	if (m_mapSceneIdToSetBoss.find(sceneId) != m_mapSceneIdToSetBoss.end())
+	{
+		return m_mapSceneIdToSetBoss[sceneId];
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+void GameData::addDataToSceneIdToSetBossData(SceneIdToSetBoss* data)
+{
+	if (m_mapSceneIdToSetBoss.find(data->sceneId) != m_mapSceneIdToSetBoss.end())
+	{
+		;
+	}
+	else
+	{
+		m_mapSceneIdToSetBoss[data->sceneId] = data;
+	}
+}
+
+void GameData::readSceneIdToSetBossFile()
+{
+	std::string jsonPath = SceneId_Boss_PATH;
+	rapidjson::Document _doc;
+	ssize_t size = 0;
+	unsigned char* pBytes = NULL;
+	do{
+		pBytes = FileUtils::getInstance()->getFileData(jsonPath, "r", &size);
+		CC_BREAK_IF(pBytes == NULL || strcmp((char*)pBytes, "") == 0);
+		std::string loda_str((const char*)pBytes, size);
+		CC_SAFE_DELETE_ARRAY(pBytes);
+		_doc.Parse<0>(loda_str.c_str());
+		CC_BREAK_IF(_doc.HasParseError());
+		//判断是否是一个数组
+		if (!_doc.IsArray())
+			return;
+		const rapidjson::Value& pArray = _doc;
+		for (rapidjson::SizeType i = 0; i < pArray.Size(); i++)
+		{
+			SceneIdToSetBoss* data = new SceneIdToSetBoss();
+			const rapidjson::Value& value = pArray[i]; //数组对象
+			data->sceneId = value["sceneId"].GetInt();
+			const rapidjson::Value& MArray = value["BossesForObj"];
+			for (rapidjson::SizeType j = 0; j < MArray.Size(); j++)
+			{
+				const rapidjson::Value& mvalue = MArray[j];
+				BossesForObj bossforobj;
+				bossforobj.Bossname = mvalue["Bossname"].GetString();
+				bossforobj.BossNums = mvalue["BossNums"].GetInt();
+				data->BossForObjVec.push_back(bossforobj);
+			}
+
+			addDataToSceneIdToSetBossData(data);
+		}
+
+	} while (0);
 }
 

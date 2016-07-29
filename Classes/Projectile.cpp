@@ -1,6 +1,8 @@
 #include "Projectile.h"
 #include "MonsterManager.h"
 #include "AnimationUtil.h"
+#include "BossManager.h"
+#include "CubeBoss.h"
 
 bool Laser::init()
 {
@@ -39,6 +41,31 @@ void Laser::update(float dt)
 			}
 		}
 	}
+
+	//BOSSÅö×²¼ì²â
+	Vector<BossABC*> bossvec = BossManager::getInstance()->getBossVec();
+	for (auto boss : bossvec)
+	{
+		if (boss->getBoundingBox().intersectsRect(getBoundingBox()))
+		{
+			int i;
+			for (i = bosscollidedVector.size() - 1; i >= 0; i--)
+			{
+				if (bosscollidedVector.at(i) == boss)
+					break;
+			}
+			if (i < 0)
+			{
+				if (boss->GetCanBeAttacked())
+				{
+					bosscollidedVector.pushBack(boss);
+				}
+				
+			}
+		}
+	}
+
+
 	// ÎïÌåÒÆ¶¯
 	Vec2 move(0, 0);
 	if (attr_direction == em_up)

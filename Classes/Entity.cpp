@@ -19,3 +19,4 @@ bool Entity::init()
 	m_sprite = NULL;
 	return true;
 }
+

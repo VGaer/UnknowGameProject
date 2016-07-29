@@ -14,6 +14,8 @@ using namespace std;
 #define PLAYER_DATA_PATH "JsonText/PlayerData.json" // 玩家存档文件路径
 #define PLAYER_DLGS_DATA_PATH "JsonText/PlayerDlgs.json" // 玩家对话数据路径
 #define SceneId_Mon_PATH "JsonText/SceneIdToSetMon.json" //地图id怪物分布数据路径
+#define SceneId_Boss_PATH "JsonText/SceneIdToSetBoss.json" //地图idBOSS分布数据路径
+
 struct NpcsData {
 	int id;				// id
 	int status;			//npc状态（0：无、1：任务过程中）
@@ -75,6 +77,8 @@ struct MonsData
 	float attackedrestoretime;//僵直时间
 	float exp;
 	string imagePath; //图片路径
+	float width;//怪物node宽度
+	float height;//怪物node高度
 	std::map<string, MonSkill> skillmap; //技能容器
 	std::map<string, MonRemoteSkill> remoteskillmap; //远程技能容器
 };
@@ -144,6 +148,17 @@ struct SceneIdToSetMon{
 	vector<MonsForObj> MonForObjVec;
 };
 //////////////////////////////////////////////////////////////////////////
+struct BossesForObj{
+	string Bossname;
+	int BossNums;
+};
+struct SceneIdToSetBoss{
+	int sceneId;
+	vector<BossesForObj> BossForObjVec;
+};
+/////
+
+
 
 class GameData
 {
@@ -161,6 +176,7 @@ public:
 	map<int, PlayerTaskDlgsData*> m_mapPlayerTaskDlgs;
 	map<int, EnterSceneDlgsData*> m_mapEnterSceneDlgs;
 	map<int, SceneIdToSetMon*> m_mapSceneIdToSetMon;
+	map<int, SceneIdToSetBoss*> m_mapSceneIdToSetBoss;
 public:
 	// 加入一条怪物数据
 	void addDataToMonsData(MonsData* data);
@@ -188,6 +204,9 @@ public:
 	void addDataToSceneIdToSetMonData(SceneIdToSetMon* data); //加入一条地图怪物分布的数据
 	SceneIdToSetMon* getDataFromSceneIdToSetMonData(int sceneId); //获取一条地图怪物分布的数据
 
+	void addDataToSceneIdToSetBossData(SceneIdToSetBoss* data); //加入一条地图BOSS分布的数据
+	SceneIdToSetBoss* getDataFromSceneIdToSetBossData(int sceneId); //获取一条地图BOSS分布的数据
+
 	// 保存玩家数据
 	void writePlayerData();
 	// 获取玩家数据
@@ -211,6 +230,7 @@ private:
 	void readPlayerDataFile();			// 玩家存档文件
 	void readPlayerDlgsDataFile();		// 玩家对话数据文件
 	void readSceneIdToSetMonFile();		// 地图怪物分布文件
+	void readSceneIdToSetBossFile();		// 地图Boss分布文件
 private:
 	PlayerData* playerData;
 };
