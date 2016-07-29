@@ -120,6 +120,10 @@ bool GameScene::init()
 		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/grave.mp3", true);
 		break;
 	}
+	case 12:{
+		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/eyecubebossbg.mp3", true);
+		break;
+	}
 
 	}
 
@@ -357,6 +361,10 @@ bool GameScene::init(int sceneId)
 	case 11:{
 	CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/grave.mp3", true);
 	break;
+	}
+	case 12:{
+		CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("sound/eyecubebossbg.mp3", true);
+		break;
 	}
 
 	}

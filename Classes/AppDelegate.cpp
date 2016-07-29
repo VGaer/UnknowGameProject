@@ -58,6 +58,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/theme.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/wildmap.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/cave.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic("sound/eyecubebossbg.mp3");
 
 
 	//³õÊ¼»¯ÒôÐ§
@@ -72,6 +73,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/getthings.wav");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/levelsup.wav");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/gameover.mp3");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/eyecubebossslam.wav");
 	
 	return true;
 }

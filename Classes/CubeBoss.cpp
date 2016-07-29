@@ -3,6 +3,7 @@
 #include "CCShake.h"
 #include "MonsterRemoteskill.h"
 #include "NeedSetZorderProj.h"
+#include "SimpleAudioEngine.h"
 
 
 void CubeBossFindPath::run(Vec2 startId, Vec2 endId)
@@ -32,7 +33,8 @@ void CubeBossFindPath::run(Vec2 startId, Vec2 endId)
 				JumpTo* jumpto = JumpTo::create(m_cubeboss->jumptime, pos, m_cubeboss->jumpheight, 1);
 				CallFunc* callfun = CallFunc::create([&](){
 					
-
+					//播放slam砸地音效
+					CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/eyecubebossslam.wav");
 
 					m_cubeboss->setJumping(false);
 
@@ -69,6 +71,8 @@ bool CubeBoss::init(const std::string name)
 {
 	bindSprite(Sprite::create("cubeeyeboss.png"));
 	this->setAnchorPoint(Vec2(0.5, 1 / 3.0f));
+
+	m_mycolor = getSprite()->getColor();
 
 	m_cubebossfindpath = new CubeBossFindPath();
 	m_cubebossfindpath->bindBoss(this);
@@ -258,7 +262,7 @@ CubeBoss::CubeBoss()
 	CanBeAttacked = true;
 
 	monMaxHp = 100;
-
+	m_hp = 100;
 }
 
 TMXTiledMap* CubeBoss::getParent()
@@ -444,6 +448,16 @@ Rect CubeBoss::getBoundingBox()
 	//Boundingbox判断
 	rect.setRect(rect.getMinX(), rect.getMinY(), this->getContentSize().width, this->getContentSize().height * 2.0f / 3.0f);
 	return rect;
+}
+
+void CubeBoss::cmd_hurt(float damage)
+{
+	if (m_hp > 0)
+		m_hp -= damage;
+	//变红色代表被攻击
+	CCTintTo* action1 = CCTintTo::create(0.1f, 255, 0, 0);
+	CCTintTo* action2 = CCTintTo::create(0.1f, this->m_mycolor);
+	this->getSprite()->runAction(Sequence::create(action1, action2, NULL));
 }
 
 

@@ -459,7 +459,7 @@ void MonsterRemoteskillDur_NoMove::update(float dt)
 					//¿ÛÖ÷½Çhp
 					if (m_player->m_hp > 0)
 					{
-						//m_player->m_hp = m_player->m_hp - m_damage;
+						m_player->m_hp = m_player->m_hp - m_damage;
 					}
 				}
 			}
@@ -517,7 +517,7 @@ void MonsterRemoteskillDur_NoMove::update(float dt)
 					//¿ÛÖ÷½Çhp
 					if (m_player->m_hp > 0)
 					{
-						//m_player->m_hp = m_player->m_hp - m_damage;
+						m_player->m_hp = m_player->m_hp - m_damage;
 					}
 				}
 			}

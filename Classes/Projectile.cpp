@@ -58,6 +58,7 @@ void Laser::update(float dt)
 			{
 				if (boss->GetCanBeAttacked())
 				{
+					boss->cmd_hurt(attr_damage);
 					bosscollidedVector.pushBack(boss);
 				}
 				
@@ -149,6 +150,23 @@ void Fire::collideUpdate(float dt)
 			collidedVector.pushBack(mons);
 		}
 	}
+
+	//BOSSÅö×²¼ì²â
+	Vector<BossABC*> bossvec = BossManager::getInstance()->getBossVec();
+	for (auto boss : bossvec)
+	{
+		if (boss->getBoundingBox().intersectsRect(getBoundingBox()))
+		{
+			{
+				if (boss->GetCanBeAttacked())
+				{
+					boss->cmd_hurt(attr_damage);
+				}
+
+			}
+		}
+	}
+
 	// ÅÐ¶ÏÊÇ·ñ×²µ½ÕÏ°­Îï
 	auto player = Player::getInstance();
 	if (!player->IsNot_CollidableTile(player->tiledCoordForPosition(getPosition())))
