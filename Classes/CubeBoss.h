@@ -44,10 +44,12 @@ public:
 	bool GetCanBeAttacked();
 	void SetCanBeAttacked();//实现虚函数
 	Rect getBoundingBox();//重写boundingbox
-	void cmd_hurt(float damage);//实现虚函数
+	bool cmd_hurt(float damage);//实现虚函数
+	bool IsAttackByPlayer();
 
 	int monsterIdForBar;
 	float monMaxHp;
+	Vec2 targetId;
 private:
 	bool isJumping; //是否正在跳跃，跳跃时候设置无敌
 	CubeBossFindPath* m_cubebossfindpath;

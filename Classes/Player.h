@@ -135,7 +135,7 @@ private:
 	int m_player_magnification;//玩家精灵放大倍数	
 	Color3B m_playerColor;
 	SkillControl* skillControl;
-	Vector<Monster*> collidedVector;	// 碰撞清单
+	Vector<Node*> collidedVector;	// 碰撞清单
 	void baseskillcollidUpdata(float dt);
 	//技能对应消耗mp
 	int l_consumemp;

@@ -5,6 +5,7 @@
 #include "G2U.h"
 #include "StartGameScene.h"
 #include "TalkManager.h"
+#include "BossManager.h"
 
 Player::Player()
 {
@@ -2864,6 +2865,111 @@ void Player::baseskillcollidUpdata(float dt)
 						}
 						}
 					}
+
+					Vector<BossABC*> bossvec = BossManager::getInstance()->getBossVec();
+					for (auto boss : bossvec)
+					{
+						switch (this->getPlayerDir())
+						{
+						case em_up:{
+							vec = this->getPosition();
+							vec.y += this->getContentSize().height;
+							vec.y += playerattackRange;
+							if (boss->getBoundingBox().containsPoint(vec))
+							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav");
+
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == boss)
+										break;
+								}
+								if (i < 0)
+								{
+									boss->cmd_hurt(6); //普通攻击的伤害		
+									collidedVector.pushBack(boss);
+								}
+							}
+
+							break;
+						}
+						case em_down:{
+							vec = this->getPosition();
+							vec.y += this->getContentSize().height;
+							vec.y -= playerattackRange;
+							if (boss->getBoundingBox().containsPoint(vec))
+							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav");
+
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == boss)
+										break;
+								}
+								if (i < 0)
+								{
+									boss->cmd_hurt(6); //普通攻击的伤害
+									collidedVector.pushBack(boss);
+								}
+							}
+
+							break;
+						}
+						case em_left:{
+							vec = this->getPosition();
+							vec.y += this->getContentSize().height;
+							vec.x -= playerattackRange;
+							if (boss->getBoundingBox().containsPoint(vec))
+							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav");
+
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == boss)
+										break;
+								}
+								if (i < 0)
+								{
+									boss->cmd_hurt(6); //普通攻击的伤害
+									collidedVector.pushBack(boss);
+								}
+							}
+
+							break;
+						}
+						case em_right:{
+							vec = this->getPosition();
+							vec.y += this->getContentSize().height;
+							vec.x += playerattackRange;
+							if (boss->getBoundingBox().containsPoint(vec))
+							{
+								/*播放怪物被普通攻击打中音效*/
+								CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/monhitedbyPlayerBaseskill.wav");
+
+								int i;
+								for (i = collidedVector.size() - 1; i >= 0; i--)
+								{
+									if (collidedVector.at(i) == boss)
+										break;
+								}
+								if (i < 0)
+								{
+									boss->cmd_hurt(6); //普通攻击的伤害							
+									collidedVector.pushBack(boss);
+								}
+							}
+
+							break;
+						}
+						}
+					}
+
 				}
 			}
 		}

@@ -5,7 +5,7 @@ class BossABC : public Entity
 {
 public:
 	virtual bool GetCanBeAttacked() = 0;
-	virtual void cmd_hurt(float damage) = 0;
+	virtual bool cmd_hurt(float damage) = 0;
 private:
 };
 

@@ -74,6 +74,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/levelsup.wav");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/gameover.mp3");
 	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/eyecubebossslam.wav");
+	CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("sound/eyecubebosslaser.wav");
 	
 	return true;
 }

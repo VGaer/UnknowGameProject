@@ -4,6 +4,7 @@
 #include "MonsterRemoteskill.h"
 #include "NeedSetZorderProj.h"
 #include "SimpleAudioEngine.h"
+#include "BossManager.h"
 
 
 void CubeBossFindPath::run(Vec2 startId, Vec2 endId)
@@ -22,6 +23,7 @@ void CubeBossFindPath::run(Vec2 startId, Vec2 endId)
 		for (int i = 0, size = result.size(); i < size; i++)
 		{
 			auto vertex = graph->getGraphVertexByVertexId(result.at(i));
+			m_cubeboss->targetId == vertex->getId();
 			auto pos = Vec2(vertex->getVertex_posx(), vertex->getVertex_posy());
 			//换算坐标
 			pos.y = graph->getMap()->getMapSize().height * graph->getMap()->getTileSize().height - pos.y;
@@ -113,6 +115,33 @@ void CubeBoss::update(float dt)
 
 	//ControlPlayerMove();
 	SetCanBeAttacked();
+
+	if (m_hp <= 0)
+	{
+		auto bossvec = BossManager::getInstance()->getBossVec();
+		for (auto boss : bossvec)
+		{
+			if (boss == this)
+			{
+				bossvec.eraseObject(this);
+				break;
+			}
+		}
+		this->removeFromParent();
+		TMXLayer* barrier = m_parrent->getLayer("barrier");
+		//boss死后 去掉当前占有的方格的瓦片的障碍
+		Vec2 start = m_player->tiledCoordForPosition(this->getPosition());
+		int tileGid = barrier->getTileGIDAt(start);
+		if (tileGid > 0)
+		{
+			barrier->removeTileAt(start);
+		}
+		else
+		{
+			;
+		}
+		return;
+	}
 }
 
 void CubeBoss::JumpUpdate(float dt)
@@ -177,6 +206,9 @@ void CubeBoss::JumpUpdate(float dt)
 							m_parrent->addChild(skillr);
 							skillr->setPosition(this->getPosition() + Vec2(this->getContentSize().width / 2 - 165, 0));
 
+							//播放激光声音
+							CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/eyecubebosslaser.wav");
+
 							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skillu);
 							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skilld);
 							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skilll);
@@ -212,6 +244,9 @@ void CubeBoss::JumpUpdate(float dt)
 							skillu->setPosition(this->getPosition() + Vec2(0, this->getContentSize().height / 2 - 150));
 							m_parrent->addChild(skilld);
 							skilld->setPosition(this->getPosition() + Vec2(0, -this->getContentSize().height / 2 + 195));
+
+							//播放激光声音
+							CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("sound/eyecubebosslaser.wav");
 
 
 							NeedSetZorderProj::getInstance()->getNeedSetZorderProjVec().pushBack(skillur);
@@ -355,7 +390,10 @@ bool CubeBoss::IsColliWithPlayer()
 				float bosscurheight = jumpheight - speed * curtime;
 
 				//如果在同一个格子,且boss当前高度小于主角高度
-				if (m_player->tiledCoordForPosition(this->getPosition()) == m_player->tiledCoordForPosition(m_player->getPosition()))
+				//if (m_player->tiledCoordForPosition(this->getPosition()) == m_player->tiledCoordForPosition(m_player->getPosition()))
+				//上面那个if语句不好的原因就是，2d类的游戏坐标，在跳跃时候target在不等于m_player->tiledCoordForPosition(m_player->getPosition())的时候,
+				//但是m_player->tiledCoordForPosition(this->getPosition())在跳跃的时候却判断已经到了_player->tiledCoordForPosition(m_player->getPosition())的格子去了
+				if (targetId == m_player->tiledCoordForPosition(m_player->getPosition()))
 				{
 					if (bosscurheight <= playerheight)
 					{
@@ -450,7 +488,7 @@ Rect CubeBoss::getBoundingBox()
 	return rect;
 }
 
-void CubeBoss::cmd_hurt(float damage)
+bool CubeBoss::cmd_hurt(float damage)
 {
 	if (m_hp > 0)
 		m_hp -= damage;
@@ -458,6 +496,34 @@ void CubeBoss::cmd_hurt(float damage)
 	CCTintTo* action1 = CCTintTo::create(0.1f, 255, 0, 0);
 	CCTintTo* action2 = CCTintTo::create(0.1f, this->m_mycolor);
 	this->getSprite()->runAction(Sequence::create(action1, action2, NULL));
+
+	if (m_hp <= 0)
+		return true;
+}
+
+bool CubeBoss::IsAttackByPlayer()
+{
+	//获取主角剑气
+	if (m_player)
+	{
+		auto vec = m_player->getPlayerUsing_swordwave_Arr();
+		if (vec.size() > 0){
+			for (int i = 0; i < vec.size(); i++){
+				auto swordwave = vec.at(i);
+				if (swordwave->isVisible())
+				{
+					if (getBoundingBox().containsPoint(swordwave->getPosition())){
+						swordwave->hide();
+						//扣怪物血,
+						//this->cmd_hurt(5);
+						this->cmd_hurt(15);
+						//设置此被攻击的怪物血条为可见，其他隐藏		
+						return true;
+					}
+				}
+			}
+		}
+	}
 }
 
 
